@@ -1,0 +1,37 @@
+# Ignore everything by default, then allowlist the final Agent Arena app files.
+*
+
+# Project metadata / setup
+!.gitignore
+!.env.example
+!README.md
+!requirements.txt
+
+# Entrypoints
+!run_benchmark.py
+!audit_ground_truth.py
+
+# App source
+!backend/
+!backend/*.py
+!frontend/
+!frontend/index.html
+
+# Final task bank
+!data/
+!data/tasks.csv
+!data/excluded_tasks.json
+
+# Always keep local secrets, generated artifacts, and scratch docs private.
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+node_modules/
+dist/
+storage/
+docs/
