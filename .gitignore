@@ -10,6 +10,8 @@
 # Entrypoints
 !run_benchmark.py
 !audit_ground_truth.py
+!seed_ground_truth_from_audit.py
+!export_launch_snapshot.py
 
 # App source
 !backend/
@@ -34,4 +36,9 @@ __pycache__/
 node_modules/
 dist/
 storage/
+!storage/
+storage/*
+!storage/runs.jsonl
+!storage/ground_truth.jsonl
+!storage/v1_ground_truth_audit.csv
 docs/

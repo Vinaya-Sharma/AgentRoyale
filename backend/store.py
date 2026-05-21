@@ -92,6 +92,10 @@ def latest_ground_truth_by_task() -> dict[str, GroundTruth]:
 
 
 def build_leaderboard() -> list[LeaderboardRow]:
+    # Development leaderboard over all currently official tasks. The public v1
+    # site computes its launch leaderboard in the frontend from the frozen
+    # 43-task complete-coverage slice, so do not use this function as the v1
+    # public scoreboard without applying the same slice.
     settings = get_settings()
     default_models = set(settings.default_models)
     official_task_ids = get_official_task_ids()

@@ -48,10 +48,12 @@ class Settings:
         query = dict(parse_qsl(parsed.query, keep_blank_values=True))
         if "token" not in query and self.bright_data_api_key:
             query["token"] = self.bright_data_api_key
+        if "pro" not in query and self.bright_data_api_key:
+            query["pro"] = "1"
         if "groups" not in query:
             query["groups"] = (
                 "advanced_scraping,ecommerce,social,browser,finance,"
-                "business,research,app_stores"
+                "business,research,app_stores,travel,code"
             )
         return urlunparse(parsed._replace(query=urlencode(query, safe=",")))
 
@@ -62,7 +64,7 @@ def get_settings() -> Settings:
         item.strip()
         for item in os.getenv(
             "AGENT_ARENA_MODELS",
-            "anthropic/claude-sonnet-4.6,openai/gpt-4o,google/gemini-2.5-pro,perplexity/sonar-pro-search,meta-llama/llama-3.3-70b-instruct",
+            "anthropic/claude-sonnet-4.6,openai/gpt-4o,google/gemini-2.5-pro,perplexity/sonar-pro-search,perplexity/sonar-deep-research,x-ai/grok-4.3,openai/gpt-4o-mini,openai/gpt-oss-120b,deepseek/deepseek-v4-flash,nvidia/nemotron-3-super-120b-a12b,google/gemini-3.1-flash-lite,anthropic/claude-opus-4.7",
         ).split(",")
         if item.strip()
     )

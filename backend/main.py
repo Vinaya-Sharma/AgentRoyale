@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 import csv
+import io
 import uuid
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import APP_DIR, get_settings
@@ -17,6 +18,12 @@ from backend.store import build_leaderboard, latest_ground_truth_by_task, list_c
 from backend.task_bank import get_excluded_tasks, get_task, get_tasks
 
 
+# Launch note:
+# The public v1 site intentionally presents a frozen 43-task slice computed in
+# the frontend from complete model coverage. Some backend endpoints still expose
+# broader development data and utilities used during benchmark construction.
+# Treat those as internal/debug surfaces unless they are explicitly wired into
+# the launch UI.
 settings = get_settings()
 frontend_dir = APP_DIR / "frontend"
 
@@ -139,6 +146,39 @@ async def leaderboard() -> list[dict]:
     return [row.model_dump() for row in build_leaderboard()]
 
 
+@app.get("/api/results.csv")
+async def results_csv() -> Response:
+    # Internal/dev export. The launch UI hides this endpoint because it is based
+    # on the broader backend leaderboard, not the frontend's frozen 43-task v1
+    # slice.
+    rows = build_leaderboard()
+    fieldnames = [
+        "rank",
+        "model",
+        "total_runs",
+        "scored_runs",
+        "live_exact_accuracy",
+        "verified_retrieval_rate",
+        "avg_tool_calls",
+        "avg_latency_ms",
+        "avg_cost_usd",
+        "accuracy_per_dollar",
+        "consistency_stddev",
+    ]
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=fieldnames)
+    writer.writeheader()
+    for rank, row in enumerate(rows, start=1):
+        payload = row.model_dump()
+        payload["rank"] = rank
+        writer.writerow({key: payload.get(key, "") for key in fieldnames})
+    return Response(
+        buffer.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=agent-royale-results.csv"},
+    )
+
+
 @app.post("/api/batch-runs")
 async def batch_runs(req: BatchRequest) -> dict:
     try:
@@ -190,11 +230,33 @@ async def votes() -> list[dict]:
 
 @app.get("/api/ground-truth-audit")
 async def ground_truth_audit() -> list[dict]:
-    path = APP_DIR / "storage" / "ground_truth_audit.csv"
-    if not path.exists():
-        return []
-    with path.open("r", encoding="utf-8", newline="") as handle:
-        return list(csv.DictReader(handle))
+    storage_dir = APP_DIR / "storage"
+    paths = sorted(storage_dir.glob("*audit*.csv"))
+    rows_by_task: dict[str, dict] = {}
+    for path in paths:
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                row["audit_file"] = path.name
+                task_id = row.get("task_id", "")
+                if not task_id:
+                    continue
+                current = rows_by_task.get(task_id)
+                if current is None or _audit_priority(row) > _audit_priority(current):
+                    rows_by_task[task_id] = row
+    return list(rows_by_task.values())
+
+
+def _audit_priority(row: dict) -> int:
+    status = str(row.get("status", "")).lower()
+    if status == "ok":
+        return 4
+    if status == "changed":
+        return 3
+    if row.get("audited_value"):
+        return 2
+    if status:
+        return 1
+    return 0
 
 
 @app.post("/api/votes")

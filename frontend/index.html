@@ -36,15 +36,15 @@ select,input{width:100%;border:1px solid var(--border2);background:var(--bg);bor
 .field{margin-bottom:14px}.field small{display:block;color:var(--ink3);font-size:12px;margin-top:5px;line-height:1.45}
 .model-picks{display:grid;gap:7px;margin-bottom:8px}.model-pick{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;font-size:12px}.model-pick input{width:auto}.model-pick code{font:11px "DM Mono";color:var(--ink3)}
 .task-card{padding:14px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);margin-bottom:10px}.task-card.on{border-color:var(--ink);background:var(--white)}.task-card.clickable{cursor:pointer}.task-card.clickable:hover{border-color:var(--border2);background:var(--white)}
-.task-id{font:11px "DM Mono";color:var(--ink4);margin-bottom:4px}.task-q{font-size:13px;line-height:1.45}.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.chip{font-size:10px;border-radius:999px;padding:2px 8px;background:var(--blue-bg);color:var(--blue)}.chip.diff{background:var(--amber-bg);color:var(--amber)}.chip.ok{background:var(--green-bg);color:var(--green)}.chip.bad{background:var(--red-bg);color:var(--red)}
+.task-id{font:11px "DM Mono";color:var(--ink4);margin-bottom:4px;overflow-wrap:anywhere}.task-q{font-size:13px;line-height:1.45;overflow-wrap:anywhere}.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;min-width:0}.chip{font-size:10px;border-radius:999px;padding:2px 8px;background:var(--blue-bg);color:var(--blue);max-width:100%;overflow-wrap:anywhere}.chip.diff{background:var(--amber-bg);color:var(--amber)}.chip.ok{background:var(--green-bg);color:var(--green)}.chip.bad{background:var(--red-bg);color:var(--red)}
 .task-list{max-height:560px;overflow:auto;padding-right:4px}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
 .run{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white)}.run-head{display:flex;justify-content:space-between;gap:10px;padding:10px 13px;background:var(--bg2);border-bottom:1px solid var(--border)}.model{font:11px "DM Mono";color:var(--ink3);overflow:hidden;text-overflow:ellipsis}.badge{font-size:11px;border-radius:999px;padding:2px 8px}.pass{background:var(--green-bg);color:var(--green)}.fail{background:var(--red-bg);color:var(--red)}
-.run-body{padding:14px;min-width:0}.answer{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px}.answer p{margin:0 0 10px}.answer p:last-child{margin-bottom:0}.answer strong{color:var(--ink);font-weight:700}.answer a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--ink4);text-underline-offset:2px}.answer blockquote{margin:8px 0;padding:8px 10px;border-left:3px solid var(--border);background:var(--bg);border-radius:0 var(--r) var(--r) 0}.trace-toggle{border:1px solid var(--border);border-radius:var(--r);background:var(--bg);margin-bottom:12px;min-width:0}.trace-toggle summary{cursor:pointer;list-style:none;padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink4);font-weight:600}.trace-count{justify-self:end}.trace-toggle summary::-webkit-details-marker{display:none}.trace-toggle summary:after{content:"›";font-size:16px;line-height:1;transition:transform .15s ease}.trace-toggle[open] summary:after{transform:rotate(90deg)}.trace-toggle .trace{padding:0 8px 8px;min-width:0}.trace{display:grid;gap:5px;min-width:0}.step{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:8px;background:var(--white);border-radius:var(--r);padding:6px 8px;min-width:0}.step-num{font:10px "DM Mono";color:var(--ink4)}.step-action{font:10px "DM Mono";color:var(--ink4);text-transform:uppercase;letter-spacing:.04em}.step-text{font:11px "DM Mono";white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.step-text a{color:var(--ink2);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.step-text a:hover{text-decoration:underline}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{background:var(--bg);border-radius:var(--r);padding:9px}.metric b{display:block;font:12px "DM Mono";margin-top:2px}.metric span{font-size:10px;text-transform:uppercase;color:var(--ink4);letter-spacing:.08em}
-.gt{background:var(--ink);color:#fff;border-radius:var(--rl);padding:16px;margin-top:16px}.gt .label{color:rgba(255,255,255,.4)}.gtv{font:18px "Instrument Serif";margin-bottom:5px}.gtn{font-size:12px;color:rgba(255,255,255,.55)}
+.run-body{padding:14px;min-width:0}.answer{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;min-width:0;overflow-wrap:anywhere}.answer p{margin:0 0 10px}.answer p:last-child{margin-bottom:0}.answer strong{color:var(--ink);font-weight:700}.answer a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--ink4);text-underline-offset:2px;overflow-wrap:anywhere}.answer blockquote{margin:8px 0;padding:8px 10px;border-left:3px solid var(--border);background:var(--bg);border-radius:0 var(--r) var(--r) 0}.trace-toggle{border:1px solid var(--border);border-radius:var(--r);background:var(--bg);margin-bottom:12px;min-width:0}.trace-toggle summary{cursor:pointer;list-style:none;padding:8px 10px;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink4);font-weight:600}.trace-count{justify-self:end}.trace-toggle summary::-webkit-details-marker{display:none}.trace-toggle summary:after{content:"›";font-size:16px;line-height:1;transition:transform .15s ease}.trace-toggle[open] summary:after{transform:rotate(90deg)}.trace-toggle .trace{padding:0 8px 8px;min-width:0}.trace{display:grid;gap:5px;min-width:0}.step{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:8px;background:var(--white);border-radius:var(--r);padding:6px 8px;min-width:0}.step-num{font:10px "DM Mono";color:var(--ink4)}.step-action{font:10px "DM Mono";color:var(--ink4);text-transform:uppercase;letter-spacing:.04em}.step-text{font:11px "DM Mono";white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.step-text a{color:var(--ink2);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.step-text a:hover{text-decoration:underline}.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{background:var(--bg);border-radius:var(--r);padding:9px}.metric b{display:block;font:12px "DM Mono";margin-top:2px}.metric span{font-size:10px;text-transform:uppercase;color:var(--ink4);letter-spacing:.08em}
+.gt{background:var(--ink);color:#fff;border-radius:var(--rl);padding:16px;margin-top:16px;min-width:0}.gt .label{color:rgba(255,255,255,.4)}.gtv{font:18px "Instrument Serif";margin-bottom:5px;overflow-wrap:anywhere}.gtn{font-size:12px;color:rgba(255,255,255,.55);overflow-wrap:anywhere}
 .vote{display:flex;justify-content:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--rl);overflow:hidden;border:1px solid var(--border)}th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-weight:600;background:var(--bg2)}th,td{padding:12px;border-bottom:1px solid var(--border)}tr:last-child td{border-bottom:none}td.r,th.r{text-align:right;font-family:"DM Mono";font-size:12px}.bar{width:80px;height:4px;background:var(--bg3);border-radius:4px;display:inline-block;margin-right:8px;vertical-align:middle}.bar i{display:block;height:100%;background:var(--ink);border-radius:4px}
-.method{max-width:780px}.method h2{font-size:34px;margin-bottom:10px}.method h3{font-size:24px;margin-top:34px;margin-bottom:8px}.method p{color:var(--ink2);margin-bottom:14px;line-height:1.75}.method .callout{background:var(--ink);color:#fff;padding:20px;border-radius:var(--rl);margin-bottom:28px}.method .callout p{color:rgba(255,255,255,.78);margin:0}.code{font:12px "DM Mono";background:var(--ink);color:#fff;border-radius:var(--rl);padding:16px;overflow:auto;margin:16px 0;line-height:1.8}
+.method{max-width:860px}.method h2{font-size:34px;margin-bottom:10px}.method h3{font-size:24px;margin-top:34px;margin-bottom:8px}.method p{color:var(--ink2);margin-bottom:14px;line-height:1.75}.method ul,.method ol{padding-left:20px;margin:8px 0 16px}.method li{color:var(--ink2);line-height:1.7;margin:6px 0}.method .callout{background:var(--ink);color:#fff;padding:20px;border-radius:var(--rl);margin-bottom:28px}.method .callout p{color:rgba(255,255,255,.78);margin:0}.method-paper{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:24px;box-shadow:0 2px 18px rgba(23,23,14,.045);margin-bottom:18px}.method-paper h3:first-child{margin-top:0}.method-kicker{font:10px "DM Mono";text-transform:uppercase;letter-spacing:.12em;color:var(--ink4);margin-bottom:8px}.method-tldr{background:var(--ink);color:#fff;border-radius:var(--rl);padding:18px;margin:16px 0}.method-tldr h3{font:600 12px "DM Sans";letter-spacing:0;margin:0 0 8px;color:#fff}.method-tldr ul{margin:0;padding-left:18px}.method-tldr li{color:rgba(255,255,255,.78);font-size:13px;line-height:1.6}.method-caveat{background:var(--amber-bg);border:1px solid rgba(122,80,5,.14);border-radius:var(--rl);padding:16px;margin:16px 0}.method-caveat h3{font:600 13px "DM Sans";letter-spacing:0;margin:0 0 8px;color:var(--amber)}.method-caveat p,.method-caveat li{font-size:12.5px;line-height:1.65;color:var(--amber)}.method-caveat ul{margin:8px 0 0;padding-left:18px}.method-model-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.method-model-list span{font-size:11px;border:1px solid rgba(122,80,5,.18);background:rgba(255,255,255,.45);border-radius:999px;padding:3px 8px;color:var(--amber)}.method-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.method-stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px;min-width:0}.method-stat b{display:block;font:26px "Instrument Serif";font-weight:400;line-height:1.05}.method-stat span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-top:5px}.method-note{border-left:2px solid var(--ink);padding-left:12px;color:var(--ink2);font-size:13px;line-height:1.7;margin:14px 0}.method-table{font-size:12px;margin:12px 0 18px}.method-table th,.method-table td{padding:10px}.method-accordions{display:grid;gap:10px}.method-fold{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);box-shadow:0 1px 10px rgba(23,23,14,.035);overflow:hidden}.method-fold summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:16px 18px}.method-fold summary::-webkit-details-marker{display:none}.method-fold summary:after{content:"›";font-size:22px;color:var(--ink4);line-height:1;transition:transform .15s ease}.method-fold[open] summary:after{transform:rotate(90deg)}.method-fold h3{font:600 14px "DM Sans";letter-spacing:0;margin:0;color:var(--ink)}.method-fold small{display:block;font-size:12px;color:var(--ink3);line-height:1.5;margin-top:3px}.method-fold-body{padding:0 18px 18px;border-top:1px solid var(--border)}.code{font:12px "DM Mono";background:var(--ink);color:#fff;border-radius:var(--rl);padding:16px;overflow:auto;margin:16px 0;line-height:1.8}
 .landing-hero{min-height:calc(100vh - 56px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 28px 84px;position:relative;overflow:hidden}
 .landing-hero:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(36,74,168,.07),transparent 70%);pointer-events:none}
 .landing-hero>*{position:relative}.landing-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);background:var(--white);border:1px solid var(--border);padding:5px 14px;border-radius:999px;margin-bottom:28px;box-shadow:0 1px 4px rgba(23,23,14,.05)}
@@ -58,47 +58,52 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
 .landing-card ul{padding-left:17px;margin:0}.landing-card li{font-size:12.5px;color:var(--ink3);line-height:1.65;margin:4px 0}
 .landing-callout{background:var(--amber-bg);border-top:1px solid rgba(122,80,5,.12);border-bottom:1px solid rgba(122,80,5,.12);margin-bottom:64px}.landing-callout-inner{max-width:1120px;margin:0 auto;padding:16px 28px;display:flex;gap:14px;align-items:flex-start}.landing-callout-mark{font:600 14px "DM Mono";color:var(--amber);margin-top:1px}.landing-callout p{font-size:13px;color:var(--amber);line-height:1.65}.landing-callout strong{font-weight:600}
 .examples{max-width:920px;margin:0 auto;padding:0 28px 60px}.examples-head{text-align:center;margin-bottom:34px}.examples-head h2{font-size:32px;line-height:1.15;margin-bottom:12px}.examples-head p{font-size:14px;color:var(--ink3);line-height:1.7;max-width:540px;margin:0 auto}.example-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 8px rgba(23,23,14,.04);margin-bottom:12px}.example-q{display:flex;gap:12px;padding:14px 18px;background:rgba(23,23,14,.018);border-bottom:1px solid var(--border);font-size:13.5px}.example-num{font:10px "DM Mono";color:var(--ink4);padding-top:3px}.example-cols{display:grid;grid-template-columns:repeat(3,1fr)}.example-col{padding:14px 16px;border-right:1px solid var(--border)}.example-col:last-child{border-right:none;background:rgba(35,95,60,.028)}.example-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px}.example-label.claim{color:var(--ink3)}.example-label.source{color:var(--blue)}.example-label.truth{color:var(--green)}.example-val{font:12px "DM Mono";color:var(--ink2);line-height:1.55}.example-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 9px;border-radius:999px;margin-top:8px}.example-badge.bad{background:var(--red-bg);color:var(--red)}.example-badge.warn{background:var(--amber-bg);color:var(--amber)}.example-badge.good{background:var(--green-bg);color:var(--green)}.example-legend{display:flex;align-items:center;gap:20px;justify-content:center;flex-wrap:wrap;padding:12px 0 0;font-size:11px;color:var(--ink3)}.example-legend-item{display:flex;align-items:center;gap:6px}.example-legend-dot{width:7px;height:7px;border-radius:50%}
-.finding{background:var(--ink);color:#fff;overflow:hidden}.finding-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr auto}.finding-left{padding:40px 48px;border-right:1px solid rgba(255,255,255,.08)}.finding-kicker{font:10px "DM Mono";letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-bottom:12px}.finding-quote{font-size:14px;line-height:1.75;color:rgba(255,255,255,.7);font-style:italic;border-left:2px solid rgba(255,255,255,.13);padding-left:18px;margin-bottom:16px}.finding-sub{font-size:12.5px;color:rgba(255,255,255,.42);line-height:1.65}.finding-sub strong{color:rgba(255,255,255,.72)}.finding-right{min-width:220px;padding:40px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.finding-big{font:60px "Instrument Serif";line-height:1}.finding-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:20px}
+.finding{background:var(--ink);color:#fff;overflow:hidden}.finding-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr auto}.finding-left{padding:44px 48px 82px;border-right:1px solid rgba(255,255,255,.08)}.finding-kicker{font:10px "DM Mono";letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-bottom:12px}.finding-heading{font:34px "Instrument Serif";line-height:1.08;margin-bottom:14px;max-width:760px}.finding-sub{font-size:13px;color:rgba(255,255,255,.58);line-height:1.7;max-width:820px}.finding-sub strong{color:rgba(255,255,255,.82)}.finding-right{min-width:220px;padding:40px 48px 82px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.finding-big{font:60px "Instrument Serif";line-height:1}.finding-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:20px}
 .code-window-section{max-width:820px;margin:0 auto;padding:56px 28px 78px;text-align:center}.code-window-section>p{font-size:11.5px;color:var(--ink3);margin-bottom:14px}.code-window{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 8px 32px rgba(23,23,14,.1);text-align:left}.code-top{display:flex;align-items:center;gap:9px;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}.code-dots{display:flex;gap:5px}.code-dots i{width:10px;height:10px;border-radius:50%;display:block}.code-dots i:nth-child(1){background:#ff5f57}.code-dots i:nth-child(2){background:#febc2e}.code-dots i:nth-child(3){background:#28c840}.code-file{font:11px "DM Mono";color:var(--ink3)}.code-body{padding:22px 26px;font:12.5px "DM Mono";line-height:2;color:var(--ink2);overflow:auto}.code-comment{color:var(--ink3);font-style:italic}.code-key{color:#3d33b0}.code-fn{color:var(--blue)}
 .notice{padding:12px 14px;border-radius:var(--r);background:var(--amber-bg);color:var(--amber);font-size:13px;margin-bottom:14px}.empty{padding:30px;text-align:center;color:var(--ink3)}
-.arena-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pair-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.pair-nav{display:flex;align-items:center;gap:8px}.icon-btn{width:34px;height:34px;border-radius:var(--r);border:1px solid var(--border2);background:var(--white);display:grid;place-items:center;font-size:18px;line-height:1}.icon-btn:hover{background:var(--bg2)}.pair-count{font:11px "DM Mono";color:var(--ink3)}.section-title{margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.arena-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pair-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.pair-nav{display:flex;align-items:center;gap:8px}.icon-btn{width:34px;height:34px;border-radius:var(--r);border:1px solid var(--border2);background:var(--white);color:var(--ink3);display:grid;place-items:center;font-size:18px;line-height:1;text-decoration:none}.icon-btn:hover{background:var(--bg2);color:var(--ink)}.leader-download{width:42px;height:42px;flex:0 0 42px}.pair-count{font:11px "DM Mono";color:var(--ink3)}.section-title{margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
 .guide{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-bottom:16px}.guide-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px}.guide-box h3{font:600 12px "DM Sans";letter-spacing:0;margin-bottom:8px}.guide-box p,.guide-box li{font-size:12px;color:var(--ink2);line-height:1.55}.guide-box ul{padding-left:18px}.guide-box li{margin:5px 0}.good{color:var(--green)}.bad{color:var(--red)}
+.audit-guide{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-bottom:16px}.audit-guide .panel{padding:16px;min-width:0}.audit-guide h3{font-size:20px;margin-bottom:8px}.audit-guide p{font-size:13px;line-height:1.6;color:var(--ink2);margin-bottom:10px}.audit-steps{display:grid;gap:8px}.audit-step{display:grid;grid-template-columns:24px 1fr;gap:8px;font-size:12px;line-height:1.45;color:var(--ink2);min-width:0}.audit-step b{display:grid;place-items:center;width:22px;height:22px;border-radius:999px;background:var(--blue-bg);color:var(--blue);font:11px "DM Mono"}.audit-row-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:12px;min-width:0}.audit-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:10px;min-width:0}.audit-box .label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:5px}.audit-box p{font-size:12px;line-height:1.5;color:var(--ink2);margin:0;overflow-wrap:anywhere}
+.result-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:16px}.result-story{padding:22px}.result-story h3{font-size:30px;margin-bottom:8px}.result-story p{font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:10px}.result-status{padding:16px;background:var(--white);color:var(--ink);border:1px solid var(--border);border-radius:var(--rl);box-shadow:0 2px 18px rgba(23,23,14,.045)}.result-status b{display:block;font:28px "Instrument Serif";font-weight:400;line-height:1;margin-bottom:5px}.result-status span{font-size:12px;line-height:1.55;color:var(--ink2)}.result-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.result-metric{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:14px;min-width:0}.result-metric span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:5px}.result-metric b{font:26px "Instrument Serif";font-weight:400}.result-metric p{font-size:11px;color:var(--ink3);line-height:1.45;margin-top:4px}.result-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-bottom:16px}.chart-panel{padding:14px;min-width:0}.chart-panel h3{font-size:24px;margin-bottom:8px}.chart-note{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:12px}.bar-row{display:grid;grid-template-columns:minmax(140px,1fr) minmax(120px,1.2fr) auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--border)}.bar-row:first-of-type{border-top:0}.bar-label{font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis}.bar-track{height:7px;background:var(--bg3);border-radius:999px;overflow:hidden}.bar-fill{height:100%;background:var(--ink);border-radius:999px}.bar-fill.green{background:var(--green)}.bar-fill.amber{background:var(--amber)}.bar-value{font:11px "DM Mono";color:var(--ink3);white-space:nowrap}.result-tools{display:grid;grid-template-columns:minmax(220px,1fr) minmax(150px,220px) minmax(150px,220px) minmax(150px,220px);gap:10px;margin:14px 0}.result-tools input,.result-tools select{max-width:none;background:var(--white)}.takeaway-list{display:grid;gap:8px}.takeaway{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px}.takeaway strong{display:block;font-size:13px;margin-bottom:4px}.takeaway p{font-size:12px;color:var(--ink2);line-height:1.55}.ship-list{padding-left:18px}.ship-list li{font-size:12px;color:var(--ink2);line-height:1.6;margin:5px 0}
+.result-kicker{font:10px "DM Mono";letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:10px}.result-story h3{max-width:720px}.result-verdict{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.result-verdict div{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px}.result-verdict span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:4px}.result-verdict b{display:block;font:20px "Instrument Serif";font-weight:400}.result-verdict p{font-size:11px!important;line-height:1.45!important;margin:2px 0 0!important;color:var(--ink3)!important}.result-status-grid{display:grid;gap:10px}.result-status-row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--border);padding-top:9px;font-size:12px;color:var(--ink2)}.result-status-row:first-of-type{border-top:0;padding-top:0}.result-status-row strong{font:12px "DM Mono";color:var(--ink)}.result-plain{background:transparent;border:0;box-shadow:none;padding:0}.result-note-list{display:grid;gap:8px}.result-note{border-left:2px solid var(--ink);padding:2px 0 2px 10px}.result-note strong{display:block;font-size:13px;margin-bottom:3px}.result-note p{font-size:12px;line-height:1.55;color:var(--ink2)}.result-section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:10px}.result-section-head h3{margin:0}.result-section-head p{margin:0;max-width:420px}
+.results-v2{display:grid;gap:16px}.results-hero{background:var(--ink);color:#fff;border-radius:var(--rl);padding:28px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end}.results-hero h3{font-size:38px;line-height:1.08;margin:0 0 12px;max-width:780px}.results-hero p{font-size:14px;line-height:1.7;color:rgba(255,255,255,.62);max-width:760px}.results-hero-stat{text-align:right;min-width:190px}.results-hero-stat b{display:block;font:64px "Instrument Serif";line-height:.95}.results-hero-stat span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.42);margin-top:8px}.outcome-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.outcome-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px}.outcome-card span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink4);margin-bottom:6px}.outcome-card b{font:34px "Instrument Serif";font-weight:400}.outcome-card p{font-size:12px;line-height:1.55;color:var(--ink3);margin-top:5px}.results-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.86fr);gap:14px}.results-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px;min-width:0}.results-panel h3{font-size:24px;margin-bottom:6px}.results-panel>p{font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:12px}.rank-list{display:grid;gap:8px}.rank-row{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg)}.rank-row-num{font:11px "DM Mono";color:var(--ink4)}.rank-row-name{font-size:12.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank-row-sub{font-size:10.5px;color:var(--ink4);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank-row-meter{height:6px;background:var(--bg3);border-radius:999px;overflow:hidden;margin-top:6px}.rank-row-meter i{display:block;height:100%;background:var(--ink);border-radius:999px}.rank-row-score{font:12px "DM Mono";white-space:nowrap}.insight-list{display:grid;gap:10px}.insight{border-left:2px solid var(--ink);padding-left:12px}.insight strong{display:block;font-size:13px;margin-bottom:3px}.insight p{font-size:12px;color:var(--ink2);line-height:1.55}.topic-list{display:grid;gap:7px}.topic-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;border-top:1px solid var(--border);padding-top:8px}.topic-row:first-child{border-top:0;padding-top:0}.topic-row strong{font-size:12px}.topic-row span{font:11px "DM Mono";color:var(--ink3)}.results-explorer-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:12px}.results-explorer-head p{font-size:12px;color:var(--ink3);line-height:1.55;max-width:620px}.results-explorer-head h3{margin-bottom:4px}
 .ideal-box{display:flex;align-items:flex-start;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:14px;padding:12px;border-top:1px solid var(--border);background:var(--bg);border-radius:var(--r)}.ideal-box label{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink2)}.ideal-box input{width:auto}.ideal-note{flex-basis:100%;text-align:center;font-size:11px;color:var(--ink3)}.vote-reveal{margin-top:16px}.reveal-actions{display:flex;justify-content:flex-end;margin-top:10px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.summary-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:14px}.summary-card span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:4px}.summary-card b{font:22px "Instrument Serif";font-weight:400}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px}.toolbar input,.toolbar select{max-width:280px}.split{display:grid;grid-template-columns:360px 1fr;gap:16px}.list-panel{max-height:680px;overflow:auto;padding:12px}.detail-panel{padding:16px}.mini-table{font-size:12px}.mini-table td,.mini-table th{padding:9px}.task-card button{margin-top:10px}.model-card{padding:14px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);margin-bottom:10px;cursor:pointer}.model-card:hover{background:var(--white);border-color:var(--ink3)}.model-card.on{border-color:var(--ink);background:var(--white)}.model-name{font:12px "DM Mono";color:var(--ink2);overflow:hidden;text-overflow:ellipsis}.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.score-row .metric{background:var(--bg2)}.fail-list{display:grid;gap:8px}.fail-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px;font-size:12px}.run-stack{display:grid;gap:10px}.compact-run{border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--bg)}.compact-run summary{cursor:pointer;font-size:12px}.compact-run .answer{margin-top:8px;margin-bottom:8px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.summary-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:14px;min-width:0}.summary-card span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:4px}.summary-card b{font:22px "Instrument Serif";font-weight:400}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px}.toolbar input,.toolbar select{max-width:280px}.ground-truth-toolbar{display:grid;grid-template-columns:minmax(280px,1fr) minmax(170px,220px) auto;gap:10px;align-items:center}.ground-truth-toolbar input,.ground-truth-toolbar select{max-width:none;background:var(--white)}.result-count{white-space:nowrap;border:1px solid var(--border);background:var(--white);border-radius:999px;padding:9px 12px;font:11px "DM Mono";color:var(--ink3)}.audit-note{padding:10px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--ink3);font-size:12px;line-height:1.55;margin:-4px 0 14px}.split{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px}.list-panel{max-height:680px;overflow:auto;padding:12px;min-width:0}.detail-panel{padding:16px;min-width:0}.mini-table{font-size:12px}.mini-table td,.mini-table th{padding:9px}.mini-table td{vertical-align:top}.task-card button{margin-top:10px}.model-card{padding:14px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);margin-bottom:10px;cursor:pointer}.model-card:hover{background:var(--white);border-color:var(--ink3)}.model-card.on{border-color:var(--ink);background:var(--white)}.model-name{font:12px "DM Mono";color:var(--ink2);overflow:hidden;text-overflow:ellipsis}.score-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}.score-row .metric{background:var(--bg2)}.model-tools{display:grid;grid-template-columns:minmax(180px,1fr) minmax(150px,220px) minmax(150px,220px);gap:10px;margin:16px 0}.model-tools input,.model-tools select{max-width:none;background:var(--white)}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--rl);background:var(--white)}.table-wrap table{border:0;border-radius:0}.status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;font-size:10px;background:var(--bg3);color:var(--ink3);white-space:nowrap}.status-pill.ok{background:var(--green-bg);color:var(--green)}.status-pill.diff{background:var(--amber-bg);color:var(--amber)}.status-pill.bad{background:var(--red-bg);color:var(--red)}.inspect-summary{border-top:1px solid var(--border);font-size:12px;width:100%;min-width:0}.inspect-summary:first-child{border-top:0}.inspect-summary summary,.inspect-head{display:grid;grid-template-columns:minmax(210px,1.45fr) minmax(125px,.8fr) minmax(120px,1fr) 54px;gap:8px;align-items:start;padding:11px 12px;min-width:0}.inspect-head{min-width:0;position:sticky;top:0;z-index:3;background:var(--bg2);box-shadow:0 1px 0 var(--border);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);font-weight:600}.inspect-head>div{background:var(--bg2)!important}.inspect-head .r{background:var(--bg2)!important}.inspect-summary summary{cursor:pointer;list-style:none}.inspect-summary summary::-webkit-details-marker{display:none}.inspect-task{display:flex;gap:8px;min-width:0}.caret{font-size:16px;line-height:1;color:var(--ink4);transition:transform .15s ease}.inspect-summary[open] .caret{transform:rotate(90deg)}.inspect-cell{min-width:0;overflow-wrap:anywhere}.inspect-detail{width:100%;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin:0 12px 12px;max-width:calc(100% - 24px);overflow:hidden}.inspect-runs{display:grid;gap:8px;min-width:0}.outcome-strip{display:flex;gap:4px;margin:7px 0 5px}.outcome-strip span{width:24px;height:5px;border-radius:999px;background:var(--bg3)}.outcome-strip .correct{background:var(--green)}.outcome-strip .wrong{background:var(--red)}.outcome-strip .abstain,.outcome-strip .provider_error{background:var(--amber)}.latest-claim{color:var(--ink2);line-height:1.45}.inspect-evidence-grid{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:10px;margin-bottom:10px}.inspect-answer-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px;min-width:0}.inspect-answer-box .gtv{color:var(--ink);font-size:20px}.inspect-answer-box .gtn{color:var(--ink3)}.source-link{font:12px "DM Mono";color:var(--ink2);overflow-wrap:anywhere}.inspect-rule{font-size:12px;color:var(--ink2);line-height:1.55;background:rgba(255,255,255,.55);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:10px}.compact-inspect-runs{gap:6px}.inspect-run{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:8px 10px}.inspect-run-claim{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}.fail-list{display:grid;gap:8px}.fail-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px;font-size:12px;min-width:0;overflow-wrap:anywhere}.run-stack{display:grid;gap:10px;min-width:0}.compact-run{border:1px solid var(--border);border-radius:var(--r);padding:10px;background:var(--bg);min-width:0;max-width:100%;overflow:hidden}.compact-run summary{cursor:pointer;font-size:12px;overflow-wrap:anywhere;white-space:normal}.compact-run .answer{margin-top:8px;margin-bottom:8px}#groundTruthPage .compact-run{background:var(--white);box-shadow:0 1px 10px rgba(23,23,14,.035)}#groundTruthPage .compact-run[open]{border-color:var(--border2)}
+.outcome-strip .error{background:var(--amber)}
 @media(max-width:850px){nav{padding:0 12px;gap:10px}.brand{font-size:17px}.tabs{overflow:auto;flex:1;justify-content:flex-start}.tab{white-space:nowrap;padding:7px 10px}.pill{display:none}.grid,.result-grid{grid-template-columns:1fr}.wrap{padding:24px 16px 86px}h1{font-size:40px}.stat{min-width:auto;flex:1;padding:10px 8px}.stat:nth-child(n+4){display:none}}
-@media(max-width:850px){.guide,.cards,.split,.score-row,.landing-grid,.example-cols,.finding-inner{grid-template-columns:1fr}.toolbar{display:grid}.landing-hero{padding:56px 16px 64px}.landing-hero h1{font-size:40px}.landing-stats{flex-wrap:wrap}.landing-div{display:none}.landing-stat{padding:14px 18px}.landing-section,.examples,.code-window-section{padding-left:16px;padding-right:16px}.landing-callout-inner{padding-left:16px;padding-right:16px}.finding-left,.finding-right{padding:28px 22px}.finding-left{border-right:none}.finding-right{border-top:1px solid rgba(255,255,255,.08)}}
+@media(max-width:850px){.guide,.cards,.split,.score-row,.landing-grid,.example-cols,.finding-inner,.audit-guide,.audit-row-grid,.ground-truth-toolbar,.result-hero,.result-grid,.result-two,.result-tools,.result-verdict,.method-stat-grid,.inspect-evidence-grid,.results-hero,.outcome-cards,.results-split{grid-template-columns:1fr}.toolbar{display:grid}.landing-hero{padding:56px 16px 64px}.landing-hero h1{font-size:40px}.landing-stats{flex-wrap:wrap}.landing-div{display:none}.landing-stat{padding:14px 18px}.landing-section,.examples,.code-window-section{padding-left:16px;padding-right:16px}.landing-callout-inner{padding-left:16px;padding-right:16px}.finding-left,.finding-right{padding:28px 22px 50px}.finding-left{border-right:none}.finding-right{border-top:1px solid rgba(255,255,255,.08)}.method-paper{padding:18px}.results-hero h3{font-size:31px}.results-hero-stat{text-align:left}.results-explorer-head{display:grid;align-items:start}}
 </style>
 </head>
 <body>
 <nav>
   <div class="brand" data-go="home"><div class="mark"><span></span><span></span><span></span><span></span></div>Agent Royale</div>
   <div class="tabs">
-    <button class="tab" data-go="arena">Arena</button>
-    <button class="tab" data-go="livecheck">Live Check</button>
     <button class="tab" data-go="leaderboard">Leaderboard</button>
+    <button class="tab" data-go="resultsPage">Results</button>
+    <button class="tab" data-go="livecheck">Live Check</button>
     <button class="tab" data-go="tasksPage">Tasks</button>
     <button class="tab" data-go="modelsPage">Models</button>
-    <button class="tab" data-go="groundTruthPage">Ground Truth</button>
+    <button class="tab" data-go="groundTruthPage">Task Bank</button>
     <button class="tab" data-go="methodology">Methodology</button>
   </div>
   <div class="pill"><span class="dot"></span><span id="leaderState">loading winner</span></div>
 </nav>
 
-<section id="home" class="page on">
-  <div class="landing-hero">
+<section id="legacyHome" class="page">
+    <div class="landing-hero">
     <div class="landing-eyebrow"><span class="dot"></span>Live retrieval benchmark</div>
-    <h1>The first benchmark AI can't cheat.</h1>
-    <p class="landing-sub">AI search agents cite sources, sound confident, and still miss live facts. Agent Royale tests whether production stacks can retrieve exact current values from the web, then shows where they fail.</p>
+    <h1>A live benchmark for AI web retrieval.</h1>
+    <p class="landing-sub">I built Agent Royale to test a narrow but important claim: when an AI system says it can search the web, can it return the exact live value from the source the task requires?</p>
     <div class="landing-actions">
-      <button class="btn dark" data-go="arena">Vote in Arena</button>
-      <button class="btn" data-go="leaderboard">View leaderboard</button>
+      <button class="btn dark" data-go="leaderboard">View leaderboard</button>
+      <button class="btn" data-go="tasksPage">Explore tasks</button>
       <button class="btn" data-go="livecheck">Run a live check</button>
       <button class="btn" data-go="methodology">Methodology</button>
     </div>
     <div class="landing-stats">
-      <div class="landing-stat"><b>5</b><span>stacks evaluated</span></div>
+      <div class="landing-stat"><b id="homeModelCount">0</b><span>stacks evaluated</span></div>
       <div class="landing-div"></div>
-      <div class="landing-stat"><b id="homeTaskCount">0</b><span>live retrieval tasks</span></div>
+      <div class="landing-stat"><b id="homeTaskCount">0</b><span>benchmark tasks</span></div>
       <div class="landing-div"></div>
       <div class="landing-stat"><b>3x</b><span>runs per task</span></div>
       <div class="landing-div"></div>
@@ -109,34 +114,25 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
   <div class="landing-section">
     <div class="landing-grid">
       <div class="landing-card">
-        <div class="landing-icon">🔒</div>
-        <h3>Contamination-proof</h3>
-        <p>Ground truth is fetched live before every evaluation. Therefore answers cannot be memorized or pre-cached and there is no answer key to exploit.</p>
+        <div class="landing-icon">01</div>
+        <h3>Live Web Ground Truth</h3>
+        <p>Tasks are graded against values fetched from the public web, not static answer keys models can memorize.</p>
         <hr>
-        <p>A 2026 UC Berkeley audit found all 8 leading agent benchmarks, including SWE-bench, WebArena, and GAIA, could be exploited for near-perfect scores without solving a single task. Static answer keys make this trivial. Agent Royale reduces several common benchmark exploit paths by using live, time-varying answers.</p>
+        <p>Each saved answer includes the source, timestamp, evidence, and grading rule so readers can spot-check the benchmark instead of trusting the leaderboard blindly.</p>
       </div>
       <div class="landing-card">
-        <div class="landing-icon">◎</div>
-        <h3>Retrieval, not recall</h3>
-        <p>Most benchmarks cannot tell the difference between a model remembering a fact from training and actually fetching it live, but retrieval reliability failures are costly.</p>
+        <div class="landing-icon">02</div>
+        <h3>Built To Catch Real Agent Failures</h3>
+        <p>The benchmark tests the boring but costly mistakes: stale data, wrong sources, bad citations, wrong regions, and incorrect product variants.</p>
         <hr>
-        <p>Most production AI agents fail because of stale values, wrong sources, wrong regions, or wrong product variants.</p>
-        <p>Agent Royale specifically tests: which agent stack can reliably retrieve the public web today?</p>
+        <p>These are the failures that make AI agents look useful in a demo and break when the answer has to be exact.</p>
       </div>
       <div class="landing-card">
-        <div class="landing-icon">🎯</div>
-        <h3>What Agent Royale measures</h3>
-        <p>Agent Royale evaluates live retrieval reliability end-to-end.</p>
+        <div class="landing-icon">03</div>
+        <h3>Exact, Source-Backed Evaluation</h3>
+        <p>Every answer is checked against an independently fetched ground-truth value.</p>
         <hr>
-        <ul>
-          <li>Does the agent find the right source?</li>
-          <li>Does it extract the correct current value?</li>
-          <li>Does it avoid nearby wrong values?</li>
-          <li>Does its citation support the answer?</li>
-          <li>How much does it cost?</li>
-          <li>How long does it take?</li>
-          <li>How consistent is it across repeated runs?</li>
-        </ul>
+        <p>I also measure source correctness, citation support, cost, speed, and consistency across repeated runs.</p>
       </div>
     </div>
   </div>
@@ -144,71 +140,71 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
   <div class="landing-callout">
     <div class="landing-callout-inner">
       <div class="landing-callout-mark">!</div>
-      <p><strong>AI has gotten very good at looking right.</strong> Search agents cite real pages, write polished answers, and still return the wrong value. GhostCite benchmarked 13 leading LLMs across 40 domains and found hallucination rates ranging from 14% to 95% even when models cited a real source. The models were not failing to search. They were searching, citing, and still getting it wrong more than half the time. Agent Royale exists to warn that we cannot trust AI just yet, and to help measure whether we are getting closer to the point where we can.</p>
+      <p><strong>V1 made the failure mode visible.</strong> Across 1,548 scored attempts, the model stacks were right 50% of the time, wrong 38% of the time, and returned no usable answer 13% of the time. The uncomfortable part is the wrong-answer bucket: many failures still looked like normal, cited AI answers.</p>
     </div>
   </div>
 
   <div class="examples">
     <div class="examples-head">
       <h2>AI cited a source.<br>It was still wrong.</h2>
-      <p>The benchmark verifies the answer itself, not just whether a source appeared in the response.</p>
+      <p>Representative examples of the failure mode I am testing: a real citation can appear beside a stale, approximate, or unsupported value.</p>
     </div>
     <div class="example-card">
       <div class="example-q"><span class="example-num">01</span><span>What is the current interest rate set by the Federal Reserve?</span></div>
       <div class="example-cols">
         <div class="example-col"><div class="example-label claim">AI model answer</div><div class="example-val">The Federal Reserve's interest rate is 4.75%, set at their most recent meeting.</div><span class="example-badge bad">✗ Wrong</span></div>
-        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">federalreserve.gov</div><span class="example-badge warn">⚠ Real URL — answer still wrong</span></div>
-        <div class="example-col"><div class="example-label truth">Verified live answer</div><div class="example-val">5.25–5.50%</div><span class="example-badge good">✓ Bright Data verified</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">federalreserve.gov</div><span class="example-badge warn">⚠ Real URL, wrong value</span></div>
+        <div class="example-col"><div class="example-label truth">Verified answer</div><div class="example-val">5.25–5.50%</div><span class="example-badge good">✓ Source verified</span></div>
       </div>
     </div>
     <div class="example-card">
       <div class="example-q"><span class="example-num">02</span><span>How many employees does Stripe currently have?</span></div>
       <div class="example-cols">
         <div class="example-col"><div class="example-label claim">AI model answer</div><div class="example-val">Stripe currently employs approximately 8,000 people worldwide.</div><span class="example-badge bad">✗ Wrong</span></div>
-        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">linkedin.com/company/stripe</div><span class="example-badge warn">⚠ Real URL — answer still wrong</span></div>
-        <div class="example-col"><div class="example-label truth">Verified live answer</div><div class="example-val">6,614 employees</div><span class="example-badge good">✓ Bright Data verified</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">linkedin.com/company/stripe</div><span class="example-badge warn">⚠ Real URL, wrong field/value</span></div>
+        <div class="example-col"><div class="example-label truth">Verified answer</div><div class="example-val">6,614 employees</div><span class="example-badge good">✓ Source verified</span></div>
       </div>
     </div>
     <div class="example-card">
       <div class="example-q"><span class="example-num">03</span><span>What are the current visa requirements for US citizens traveling to Brazil?</span></div>
       <div class="example-cols">
         <div class="example-col"><div class="example-label claim">AI model answer</div><div class="example-val">US citizens do not need a visa to visit Brazil for tourism.</div><span class="example-badge bad">✗ Wrong</span></div>
-        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">travel.state.gov</div><span class="example-badge warn">⚠ Real URL — answer still wrong</span></div>
-        <div class="example-col"><div class="example-label truth">Verified live answer</div><div class="example-val">eVisa required — $80.90 fee, apply online before travel</div><span class="example-badge good">✓ Bright Data verified</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">travel.state.gov</div><span class="example-badge warn">⚠ Real URL, stale answer</span></div>
+        <div class="example-col"><div class="example-label truth">Verified answer</div><div class="example-val">eVisa required — $80.90 fee, apply online before travel</div><span class="example-badge good">✓ Source verified</span></div>
       </div>
     </div>
     <div class="example-card">
       <div class="example-q"><span class="example-num">04</span><span>How many weekly npm downloads did the axios package receive last week?</span></div>
       <div class="example-cols">
-        <div class="example-col"><div class="example-label claim">AI model answer</div><div class="example-val">Axios receives approximately 50 million weekly downloads.</div><span class="example-badge good">✓ Correct</span></div>
-        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">npmjs.com/package/axios</div><span class="example-badge warn">⚠ Real URL — answer still wrong</span></div>
-        <div class="example-col"><div class="example-label truth">Verified live answer</div><div class="example-val">48,291,774 downloads</div><span class="example-badge good">✓ Bright Data verified</span></div>
+        <div class="example-col"><div class="example-label claim">AI model answer</div><div class="example-val">Axios receives approximately 50 million weekly downloads.</div><span class="example-badge warn">⚠ Close, not exact</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">npmjs.com/package/axios</div><span class="example-badge warn">⚠ Real URL, rounded value</span></div>
+        <div class="example-col"><div class="example-label truth">Verified answer</div><div class="example-val">48,291,774 downloads</div><span class="example-badge good">✓ Source verified</span></div>
       </div>
     </div>
     <div class="example-legend">
       <div class="example-legend-item"><span class="example-legend-dot" style="background:var(--red)"></span>Model answer wrong</div>
-      <div class="example-legend-item"><span class="example-legend-dot" style="background:var(--amber)"></span>Cited source real, answer still wrong</div>
-      <div class="example-legend-item"><span class="example-legend-dot" style="background:var(--green)"></span>Correct — verified against live data</div>
+      <div class="example-legend-item"><span class="example-legend-dot" style="background:var(--amber)"></span>Real source, weak or wrong extraction</div>
+      <div class="example-legend-item"><span class="example-legend-dot" style="background:var(--green)"></span>Verified against source data</div>
     </div>
   </div>
 
   <div class="finding">
     <div class="finding-inner">
       <div class="finding-left">
-        <div class="finding-kicker">Why existing benchmarks are not enough</div>
-        <div class="finding-quote">Search agents now cite sources confidently, but citation does not equal accuracy.</div>
-        <div class="finding-sub">Every AI product is becoming an agent, but agents still fail at basic live facts: prices, ratings, versions, counts, availability, and policy limits. Existing benchmarks are often static, leaked, or gameable. Agent Royale creates a harder-to-game measurement layer for live web retrieval: current questions, independent ground truth, exact grading, citation verification, latency, and cost. It gives teams a practical answer to: <strong>which agent stack can reliably retrieve the public web today?</strong></div>
+        <div class="finding-kicker">This experiment made me realize</div>
+        <div class="finding-heading">AI is getting better at lying.</div>
+        <div class="finding-sub">Across 1,548 scored attempts, the stacks were right 50% of the time, gave a wrong value 38% of the time, and returned no usable answer 13% of the time. The scariest failures were not blank responses. They were confident, cited answers that looked usable and still did not match the source. At least for the stacks measured here, AI search agents are not yet reliable enough to trust without verification.</div>
       </div>
       <div class="finding-right">
-        <div class="finding-big">≠</div>
-        <div class="finding-label">citation ≠ accuracy</div>
-        <button class="btn" data-go="methodology">How grading works</button>
+        <div class="finding-big">38%</div>
+        <div class="finding-label">returned a wrong value</div>
+        <button class="btn" data-go="resultsPage">See the breakdown</button>
       </div>
     </div>
   </div>
 
   <div class="code-window-section">
-    <p>The model cited the right source. The answer was still wrong. Here's how we catch these mistakes.</p>
+    <p>The model cited a source. The answer still had to match the saved value.</p>
     <div class="code-window">
       <div class="code-top"><span class="code-dots"><i></i><i></i><i></i></span><span class="code-file">grader/verify.py</span></div>
       <div class="code-body">
@@ -219,12 +215,263 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
         &nbsp;&nbsp;&nbsp;&nbsp;claim = <span class="code-fn">extract_claim</span>(model_output)&nbsp;&nbsp;<span class="code-comment"># → "4.75%"</span><br>
         &nbsp;&nbsp;&nbsp;&nbsp;score = exact_match(claim, ground_truth) <span class="code-comment"># → FAIL</span><br>
         &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">return</span> {<span class="code-comment">"cited_real_source"</span>: True, <span class="code-comment">"answer_correct"</span>: False}<br><br>
-        <span class="code-comment"># A valid citation ≠ an accurate answer. Agent Royale exposes that.</span>
+        <span class="code-comment"># A citation is useful evidence, not the score itself.</span>
       </div>
     </div>
   </div>
 </section>
 
+<section id="legacyResultsLanding" class="page">
+  <div class="landing-hero">
+    <div class="landing-eyebrow"><span class="dot"></span>V1 results snapshot</div>
+    <h1>AI search got the exact live answer right 50% of the time.</h1>
+    <p class="landing-sub">I tested 12 model stacks on 43 live-web retrieval tasks. The models often cited sources and sounded confident. The problem was simpler: they still returned the wrong value.</p>
+    <div class="landing-actions">
+      <button class="btn dark" data-go="resultsPage">Read results</button>
+      <button class="btn" data-go="leaderboard">View leaderboard</button>
+      <button class="btn" data-go="groundTruthPage">Audit task bank</button>
+      <button class="btn" data-go="methodology">Methodology</button>
+    </div>
+    <div class="landing-stats">
+      <div class="landing-stat"><b>50%</b><span>exact accuracy</span></div>
+      <div class="landing-div"></div>
+      <div class="landing-stat"><b>38%</b><span>wrong with answer</span></div>
+      <div class="landing-div"></div>
+      <div class="landing-stat"><b>13%</b><span>no usable answer</span></div>
+      <div class="landing-div"></div>
+      <div class="landing-stat"><b>73%</b><span>top stack accuracy</span></div>
+    </div>
+  </div>
+
+  <div class="landing-callout">
+    <div class="landing-callout-inner">
+      <div class="landing-callout-mark">!</div>
+      <p><strong>The surprising part was not refusal.</strong> Out of 1,548 scored attempts, 770 were correct, 584 were wrong answers, and 194 returned no usable answer. The largest failure bucket was models giving a value that looked usable but did not match the source.</p>
+    </div>
+  </div>
+
+  <div class="landing-section">
+    <div class="landing-grid">
+      <div class="landing-card">
+        <div class="landing-icon">01</div>
+        <h3>The Best Stack Still Missed</h3>
+        <p>Grok 4 led the v1 run at 73% exact accuracy, which also means it missed about 27% of exact live facts.</p>
+        <hr>
+        <p>That is the bar I care about: not whether the answer sounds good, but whether the exact value matches the source.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">02</div>
+        <h3>Citations Did Not Save It</h3>
+        <p>A citation can make a wrong answer feel trustworthy. In v1, models sometimes touched the right source and still extracted the wrong field or stale value.</p>
+        <hr>
+        <p>Agent Royale treats citations as evidence to inspect, not proof that the answer is correct.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">03</div>
+        <h3>Built For Stack Decisions</h3>
+        <p>I compare accuracy, wrong-answer rate, no-answer rate, canonical-source checks, latency, cost, and repeat consistency.</p>
+        <hr>
+        <p>The goal is to help teams choose the retrieval stack that works for their actual task bank.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="examples">
+    <div class="examples-head">
+      <h2>The failures were ordinary.<br>That is why they matter.</h2>
+      <p>Real agent failures are usually not cinematic. They are stale quote fields, rounded package counts, wrong source pages, and product variants that look close enough until a workflow depends on them.</p>
+    </div>
+    <div class="example-card">
+      <div class="example-q"><span class="example-num">01</span><span>A model cites the finance page but returns the wrong quote field.</span></div>
+      <div class="example-cols">
+        <div class="example-col"><div class="example-label claim">Failure</div><div class="example-val">Uses a previous close, chart label, or nearby price instead of the required live field.</div><span class="example-badge bad">Wrong value</span></div>
+        <div class="example-col"><div class="example-label source">Why it passes a sniff test</div><div class="example-val">The cited domain is real, and the answer looks plausible.</div><span class="example-badge warn">Citation ≠ accuracy</span></div>
+        <div class="example-col"><div class="example-label truth">What I grade</div><div class="example-val">The extracted claim has to match the saved source value for the required field.</div><span class="example-badge good">Exact check</span></div>
+      </div>
+    </div>
+    <div class="example-card">
+      <div class="example-q"><span class="example-num">02</span><span>A model answers a company metric from the wrong field.</span></div>
+      <div class="example-cols">
+        <div class="example-col"><div class="example-label claim">Failure</div><div class="example-val">Returns followers, company-size range, or a third-party estimate instead of the required employee count.</div><span class="example-badge bad">Wrong field</span></div>
+        <div class="example-col"><div class="example-label source">Why it happens</div><div class="example-val">Search results contain many nearby values that sound like the answer.</div><span class="example-badge warn">Nearby fact</span></div>
+        <div class="example-col"><div class="example-label truth">What I grade</div><div class="example-val">The model must retrieve the exact field named in the task rubric.</div><span class="example-badge good">Source-backed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-inner">
+      <div class="finding-left">
+        <div class="finding-kicker">My takeaway</div>
+        <div class="finding-quote">“Has search” is not the same as “retrieves the exact fact.”</div>
+        <div class="finding-sub">The v1 result does not prove one model is permanently best. It shows that live retrieval needs source-specific evaluation. If a product depends on current public-web facts, teams should test their own task bank and compare exact accuracy, wrong-answer rate, speed, cost, and consistency before choosing a stack.</div>
+      </div>
+      <div class="finding-right">
+        <div class="finding-big">50%</div>
+        <div class="finding-label">overall exact accuracy</div>
+        <button class="btn" data-go="resultsPage">Explore results</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="home" class="page on">
+  <div class="landing-hero">
+    <div class="landing-eyebrow"><span class="dot"></span>Web retrieval benchmark</div>
+    <h1>AI still can’t be trusted on search and retrieval.</h1>
+    <p class="landing-sub">I tested 12 model stacks on 43 live-web retrieval tasks. The models often cited legitimate sources, but their answers were still wrong. The tested stacks were right only 50% of the time, and even the best model got roughly 1 in 4 answers incorrect.</p>
+    <div class="landing-actions">
+      <button class="btn dark" data-go="resultsPage">See results</button>
+      <button class="btn" data-go="leaderboard">Compare models</button>
+      <button class="btn" data-go="groundTruthPage">Check the task bank</button>
+      <button class="btn" data-go="methodology">Read methodology</button>
+    </div>
+    <div class="landing-stats">
+      <div class="landing-stat"><b>12</b><span>model stacks</span></div>
+      <div class="landing-div"></div>
+      <div class="landing-stat"><b>43</b><span>live-web tasks</span></div>
+      <div class="landing-div"></div>
+      <div class="landing-stat"><b>50%</b><span>avg exact accuracy</span></div>
+      <div class="landing-div"></div>
+      <div class="landing-stat"><b>73%</b><span>top stack accuracy</span></div>
+    </div>
+  </div>
+
+  <div class="landing-section">
+    <div class="landing-grid">
+      <div class="landing-card">
+        <div class="landing-icon">01</div>
+        <h3>Why I Ran It</h3>
+        <p>I’ve been using AI more and more to find real data quickly: prices, counts, rates, facts, and sources I do not want to manually dig through.</p>
+        <hr>
+        <p>I wanted to know which model was actually best at this. When I ran the experiment, the answer was, sadly, none of them without verification.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">02</div>
+        <h3>How I Ran It</h3>
+        <p>I designed 43 tasks that require exact, current, source-specific values. I ran 12 model stacks on each task three times.</p>
+        <hr>
+        <p>Then I compared every answer to ground truth fetched independently from the required source and logged the result.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">03</div>
+        <h3>What I Found</h3>
+        <p>Across 1,548 scored attempts, the models were right 50% of the time, wrong 38% of the time, and returned no usable answer 13% of the time.</p>
+        <hr>
+        <p>The uncomfortable part is that 38% of the time, I was returned false information that looked normal and cited.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-section">
+    <div class="examples-head" style="margin-bottom:20px">
+      <h2>How I ran this experiment</h2>
+      <p>I wanted a task bank that forced live retrieval, not memorization. So each question is normal enough for a person to ask, but specific enough to have one deterministic answer.</p>
+    </div>
+    <div class="landing-grid">
+      <div class="landing-card">
+        <div class="landing-icon">01</div>
+        <h3>Task Bank Creation</h3>
+        <p>Each question has a required source, field, and grading rule. The answers change over time, so models cannot rely on memorized static answer keys.</p>
+        <hr>
+        <p>Examples: “Using Yahoo Finance, what is NVDA’s current regular-market quote price in USD?” or “On the Hacker News front page right now, what is the title of the #1 ranked story?”</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">02</div>
+        <h3>Model Selection</h3>
+        <p>I chose a mix of consumer flagships, search-first models, efficient models, and open-weight-style stacks.</p>
+        <hr>
+        <p>Each stack ran the same task bank three times so I could see whether it was consistently correct or just occasionally lucky.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">03</div>
+        <h3>Grading</h3>
+        <p>I normalized answers and applied task-specific grading rules before scoring each run for exact accuracy.</p>
+        <hr>
+        <p>I did not use an LLM judge because that would add another layer of subjective interpretation. A judge model might reward a plausible explanation, forgive an approximate value, or miss that the model answered with the wrong field. For this benchmark, I wanted the grading to be stricter: the extracted claim either matches the independently fetched value or it does not.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">04</div>
+        <h3>Additional Metrics</h3>
+        <p>I logged source matching, citation behavior, cost, latency, and consistency across repeated runs.</p>
+        <hr>
+        <p>Those metrics help builders make decisions based on what they value: accuracy, speed, price, reliability, or lowest risk of false information.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">05</div>
+        <h3>Keep In Mind</h3>
+        <p>This is a v1 slice, not a universal ranking of every model forever. The public task bank has 43 questions, and the domain mix is uneven.</p>
+        <hr>
+        <p>My goal is to run another experiment within the next week with a larger task bank but smaller contestant stack: Grok 4, Sonar Pro Search, Gemini Pro, Nemotron 3 Super, DeepSeek V4 Flash, GPT-4o, Claude Sonnet, and Gemini Flash Lite.</p>
+      </div>
+      <div class="landing-card">
+        <div class="landing-icon">06</div>
+        <h3>What’s Next</h3>
+        <p>The goal of v2 is to replace vague marketing claims like “good at search” with hard proof on exact, fast-changing facts.</p>
+        <hr>
+        <p>I want to stress-test AI-first search systems like Exa and Parallel.ai against traditional search APIs on source-specific tasks, then let teams upload their own task lists and filter by cost, speed, accuracy, and safety constraints.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="examples">
+    <div class="examples-head">
+      <h2>Just because AI cited the correct source does not mean it is correct.</h2>
+      <p>These examples show how the source can be real, the answer can look polished, and yet incorrect.</p>
+    </div>
+    <div class="example-card">
+      <div class="example-q"><span class="example-num">01</span><span>Using Samsung's official US page for the unlocked Galaxy S25 Ultra with 256GB storage, what is the current one-time purchase price in USD before trade-in?</span></div>
+      <div class="example-cols">
+        <div class="example-col"><div class="example-label claim">Claude Sonnet answer</div><div class="example-val">$1,299.99 USD</div><span class="example-badge bad">FAIL · 12,794ms</span></div>
+        <div class="example-col"><div class="example-label source">What it said</div><div class="example-val">Confirmed by multiple Samsung.com pages, including the Galaxy S25 Ultra main page.</div><span class="example-badge warn">Real source, wrong price</span></div>
+        <div class="example-col"><div class="example-label truth">Ground truth</div><div class="example-val">$999.99</div><span class="example-badge good">Samsung source checked</span></div>
+      </div>
+    </div>
+    <div class="example-card">
+      <div class="example-q"><span class="example-num">02</span><span>Using Yahoo Finance, what is NVDA's current regular-market quote price in USD?</span></div>
+      <div class="example-cols">
+        <div class="example-col"><div class="example-label claim">GPT-4o answer</div><div class="example-val">$228.04</div><span class="example-badge bad">FAIL · 4,092ms</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">Yahoo Finance</div><span class="example-badge warn">Correct domain, wrong value</span></div>
+        <div class="example-col"><div class="example-label truth">Ground truth</div><div class="example-val">$220.61</div><span class="example-badge good">finance.yahoo.com/quote/NVDA</span></div>
+      </div>
+    </div>
+    <div class="example-card">
+      <div class="example-q"><span class="example-num">03</span><span>Using Netflix's official US pricing help page, what is the current monthly price of the Standard with ads plan in USD?</span></div>
+      <div class="example-cols">
+        <div class="example-col"><div class="example-label claim">Gemini Pro answer</div><div class="example-val">$7.99</div><span class="example-badge bad">FAIL · 12,709ms</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">Netflix Help Center</div><span class="example-badge warn">Correct page, stale price</span></div>
+        <div class="example-col"><div class="example-label truth">Ground truth</div><div class="example-val">$8.99</div><span class="example-badge good">help.netflix.com/en/node/24926</span></div>
+      </div>
+    </div>
+    <div class="example-card">
+      <div class="example-q"><span class="example-num">04</span><span>Using Stripe's LinkedIn company profile, how many people does LinkedIn currently show as employees?</span></div>
+      <div class="example-cols">
+        <div class="example-col"><div class="example-label claim">Grok 4 answer</div><div class="example-val">5,001-10,000 employees</div><span class="example-badge bad">FAIL · 16,576ms</span></div>
+        <div class="example-col"><div class="example-label source">Cited source</div><div class="example-val">linkedin.com/company/stripe</div><span class="example-badge warn">Correct source, wrong field</span></div>
+        <div class="example-col"><div class="example-label truth">Ground truth</div><div class="example-val">15,243</div><span class="example-badge good">LinkedIn profile checked</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-inner">
+      <div class="finding-left">
+        <div class="finding-kicker">This experiment made me realize</div>
+        <div class="finding-heading">AI is getting better at lying.</div>
+        <div class="finding-sub">This experiment exposes that even frontier LLM stacks failed to return exact ground-truth values for live web facts about half the time in this v1 task slice. The worst part is that models often delivered confident incorrect data due to stale search caches, layout parsing issues, source-field confusion, and nearby wrong values. A model citing a real URL does not guarantee accuracy. Live data precision is still a hard retrieval problem, not just a text generation problem.</div>
+      </div>
+      <div class="finding-right">
+        <div class="finding-big">38%</div>
+        <div class="finding-label">returned a wrong value</div>
+        <button class="btn" data-go="resultsPage">See the breakdown</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Arena was an experimental pairwise path-quality feature. It is intentionally
+     hidden from v1 navigation so the launch focuses on the benchmark results. -->
 <section id="arena" class="page">
   <div class="wrap">
     <div class="topline">
@@ -272,7 +519,7 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
     <div class="topline">
       <div>
         <h2>Live Check</h2>
-        <p class="muted">A demo page for running individual tasks on demand. Use it to verify the live retrieval loop on examples like stock prices, app ratings, and product prices.</p>
+        <p class="muted">I built Live Check as a demo loop for one task at a time. It refreshes ground truth from the required source, asks selected model stacks the same question, then shows whether their claims match the verified value.</p>
       </div>
     </div>
     <div class="grid">
@@ -308,14 +555,26 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
     <div class="topline">
       <div>
         <h2>Leaderboard</h2>
-        <p class="muted">Ranking models by how often they retrieved the right live answer. Compare accuracy, source-backed retrieval, latency, and cost across the same live tasks.</p>
+        <p class="muted">I ranked 12 model stacks across the frozen 43-task v1 snapshot. This page is the scoreboard: exact accuracy, wrong-answer rate, no-response rate, canonical-source verification, latency, and cost. Right + Wrong + No Response always adds to 100% of scored runs.</p>
       </div>
       <div class="toolbar" style="margin-bottom:0">
         <select id="leaderboardDomain"><option value="all">All topics</option></select>
-        <button class="btn" id="refreshLeaderboard">Refresh</button>
       </div>
     </div>
+    <div class="notice" id="leaderboardMeta">Loading benchmark snapshot details...</div>
     <div id="leaderboardOut"><div class="empty panel">No runs yet. Run an evaluation first.</div></div>
+  </div>
+</section>
+
+<section id="resultsPage" class="page">
+  <div class="wrap">
+    <div class="topline">
+      <div>
+        <h2>Results</h2>
+        <p class="muted">This is my read of the v1 results: what surprised me, where models failed, what the numbers mean, and how I would use the benchmark to choose a retrieval stack.</p>
+      </div>
+    </div>
+    <div id="resultsOut"><div class="empty panel">Loading result analysis...</div></div>
   </div>
 </section>
 
@@ -324,12 +583,19 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
     <div class="topline">
       <div>
         <h2>Tasks</h2>
-        <p class="muted">Drill into every benchmark task: ground truth, model consistency, answers, citations, and failures.</p>
+        <p class="muted">I use this page to inspect each task under the leaderboard: saved ground truth, model answers, citations, and failures. Accuracy is the task pass rate, and average latency shows how long the model runs took.</p>
       </div>
     </div>
     <div class="toolbar">
       <input id="taskSearch" placeholder="Search tasks, domains, URLs">
       <select id="taskPageDomain"><option value="all">All topics</option></select>
+      <select id="taskAccuracyFilter">
+        <option value="all">All accuracy levels</option>
+        <option value="lt50">Below 50%</option>
+        <option value="lt70">Below 70%</option>
+        <option value="lt90">Below 90%</option>
+        <option value="eq100">100% only</option>
+      </select>
     </div>
     <div id="tasksPageOut"><div class="empty panel">Loading task results...</div></div>
   </div>
@@ -340,7 +606,7 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
     <div class="topline">
       <div>
         <h2>Models</h2>
-        <p class="muted">Report cards for each model: accuracy, Verified Retrieval Rate, consistency, vertical strengths, and recurring failures.</p>
+        <p class="muted">I use these model report cards to compare retrieval behavior across the frozen 43-task v1 snapshot. Accuracy shows how often a stack returned the right value. Canonical Source shows, among correct answers only, how often the cited URL matched the required source. Latency and cost show the speed and price tradeoff.</p>
       </div>
     </div>
     <div id="modelsPageOut"><div class="empty panel">Loading model report cards...</div></div>
@@ -351,18 +617,17 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
   <div class="wrap">
     <div class="topline">
       <div>
-        <h2>Ground Truth Audit</h2>
-        <p class="muted">Review the current Bright Data ground-truth claim for every task in the bank before trusting benchmark scores.</p>
+        <h2>Task Bank</h2>
+        <p class="muted">This is the 43-question task bank I used for the public v1 run. Each question asks for a concrete live-web value, has a required source, and has a saved answer with evidence that can be checked.</p>
+        <p class="muted">Each card shows the question, the saved answer I graded against, when I fetched it, the evidence behind it, the required source, and the grading rule. Feel free to explore this page to fact-check that the ground truth values are valid.</p>
       </div>
     </div>
-    <div class="toolbar">
+    <div class="toolbar ground-truth-toolbar">
       <input id="gtSearch" placeholder="Search questions, IDs, values, evidence">
-      <select id="gtStatus">
-        <option value="all">All statuses</option>
-        <option value="official">Official only</option>
-        <option value="quarantined">Quarantined only</option>
-        <option value="missing">Missing ground truth</option>
+      <select id="gtTopic">
+        <option value="all">All topics</option>
       </select>
+      <div id="gtResultCount" class="result-count">0 shown / 0 total in bank</div>
     </div>
     <div id="groundTruthOut"><div class="empty panel">Loading ground truth claims...</div></div>
   </div>
@@ -370,27 +635,182 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
 
 <section id="methodology" class="page">
   <div class="wrap method">
-    <div class="callout">
-      <p>Agent Royale evaluates one primitive: can an AI stack retrieve a specific current value from the live web and return the exact answer?</p>
+    <div class="method-paper">
+      <div class="method-kicker">V1 methodology</div>
+      <h2>How I ran the v1 benchmark</h2>
+      <p>I built Agent Royale to test one narrow question: can AI search stacks retrieve exact, current values from the public web when the answer has to match a specific source?</p>
+      <p>I made the task rubric fixed, but the answer live. Each task has a required source, field, tolerance, and grading rule. The model gets a normal source-specific question, but it does not get the saved answer. Separately, I fetch ground truth from the required source using Bright Data or a stable public API.</p>
+      <p>I did this because most real retrieval failures are boring but expensive: stale prices, wrong quote fields, company-size ranges instead of employee counts, wrong regions, wrong product variants, and citations that look right but do not support the answer.</p>
+
+      <div class="method-tldr">
+        <h3>TL;DR</h3>
+        <ul>
+          <li>I tested 12 model stacks on 43 audited tasks, 3 runs per model per task.</li>
+          <li>That produced 1,548 scored attempts: 770 correct, 584 wrong values, and 194 no-answer responses.</li>
+          <li>The tested stacks averaged 50% exact accuracy. Grok 4 led this slice at 73%.</li>
+          <li>I did not use an LLM judge. The extracted claim either matched the independently fetched source value or it did not.</li>
+        </ul>
+      </div>
+
+      <div class="method-caveat">
+        <h3>Read this result carefully</h3>
+        <p>This is a v1 slice, not a universal ranking of every model forever. The public task bank has 43 questions, the domain mix is uneven, and the leaderboard is a frozen snapshot from one run.</p>
+        <p>The most important limitation is timing: the model calls ran in about 2 hours and 11 minutes, but many saved ground-truth values were fetched earlier. In v2, I will refresh ground truth immediately before each task's model calls.</p>
+      </div>
+
+      <div class="method-stat-grid">
+        <div class="method-stat"><b>43</b><span>Tasks</span></div>
+        <div class="method-stat"><b>12</b><span>Model stacks</span></div>
+        <div class="method-stat"><b>1,548</b><span>Scored runs</span></div>
+        <div class="method-stat"><b>50%</b><span>Overall accuracy</span></div>
+      </div>
+      <table class="method-table">
+        <thead><tr><th>V1 fact</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Run status</td><td>Frozen public leaderboard for the v1 snapshot</td></tr>
+          <tr><td>Model run window</td><td>May 20, 2026, 1:48-3:59 AM PT. The model calls for the public v1 slice ran in about 2 hours and 11 minutes.</td></tr>
+          <tr><td>Saved answer refresh window</td><td>Saved ground-truth snapshots were refreshed between May 17, 2026, 3:28 PM PT and May 19, 2026, 11:51 PM PT.</td></tr>
+          <tr><td>Saved answer age at scoring</td><td>Median about 59.2 hours old at model-run time; max about 60.5 hours; min about 1.9 hours.</td></tr>
+          <tr><td>Scored denominator</td><td>All 1,548 stored v1 runs, including correct, wrong, and no-answer outcomes.</td></tr>
+          <tr><td>Citation check</td><td>URL overlap among correct answers only. This is citation hygiene, not proof that the cited passage supports the value.</td></tr>
+        </tbody>
+      </table>
     </div>
-    <h2>What This System Measures</h2>
-    <p><strong>Live Exact Accuracy</strong> is a pass/fail grade against live ground truth fetched from the task's canonical source. No LLM judge decides whether an answer is "good enough"; the extracted claim either matches after normalization and tolerance or it does not.</p>
-    <p><strong>Verified Retrieval Rate</strong> measures whether correct answers were backed by a cited source fetch during the run. A correct answer without a matching citation is not treated as verified retrieval.</p>
-    <p><strong>Path quality</strong> is kept separate. Humans vote between correct traces only, so a fast path to the wrong answer is never rewarded.</p>
-    <h3>MVP Runner</h3>
-    <p>The current implementation uses your existing OpenRouter and Bright Data keys. Bright Data fetches the canonical URL only for ground truth. OpenRouter models answer using the <code>openrouter:web_search</code> server tool, configured for native provider search where available.</p>
-    <div class="code">Bright Data canonical fetch -> ground truth<br>OpenRouter model + web_search -> model answer + citations<br>claim extraction -> exact/numeric/currency grading -> stored run -> leaderboard</div>
-    <p>OpenRouter uses native provider search for supported providers and can fall back depending on model/provider support. The run trace stores cited URLs and search-request counts returned by OpenRouter.</p>
-    <h3>Arena vs Live Check</h3>
-    <p><strong>Arena</strong> is for blind pairwise voting on path quality. It samples stored benchmark traces where both models got the answer right, so votes measure retrieval efficiency rather than accuracy.</p>
-    <p><strong>Live Check</strong> is an ad hoc verification tool. It runs one task now with fresh ground truth and stores the result separately in <code>live_checks.jsonl</code>, so demos and probes never change the official leaderboard.</p>
+
+    <div class="method-accordions">
+      <details class="method-fold">
+        <summary><span><h3>1. Task Design</h3><small>I wanted normal questions with deterministic answers.</small></span></summary>
+        <div class="method-fold-body">
+          <p>Each task is written like a real user question, but constrained enough to have one answer I can verify. The source and field matter. “What is NVDA’s price?” is too loose. “Using Yahoo Finance, what is NVDA’s current regular-market quote price in USD?” is gradeable.</p>
+          <p>I chose dynamic web facts so the model has to engage in retrieval instead of relying on a memorized static answer key. The candidate pool included finance, ecommerce, app stores, LinkedIn/company metrics, social metrics, developer tools, subscriptions, real estate, travel, and business intelligence.</p>
+          <p>For the public v1 launch, I only show tasks where every model had complete coverage: 3 clean runs for each of the 12 model stacks. That left 43 tasks in the frozen slice.</p>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>2. Ground Truth</h3><small>The answer key was fetched independently from the models.</small></span></summary>
+        <div class="method-fold-body">
+          <p>The model being graded never produces the answer key. For each admitted task, I fetched ground truth separately from the required source using Bright Data or a stable public API, then saved the value, source URL, timestamp, evidence, and grading rule.</p>
+          <p>If I could not reliably extract the value, I quarantined the task so it did not affect scores. I would rather ship a smaller task bank than include rows where the expected answer is questionable.</p>
+          <p class="method-note">This is why the Task Bank page matters. It is the evidence ledger: question, saved answer, source, fetch time, evidence, and grading rule.</p>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>3. Model Selection</h3><small>I tested practical stacks people might actually choose.</small></span></summary>
+        <div class="method-fold-body">
+          <p>I tested a mix of consumer flagships, search-first models, efficient/value models, open-weight-style stacks, and advanced reasoning models. The goal was not to crown a permanent winner. It was to see how different retrieval stacks behave on the same exact task bank.</p>
+          <table class="method-table">
+            <thead><tr><th>Bucket</th><th>Models in v1</th><th>Why I included them</th></tr></thead>
+            <tbody>
+              <tr><td>Consumer flagships</td><td>GPT-4o, Claude Sonnet, Gemini Pro</td><td>The models many people reach for first.</td></tr>
+              <tr><td>Search specialists</td><td>Sonar Deep Research, Sonar Pro Search, Grok 4</td><td>Stacks that explicitly position around live information or search.</td></tr>
+              <tr><td>Efficient/value</td><td>DeepSeek V4 Flash, Gemini Flash Lite, GPT-4o Mini</td><td>Cheaper or faster options that teams might use at scale.</td></tr>
+              <tr><td>Open-weight style</td><td>GPT-OSS 120B, Nemotron 3 Super</td><td>Infrastructure-style stacks where strict extraction and formatting matter.</td></tr>
+              <tr><td>Advanced reasoning</td><td>Claude Opus</td><td>A test of whether more reasoning helps with contradictory or stale web data.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>4. Run Protocol</h3><small>Same task bank, same repetitions, stored raw outputs.</small></span></summary>
+        <div class="method-fold-body">
+          <p>Each model stack answered each task 3 times. The runner stored the raw answer, extracted claim, citations returned by the provider, latency, estimated cost, and final grading result.</p>
+          <div class="code">task prompt -> model + web retrieval -> raw answer + citations -> claim extraction -> deterministic grading -> stored run</div>
+          <p>By “model stack,” I mean the model plus the retrieval path used in this runner. That matters because builders do not deploy a base model alone; they deploy a model plus search behavior, citations, routing, and provider behavior.</p>
+          <p>The public model run window was May 20, 2026, 1:48-3:59 AM PT.</p>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>5. Scoring</h3><small>Exact matching, not vibes.</small></span></summary>
+        <div class="method-fold-body">
+          <p>The main score is <strong>Live Exact Accuracy</strong>: correct scored runs divided by total scored runs. No-answer runs are included in the denominator because they still failed to return the requested value.</p>
+          <p>I did not use an LLM judge because that would add another layer of subjective interpretation. A judge model might reward a plausible explanation, forgive an approximate value, or miss that the model answered with the wrong field. For this benchmark, I wanted stricter grading: the extracted claim either matched the independently fetched value or it did not.</p>
+          <p>I split failures into two buckets: <strong>Wrong Answer</strong>, where the model returned a usable but incorrect value, and <strong>No Answer</strong>, where it refused, could not verify, or returned nothing usable. This distinction matters because confident false information is a different product risk than refusal.</p>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>6. Metrics I Report</h3><small>Accuracy alone is not enough for stack decisions.</small></span></summary>
+        <div class="method-fold-body">
+          <p>I report exact accuracy, wrong-answer rate, no-answer rate, canonical-source citation rate, latency, cost, and consistency across repeated runs.</p>
+          <p><strong>Canonical Source</strong> is intentionally limited in v1. It means a cited URL overlapped the required source URL, and I only count it among correct answers. It is not passage-level proof that the cited text supports the value.</p>
+          <p>These metrics are meant to help builders make tradeoffs. A model can be accurate but too slow, cheap but confidently wrong, or good once but inconsistent across repeated attempts.</p>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>7. Results By Topic</h3><small>The task mix mattered, and some domains broke much harder.</small></span></summary>
+        <div class="method-fold-body">
+          <table class="method-table">
+            <thead><tr><th>Topic</th><th class="r">Tasks</th><th class="r">Accuracy</th><th>What I saw break</th></tr></thead>
+            <tbody>
+              <tr><td>Subscriptions</td><td class="r">3</td><td class="r">80%</td><td>Plans and prices were comparatively easy when pages exposed clean values.</td></tr>
+              <tr><td>Mobile apps</td><td class="r">12</td><td class="r">71%</td><td>Ratings and counts were easier, but source and freshness still varied.</td></tr>
+              <tr><td>Finance</td><td class="r">6</td><td class="r">70%</td><td>Models confused live quote fields, stale values, close prices, and alternate sources.</td></tr>
+              <tr><td>Ecommerce</td><td class="r">2</td><td class="r">63%</td><td>Product pages were workable, but price extraction still failed under page noise.</td></tr>
+              <tr><td>Social media</td><td class="r">5</td><td class="r">37%</td><td>Counts changed often, sources were inconsistent, and models leaned on stale snippets.</td></tr>
+              <tr><td>Recruiting / LinkedIn</td><td class="r">9</td><td class="r">22%</td><td>Models mixed up followers, employee ranges, and structured employee fields.</td></tr>
+              <tr><td>Research / dev</td><td class="r">6</td><td class="r">20%</td><td>Package, repository, and metadata tasks exposed stale search results and wrong fields.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>8. Results By Model</h3><small>The spread was large, and even the winner missed often.</small></span></summary>
+        <div class="method-fold-body">
+          <table class="method-table">
+            <thead><tr><th>Model stack</th><th class="r">Accuracy</th><th class="r">Wrong</th><th class="r">No answer</th><th class="r">Canonical source</th></tr></thead>
+            <tbody>
+              <tr><td>Grok 4</td><td class="r">73%</td><td class="r">26%</td><td class="r">2%</td><td class="r">85%</td></tr>
+              <tr><td>Sonar Pro Search</td><td class="r">58%</td><td class="r">32%</td><td class="r">10%</td><td class="r">80%</td></tr>
+              <tr><td>Gemini Pro</td><td class="r">55%</td><td class="r">38%</td><td class="r">7%</td><td class="r">80%</td></tr>
+              <tr><td>Nemotron 3 Super</td><td class="r">55%</td><td class="r">36%</td><td class="r">9%</td><td class="r">82%</td></tr>
+              <tr><td>DeepSeek V4 Flash</td><td class="r">53%</td><td class="r">34%</td><td class="r">12%</td><td class="r">94%</td></tr>
+              <tr><td>GPT-4o Mini</td><td class="r">50%</td><td class="r">47%</td><td class="r">3%</td><td class="r">77%</td></tr>
+              <tr><td>GPT-4o</td><td class="r">50%</td><td class="r">50%</td><td class="r">0%</td><td class="r">77%</td></tr>
+              <tr><td>Claude Sonnet</td><td class="r">50%</td><td class="r">50%</td><td class="r">1%</td><td class="r">72%</td></tr>
+              <tr><td>Gemini Flash Lite</td><td class="r">48%</td><td class="r">52%</td><td class="r">0%</td><td class="r">0%</td></tr>
+              <tr><td>Claude Opus</td><td class="r">43%</td><td class="r">53%</td><td class="r">4%</td><td class="r">33%</td></tr>
+              <tr><td>GPT-OSS 120B</td><td class="r">32%</td><td class="r">22%</td><td class="r">46%</td><td class="r">95%</td></tr>
+              <tr><td>Sonar Deep Research</td><td class="r">30%</td><td class="r">12%</td><td class="r">57%</td><td class="r">87%</td></tr>
+            </tbody>
+          </table>
+          <p>My takeaway is not that one model is permanently best. It is that “has search” is not the same as “retrieves the exact fact.” Even the leading stack in this run still missed roughly 1 in 4 exact values.</p>
+        </div>
+      </details>
+
+      <details class="method-fold">
+        <summary><span><h3>9. What Changes Next</h3><small>V2 should be stricter, larger, and more useful for decisions.</small></span></summary>
+        <div class="method-fold-body">
+          <p>In the next version, I want to make the methodology stricter and the product more useful for teams choosing an AI stack.</p>
+          <ol>
+            <li>Refresh ground truth per task immediately before model calls.</li>
+            <li>Run all models for that task in parallel right after the refresh.</li>
+            <li>Store <code>ground_truth_value</code>, <code>ground_truth_fetched_at</code>, <code>ground_truth_source_url</code>, and a <code>ground_truth_id</code> on every model run.</li>
+            <li>Show "ground truth fetched X minutes before model run" on result pages.</li>
+            <li>Grow the task bank to at least 75 questions with a more balanced split across finance, apps, ecommerce, social, developer metadata, company metrics, and subscriptions.</li>
+            <li>Rerun a tighter 8-model suite so the leaderboard is easier to interpret and cheaper to repeat.</li>
+            <li>Add failure labels: wrong source, wrong field, stale value, unit mismatch, unsupported claim, no answer, and provider/API failure.</li>
+            <li>Test retrieval-native systems directly, including Exa and Parallel.ai, to see whether their search claims hold up on exact source-specific tasks.</li>
+            <li>Let teams plug in their own recurring task banks so they can choose the best stack for their actual domain.</li>
+            <li>Add decision views: cheapest acceptable model, fastest accurate model, most reliable model by domain, and safest model when wrong answers are expensive.</li>
+            <li>Make source verification stronger by resolving redirects and checking whether the cited evidence actually supports the value.</li>
+          </ol>
+          <p>The goal is to build a repeatable way to check whether AI systems can be trusted with facts that change, and to help people choose the right retrieval stack instead of trusting a vague “good at search” claim.</p>
+        </div>
+      </details>
+    </div>
   </div>
 </section>
 
 <div class="statbar">
-  <div class="stat"><div class="sv" id="taskCount">0</div><div class="sl">Live tasks</div></div>
-  <div class="stat"><div class="sv" id="runCount">0</div><div class="sl">Stored runs</div></div>
-  <div class="stat"><div class="sv">Daily</div><div class="sl">Ground truth</div></div>
+  <div class="stat"><div class="sv" id="taskCount">0</div><div class="sl">Tasks</div></div>
+  <div class="stat"><div class="sv" id="runCount">0</div><div class="sl">Scored runs</div></div>
+  <div class="stat"><div class="sv" id="lastRunDate">n/a</div><div class="sl">Last run</div></div>
   <div class="stat"><div class="sv" id="topAcc">n/a</div><div class="sl">Top accuracy</div></div>
 </div>
 
@@ -398,7 +818,7 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
 const state={tasks:[],selected:null,selectedTaskDetail:null,selectedModel:null,config:null,lastEval:null,pairs:[],pairIndex:0,currentPair:null,runs:[],groundTruth:[],groundTruthAudit:[],leaderboard:[]};
 const $=id=>document.getElementById(id);
 document.querySelectorAll("[data-go]").forEach(el=>el.addEventListener("click",()=>go(el.dataset.go)));
-function go(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));$(id).classList.add("on");document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.go===id));if(id==="leaderboard")loadLeaderboard();if(id==="tasksPage")renderTasksPage();if(id==="modelsPage")renderModelsPage();if(id==="groundTruthPage")renderGroundTruthPage();}
+function go(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));$(id).classList.add("on");document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.go===id));if(id==="leaderboard")loadLeaderboard();if(id==="resultsPage")renderResultsPage();if(id==="tasksPage")renderTasksPage();if(id==="modelsPage")renderModelsPage();if(id==="groundTruthPage")renderGroundTruthPage();}
 async function api(path,opts={}){const res=await fetch(path,{headers:{"Content-Type":"application/json"},...opts});if(!res.ok){let msg=res.statusText;try{msg=(await res.json()).detail||msg}catch{}throw new Error(msg)}return res.json();}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
 function pct(v){return `${Math.round((Number(v)||0)*100)}%`;}
@@ -446,6 +866,18 @@ function renderTraceDisclosure(trace){
   const body=count?trace.map(renderTraceStep).join(""):"<div class='muted'>No cited URLs.</div>";
   return `<details class="trace-toggle"><summary><span>Cited URLs</span><span class="trace-count">${count}</span></summary><div class="trace">${body}</div></details>`;
 }
+function isEmptyModelResponse(run){
+  return !run?.error&&!String(run?.answer||"").trim();
+}
+function runAnswerText(run){
+  if(run?.error)return run.error;
+  if(isEmptyModelResponse(run))return "Empty response: the model returned no answer text.";
+  return run?.answer||"No answer returned.";
+}
+function runClaimText(run){
+  if(isEmptyModelResponse(run))return "empty response";
+  return run?.extracted_claim||"n/a";
+}
 async function init(){
   try{
     state.config=await api("/api/config");
@@ -453,38 +885,58 @@ async function init(){
   }catch(e){$("leaderState").textContent="benchmark loading"}
   await loadTasks();
   await loadBenchmarkData();
-  await loadArenaPairs();
   await loadLeaderboard();
   await loadLiveChecks();
-  await loadVotes();
 }
 function renderModelPicks(models){
   const labels={
-    "anthropic/claude-sonnet-4.6":"Claude",
+    "anthropic/claude-sonnet-4.6":"Claude Sonnet",
+    "anthropic/claude-opus-4.7":"Claude Opus",
     "openai/gpt-4o":"GPT-4o",
-    "google/gemini-2.5-pro":"Gemini",
-    "perplexity/sonar-pro-search":"Perplexity",
-    "meta-llama/llama-3.3-70b-instruct":"Llama"
+    "openai/gpt-4o-mini":"GPT-4o Mini",
+    "openai/gpt-oss-120b":"GPT-OSS 120B",
+    "google/gemini-2.5-pro":"Gemini Pro",
+    "google/gemini-3.1-flash-lite":"Gemini Flash Lite",
+    "perplexity/sonar-pro-search":"Sonar Pro Search",
+    "perplexity/sonar-deep-research":"Sonar Deep Research",
+    "x-ai/grok-4.3":"Grok 4",
+    "deepseek/deepseek-v4-flash":"DeepSeek V4 Flash",
+    "nvidia/nemotron-3-super-120b-a12b":"Nemotron 3 Super"
   };
   $("modelPicks").innerHTML=models.map((m,i)=>`<label class="model-pick"><input type="checkbox" value="${esc(m)}" ${i<2?"checked":""}><span>${esc(labels[m]||m)}</span><code>${esc(m)}</code></label>`).join("");
 }
 async function loadTasks(){
   state.tasks=await api("/api/tasks");
-  $("taskCount").textContent=state.tasks.filter(t=>t.official!==false).length;
-  if($("homeTaskCount")) $("homeTaskCount").textContent=state.tasks.filter(t=>t.official!==false).length;
-  state.selected=state.selected||state.tasks.find(t=>t.official!==false)?.id||state.tasks[0]?.id;
+  updateTaskCounts();
+  if($("homeModelCount")) $("homeModelCount").textContent=defaultModels().length||0;
+  state.selected=state.selected||visibleTasks()[0]?.id||state.tasks.find(t=>t.official!==false)?.id||state.tasks[0]?.id;
   renderFilters();
   renderTasks();
 }
+function visibleTaskIds(){
+  const models=defaultModels();
+  const runs=cleanOfficialRuns();
+  const officialTasks=state.tasks.filter(t=>t.official!==false).map(t=>t.id);
+  return new Set(officialTasks.filter(taskId=>models.every(model=>runs.filter(r=>r.task_id===taskId&&r.model===model).length>=3)));
+}
+function visibleTasks(){
+  const ids=visibleTaskIds();
+  return state.tasks.filter(t=>t.official!==false&&ids.has(t.id));
+}
+function updateTaskCounts(){
+  const count=visibleTasks().length;
+  $("taskCount").textContent=count;
+  if($("homeTaskCount")) $("homeTaskCount").textContent=count;
+}
 function renderFilters(){
   const current=$("domainFilter").value||"all";
-  const domains=[...new Set(state.tasks.filter(t=>t.official!==false).map(t=>t.domain))].sort();
-  $("domainFilter").innerHTML=`<option value="all">All topics</option>`+domains.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("");
+  const domains=[...new Set(visibleTasks().map(t=>t.domain))].sort();
+  $("domainFilter").innerHTML=`<option value="all">All topics</option>`+domains.map(d=>`<option value="${esc(d)}">${esc(formatTopic(d))}</option>`).join("");
   $("domainFilter").value=domains.includes(current)?current:"all";
 }
 function renderTasks(){
   const f=$("domainFilter").value;
-  const tasks=state.tasks.filter(t=>t.official!==false&&(f==="all"||t.domain===f));
+  const tasks=visibleTasks().filter(t=>f==="all"||t.domain===f);
   $("taskList").innerHTML=tasks.map(t=>`
     <div class="task-card ${t.id===state.selected?"on":""}" data-task="${esc(t.id)}">
       <div class="task-id">${esc(t.id)} · ${esc(t.domain)}</div>
@@ -534,9 +986,9 @@ function renderRun(run,opts={}){
     <div class="run-head"><span class="model">${esc(title)}</span><span class="badge ${run.passed?"pass":"fail"}">${run.error?"ERROR":run.passed?"PASS":"FAIL"}</span></div>
     <div class="run-body">
       <div class="label">Answer</div>
-      <div class="answer">${renderAnswerText(run.error||run.answer||"No answer returned.")}</div>
+      <div class="answer">${renderAnswerText(runAnswerText(run))}</div>
       <div class="label">Extracted claim</div>
-      <div class="answer">${esc(run.extracted_claim||"n/a")}</div>
+      <div class="answer">${esc(runClaimText(run))}</div>
       ${renderTraceDisclosure(run.trace||[])}
       <div class="meta"><div class="metric"><span>Search calls</span><b>${run.tool_calls}</b></div><div class="metric"><span>Latency</span><b>${Math.round(run.latency_ms)}ms</b></div><div class="metric"><span>Cost est.</span><b>$${Number(run.estimated_cost_usd).toFixed(4)}</b></div></div>
     </div>
@@ -612,31 +1064,48 @@ async function loadLeaderboard(){
   const runs=await api("/api/runs");
   state.leaderboard=rows;
   state.runs=runs;
-  $("runCount").textContent=runs.length;
-  $("topAcc").textContent=rows[0]?pct(rows[0].live_exact_accuracy):"n/a";
-  if($("homeTopAcc")) $("homeTopAcc").textContent=rows[0]?pct(rows[0].live_exact_accuracy):"n/a";
-  $("leaderState").textContent=rows[0]?`${modelLabel(rows[0].model)} leads · ${pct(rows[0].live_exact_accuracy)}`:"No runs yet";
+  $("runCount").textContent=officialRuns().length;
+  const scoredRows=leaderboardRowsForDomain("all");
+  $("topAcc").textContent=scoredRows[0]?pct(scoredRows[0].live_exact_accuracy):"n/a";
+  if($("homeTopAcc")) $("homeTopAcc").textContent=scoredRows[0]?pct(scoredRows[0].live_exact_accuracy):"n/a";
+  $("leaderState").textContent=scoredRows[0]?`${modelLabel(scoredRows[0].model)} leads · ${pct(scoredRows[0].live_exact_accuracy)}`:"No runs yet";
+  updateLastRunDate();
+  renderLeaderboardMeta();
   renderLeaderboardView();
+  renderResultsPage();
 }
 async function loadBenchmarkData(){
   state.runs=await api("/api/runs");
   state.groundTruth=await api("/api/ground-truth");
   try{state.groundTruthAudit=await api("/api/ground-truth-audit")}catch{state.groundTruthAudit=[]}
-  const domains=[...new Set(state.tasks.filter(t=>t.official!==false).map(t=>t.domain))].sort();
-  if($("taskPageDomain")) $("taskPageDomain").innerHTML=`<option value="all">All topics</option>`+domains.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("");
+  updateTaskCounts();
+  renderFilters();
+  renderTasks();
+  const domains=[...new Set(visibleTasks().map(t=>t.domain))].sort();
+  if($("taskPageDomain")) $("taskPageDomain").innerHTML=`<option value="all">All topics</option>`+domains.map(d=>`<option value="${esc(d)}">${esc(formatTopic(d))}</option>`).join("");
   if($("leaderboardDomain")){
     const current=$("leaderboardDomain").value||"all";
-    $("leaderboardDomain").innerHTML=`<option value="all">All topics</option>`+domains.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("");
+    $("leaderboardDomain").innerHTML=`<option value="all">All topics</option>`+domains.map(d=>`<option value="${esc(d)}">${esc(formatTopic(d))}</option>`).join("");
     $("leaderboardDomain").value=domains.includes(current)?current:"all";
   }
-  state.selectedTaskDetail=state.selectedTaskDetail||state.tasks.find(t=>t.official!==false)?.id||state.tasks[0]?.id;
+  state.selectedTaskDetail=state.selectedTaskDetail||visibleTasks()[0]?.id||state.tasks.find(t=>t.official!==false)?.id||state.tasks[0]?.id;
   state.selectedModel=state.selectedModel||state.config?.default_models?.[0];
+  updateLastRunDate();
+  renderLeaderboardMeta();
 }
 function defaultModels(){return state.config?.default_models||[...new Set(state.runs.map(r=>r.model))];}
 function latestGroundTruth(taskId){return state.groundTruth.find(g=>g.task_id===taskId);}
 function latestAudit(taskId){
   const rows=state.groundTruthAudit.filter(row=>row.task_id===taskId);
-  return rows[rows.length-1]||null;
+  return rows.slice().sort((a,b)=>auditPriority(b)-auditPriority(a))[0]||null;
+}
+function auditPriority(row){
+  const status=String(row?.status||"").toLowerCase();
+  if(status==="ok")return 4;
+  if(status==="changed")return 3;
+  if(row?.audited_value)return 2;
+  if(status)return 1;
+  return 0;
 }
 function displayGroundTruth(gt,audit){
   const value=gt?.value||audit?.audited_value||"";
@@ -645,13 +1114,35 @@ function displayGroundTruth(gt,audit){
   const notes=gt?.notes||audit?.notes||"";
   return {value,fetchedAt,confidence,notes};
 }
+function renderLeaderboardMeta(){
+  const el=$("leaderboardMeta");
+  if(!el)return;
+  const officialCount=visibleTasks().length;
+  const runDate=maxIso(officialRuns().map(r=>r.created_at));
+  const gtDate=maxIso(state.groundTruth.map(g=>g.fetched_at));
+  const models=defaultModels().length||0;
+  el.innerHTML=`<strong>V1 snapshot:</strong> ${officialCount} tasks · ${models} model stacks · 3 runs each. <strong>Last scored result:</strong> ${runDate?formatDate(runDate):"no runs yet"}. <strong>Latest saved answer refresh:</strong> ${gtDate?formatDate(gtDate):"not loaded"}. <strong>Canonical Source</strong> is measured only on correct runs.`;
+}
+function updateLastRunDate(){
+  const el=$("lastRunDate");
+  if(!el)return;
+  const latest=maxIso(officialRuns().map(r=>r.created_at));
+  el.textContent=latest?formatShortDate(latest):"n/a";
+  el.title=latest?formatDate(latest):"No scored run loaded";
+}
+function maxIso(values){
+  return values.filter(Boolean).sort().at(-1)||"";
+}
 function auditChip(row){
   if(!row) return `<span class="chip diff">qa pending</span>`;
   const status=String(row.status||"").toLowerCase();
   const cls=status==="ok"?"ok":status==="changed"?"diff":"bad";
-  return `<span class="chip ${cls}">qa ${esc(status||"unknown")}</span>`;
+  return `<span class="chip ${cls}">audit ${esc(status||"unknown")}</span>`;
 }
-function officialRuns(){
+function auditPassed(row){
+  return row&&["ok","changed"].includes(String(row.status||"").toLowerCase());
+}
+function cleanOfficialRuns(){
   const allowed=new Set(defaultModels());
   const officialTasks=new Set(state.tasks.filter(t=>t.official!==false).map(t=>t.id));
   const groups={};
@@ -662,35 +1153,103 @@ function officialRuns(){
   });
   return Object.values(groups).flatMap(list=>list.sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at))).slice(-3));
 }
+function officialRuns(){
+  const visible=visibleTaskIds();
+  return cleanOfficialRuns().filter(r=>visible.has(r.task_id));
+}
 function runsForTask(taskId){return officialRuns().filter(r=>r.task_id===taskId);}
 function runsForModel(model){return officialRuns().filter(r=>r.model===model);}
 function avg(values){return values.length?values.reduce((a,b)=>a+b,0)/values.length:0;}
 function modelLabel(model){
-  const labels={"anthropic/claude-sonnet-4.6":"Claude","openai/gpt-4o":"GPT-4o","google/gemini-2.5-pro":"Gemini","perplexity/sonar-pro-search":"Perplexity","meta-llama/llama-3.3-70b-instruct":"Llama"};
+  const labels={
+    "anthropic/claude-sonnet-4.6":"Claude Sonnet",
+    "anthropic/claude-opus-4.7":"Claude Opus",
+    "openai/gpt-4o":"GPT-4o",
+    "openai/gpt-4o-mini":"GPT-4o Mini",
+    "openai/gpt-oss-120b":"GPT-OSS 120B",
+    "google/gemini-2.5-pro":"Gemini Pro",
+    "google/gemini-3.1-flash-lite":"Gemini Flash Lite",
+    "perplexity/sonar-pro-search":"Sonar Pro Search",
+    "perplexity/sonar-deep-research":"Sonar Deep Research",
+    "x-ai/grok-4.3":"Grok 4",
+    "deepseek/deepseek-v4-flash":"DeepSeek V4 Flash",
+    "nvidia/nemotron-3-super-120b-a12b":"Nemotron 3 Super"
+  };
   return labels[model]||model;
 }
 function summarizeRuns(runs){
   const scored=runs.filter(r=>!r.error);
   const correct=scored.filter(r=>r.passed);
+  const abstained=scored.filter(r=>runOutcome(r)==="abstain");
+  const wrong=scored.filter(r=>runOutcome(r)==="wrong");
   return {
     runs:scored.length,
+    correct:correct.length,
     accuracy:scored.length?correct.length/scored.length:0,
+    wrongRate:scored.length?wrong.length/scored.length:0,
+    abstainRate:scored.length?abstained.length/scored.length:0,
+    wrong:wrong.length,
+    abstained:abstained.length,
     vrr:correct.length?correct.filter(r=>r.verified_retrieval).length/correct.length:0,
     latency:scored.length?scored.reduce((sum,r)=>sum+Number(r.latency_ms||0),0)/scored.length:0,
     cost:scored.length?scored.reduce((sum,r)=>sum+Number(r.estimated_cost_usd||0),0)/scored.length:0,
     calls:scored.length?scored.reduce((sum,r)=>sum+Number(r.tool_calls||0),0)/scored.length:0,
   };
 }
+function outcomePercents(summary){
+  const total=summary.runs||0;
+  if(!total)return {correct:0,wrong:0,abstain:0};
+  const counts=[
+    ["correct", summary.correct||0],
+    ["wrong", summary.wrong||0],
+    ["abstain", summary.abstained||0]
+  ];
+  const base=counts.map(([key,count])=>{
+    const raw=(count/total)*100;
+    return {key,count,base:Math.floor(raw),rem:raw-Math.floor(raw)};
+  });
+  let remaining=100-base.reduce((sum,item)=>sum+item.base,0);
+  base.sort((a,b)=>b.rem-a.rem||b.count-a.count);
+  for(let i=0;i<base.length&&remaining>0;i++,remaining--)base[i].base++;
+  return Object.fromEntries(base.map(item=>[item.key,item.base]));
+}
+function pctInt(value){return `${Number(value)||0}%`;}
+function runOutcome(run){
+  if(!run || run.error)return "error";
+  if(run.outcome==="correct")return "correct";
+  if(run.outcome==="wrong_answer")return "wrong";
+  if(run.outcome==="no_answer")return "abstain";
+  if(run.outcome==="provider_error")return "error";
+  if(run.passed)return "correct";
+  if(isEmptyModelResponse(run))return "abstain";
+  const answer=String(run.answer||"").toLowerCase();
+  const claim=String(run.extracted_claim||"").toLowerCase();
+  const refusalPatterns=[
+    /\b(was\s+)?(can'?t|cannot|couldn'?t|unable to)\s+(reliably\s+)?(find|verify|confirm|determine|access|retrieve|provide|load|see|view|open|read|give)\b/,
+    /\b(no|not enough|insufficient)\s+(reliable\s+)?(information|data|evidence)\b/,
+    /\bnot\s+(available|found|accessible|able to verify)\b/,
+    /\bi\s+(do not|don'?t)\s+have\s+access\b/,
+    /\bi\s+(can'?t|cannot|couldn'?t|am unable to)\s+(reliably\s+)?(load|see|view|access|verify|read|provide)\b/,
+    /\b(cannot|can'?t|unable to)\s+give\s+(you\s+)?(the\s+)?exact\b/,
+    /\bno answer\b/,
+    /\bempty response\b/
+  ];
+  return refusalPatterns.some(pattern=>pattern.test(answer)||pattern.test(claim))?"abstain":"wrong";
+}
 function leaderboardRowsForDomain(domain){
-  if(domain==="all") return state.leaderboard;
   const taskDomain=new Map(state.tasks.map(t=>[t.id,t.domain]));
   const rows=defaultModels().map(model=>{
-    const runs=officialRuns().filter(r=>r.model===model&&taskDomain.get(r.task_id)===domain);
+    const runs=officialRuns().filter(r=>r.model===model&&(domain==="all"||taskDomain.get(r.task_id)===domain));
     const s=summarizeRuns(runs);
     return {
       model,
       scored_runs:s.runs,
+      correct_runs:s.correct,
+      wrong_answer_runs:s.wrong,
+      no_answer_runs:s.abstained,
       live_exact_accuracy:Math.round(s.accuracy*10000)/10000,
+      wrong_answer_rate:Math.round(s.wrongRate*10000)/10000,
+      no_answer_rate:Math.round(s.abstainRate*10000)/10000,
       verified_retrieval_rate:Math.round(s.vrr*10000)/10000,
       avg_tool_calls:Math.round(s.calls*1000)/1000,
       avg_latency_ms:Math.round(s.latency*100)/100,
@@ -703,7 +1262,13 @@ function leaderboardRowsForDomain(domain){
 function renderLeaderboardView(){
   const domain=$("leaderboardDomain")?.value||"all";
   const rows=leaderboardRowsForDomain(domain);
-  $("leaderboardOut").innerHTML=rows.length?renderLeaderboard(rows,domain):`<div class="empty panel">No runs for this topic yet.</div>`;
+  if(rows.length){
+    $("leaderboardOut").innerHTML=renderLeaderboard(rows,domain);
+    return;
+  }
+  const officialTasks=visibleTasks().filter(t=>domain==="all"||t.domain===domain);
+  const label=domain==="all"?"this suite":formatTopic(domain);
+  $("leaderboardOut").innerHTML=`<div class="empty panel">No scored results for ${esc(label)} yet.</div>`;
 }
 function taskConsistency(taskRuns,model){
   const runs=taskRuns.filter(r=>r.model===model);
@@ -714,8 +1279,9 @@ function renderTasksPage(){
   if(!state.runs.length) loadBenchmarkData().then(renderTasksPage);
   const q=($("taskSearch")?.value||"").toLowerCase();
   const domain=$("taskPageDomain")?.value||"all";
-  const tasks=state.tasks.filter(t=>t.official!==false&&(domain==="all"||t.domain===domain)&&`${t.id} ${t.domain} ${t.question} ${t.canonical_url}`.toLowerCase().includes(q));
-  const selected=state.tasks.find(t=>t.id===state.selectedTaskDetail&&t.official!==false)||tasks[0]||state.tasks.find(t=>t.official!==false)||state.tasks[0];
+  const accuracyFilter=$("taskAccuracyFilter")?.value||"all";
+  const tasks=visibleTasks().filter(t=>(domain==="all"||t.domain===domain)&&taskMatchesAccuracy(t,accuracyFilter)&&`${t.id} ${t.domain} ${t.question} ${t.canonical_url}`.toLowerCase().includes(q));
+  const selected=tasks.find(t=>t.id===state.selectedTaskDetail)||tasks[0]||visibleTasks()[0]||state.tasks.find(t=>t.official!==false)||state.tasks[0];
   state.selectedTaskDetail=selected?.id;
   $("tasksPageOut").innerHTML=`
     <div class="split">
@@ -723,6 +1289,17 @@ function renderTasksPage(){
       <main class="panel detail-panel">${selected?renderTaskDetail(selected):`<div class="empty">Select a task.</div>`}</main>
     </div>`;
   document.querySelectorAll("[data-task-detail]").forEach(el=>el.addEventListener("click",()=>{state.selectedTaskDetail=el.dataset.taskDetail;renderTasksPage();}));
+}
+function taskMatchesAccuracy(t,filter){
+  if(filter==="all")return true;
+  const s=summarizeRuns(runsForTask(t.id));
+  if(filter==="noruns")return s.runs===0;
+  if(s.runs===0)return false;
+  if(filter==="lt50")return s.accuracy<0.5;
+  if(filter==="lt70")return s.accuracy<0.7;
+  if(filter==="lt90")return s.accuracy<0.9;
+  if(filter==="eq100")return s.accuracy===1;
+  return true;
 }
 function renderTaskListItem(t){
   const runs=runsForTask(t.id);
@@ -740,11 +1317,12 @@ function renderTaskDetail(t){
   const displayGt=displayGroundTruth(gt,audit);
   const models=defaultModels();
   const s=summarizeRuns(runs);
+  const passedRuns=runs.filter(r=>r.passed).length;
   const rows=models.map(m=>{
     const mr=runs.filter(r=>r.model===m);
     const ms=summarizeRuns(mr);
     const last=mr[mr.length-1];
-    return `<tr><td><strong>${esc(modelLabel(m))}</strong><br><span class="muted">${esc(m)}</span></td><td class="r">${taskConsistency(runs,m)}</td><td class="r">${pct(ms.accuracy)}</td><td>${esc(last?.extracted_claim||"n/a")}</td><td class="r">${Math.round(ms.latency)}ms</td></tr>`;
+    return `<tr><td><strong>${esc(modelLabel(m))}</strong><br><span class="muted">${esc(m)}</span></td><td class="r">${taskConsistency(runs,m)}</td><td class="r">${pct(ms.accuracy)}</td><td class="r">${ms.wrong}</td><td class="r">${ms.abstained}</td><td>${esc(last?runClaimText(last):"n/a")}</td><td class="r">${Math.round(ms.latency)}ms</td></tr>`;
   }).join("");
   return `
     <div class="task-id">${esc(t.id)} · ${esc(t.domain)} · ${esc(t.difficulty)}</div>
@@ -755,26 +1333,27 @@ function renderTaskDetail(t){
       <div class="summary-card"><span>Accuracy</span><b>${pct(s.accuracy)}</b></div>
       <div class="summary-card"><span>Tolerance</span><b>${esc(t.tolerance||"exact")}</b></div>
       <div class="summary-card"><span>Avg Latency</span><b>${Math.round(s.latency)}ms</b></div>
-      <div class="summary-card"><span>Runs</span><b>${runs.length}</b></div>
+      <div class="summary-card"><span>Passed Runs</span><b>${passedRuns}/${runs.length}</b></div>
     </div>
     <div class="gt"><div class="label">Ground truth</div><div class="gtv">${esc(displayGt.value||"n/a")}</div><div class="gtn">${esc(t.canonical_url)}${displayGt.fetchedAt?` · fetched ${new Date(displayGt.fetchedAt).toLocaleString()}`:""}${displayGt.confidence?` · confidence ${esc(displayGt.confidence)}`:""}</div></div>
     <h3 style="font-size:24px;margin:18px 0 8px">Model Results</h3>
-    <table class="mini-table"><thead><tr><th>Model</th><th class="r">Consistency</th><th class="r">Accuracy</th><th>Latest Claim</th><th class="r">Latency</th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="mini-table"><thead><tr><th>Model</th><th class="r">Consistency</th><th class="r">Accuracy</th><th class="r">Wrong</th><th class="r">No Answer</th><th>Latest Claim</th><th class="r">Latency</th></tr></thead><tbody>${rows}</tbody></table>
     <h3 style="font-size:24px;margin:18px 0 8px">Run History</h3>
-    <div class="run-stack">${runs.slice().reverse().map(r=>renderCompactRun(r)).join("")||`<div class="empty">No official runs for this task.</div>`}</div>`;
+    <div class="run-stack">${runs.slice().reverse().map(r=>renderCompactRun(r)).join("")||`<div class="empty">No scored runs for this task.</div>`}</div>`;
 }
 function renderCompactRun(r){
-  return `<details class="compact-run"><summary><strong>${esc(modelLabel(r.model))}</strong> · <span class="badge ${r.passed?"pass":"fail"}">${r.passed?"PASS":"FAIL"}</span> · ${esc(r.extracted_claim||"n/a")} · ${Math.round(r.latency_ms)}ms</summary>
-    <div class="answer">${renderAnswerText(r.answer||r.error||"No answer.")}</div>
+  return `<details class="compact-run"><summary><strong>${esc(modelLabel(r.model))}</strong> · <span class="badge ${r.passed?"pass":"fail"}">${r.passed?"PASS":"FAIL"}</span> · ${esc(runClaimText(r))} · ${Math.round(r.latency_ms)}ms</summary>
+    <div class="answer">${renderAnswerText(runAnswerText(r))}</div>
     ${renderTraceDisclosure(r.trace||[])}
   </details>`;
 }
 function renderGroundTruthPage(){
   if(!state.tasks.length)return;
   if(!state.groundTruth.length) loadBenchmarkData().then(renderGroundTruthPage);
+  populateGroundTruthFilters();
   const q=($("gtSearch")?.value||"").toLowerCase();
-  const status=$("gtStatus")?.value||"all";
-  const rows=state.tasks.map(t=>{
+  const topic=$("gtTopic")?.value||"all";
+  const rows=visibleTasks().map(t=>{
     const gt=latestGroundTruth(t.id);
     const audit=latestAudit(t.id);
     const displayGt=displayGroundTruth(gt,audit);
@@ -782,50 +1361,60 @@ function renderGroundTruthPage(){
     return {t,gt,audit,displayGt,hay};
   }).filter(row=>{
     if(q && !row.hay.includes(q)) return false;
-    if(status==="all" && row.t.official===false) return false;
-    if(status==="official" && row.t.official===false) return false;
-    if(status==="quarantined" && row.t.official!==false) return false;
-    if(status==="missing" && row.displayGt.value) return false;
+    if(topic!=="all" && row.t.domain!==topic) return false;
     return true;
   });
-  const officialCount=state.tasks.filter(t=>t.official!==false).length;
-  const gtCount=state.tasks.filter(t=>{
-    const gt=latestGroundTruth(t.id);
-    const audit=latestAudit(t.id);
-    return Boolean(displayGroundTruth(gt,audit).value);
-  }).length;
+  const officialCount=visibleTasks().length;
+  if($("gtResultCount")) $("gtResultCount").textContent=`${rows.length} shown / ${officialCount} tasks`;
   $("groundTruthOut").innerHTML=`
-    <div class="cards">
-      <div class="summary-card"><span>Official Tasks</span><b>${officialCount}</b></div>
-      <div class="summary-card"><span>Archived</span><b>${state.tasks.length-officialCount}</b></div>
-      <div class="summary-card"><span>With Ground Truth</span><b>${gtCount}</b></div>
-      <div class="summary-card"><span>Showing</span><b>${rows.length}</b></div>
-    </div>
     <div class="run-stack">${rows.map(renderGroundTruthRow).join("")||`<div class="empty panel">No matching ground truth claims.</div>`}</div>`;
+}
+function populateGroundTruthFilters(){
+  const topicSelect=$("gtTopic");
+  if(!topicSelect)return;
+  const topicValue=topicSelect.value||"all";
+  const topics=[...new Set(visibleTasks().map(t=>t.domain).filter(Boolean))].sort();
+  topicSelect.innerHTML=`<option value="all">All topics</option>`+topics.map(topic=>`<option value="${esc(topic)}">${esc(formatTopic(topic))}</option>`).join("");
+  topicSelect.value=topics.includes(topicValue)?topicValue:"all";
+}
+function formatTopic(topic){
+  return String(topic||"").replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+}
+function methodLabel(method){
+  if(method==="direct_http")return "Direct public API / HTTP";
+  if(method==="scrape_as_markdown")return "Bright Data scrape";
+  if(method==="scrape_as_html")return "Bright Data HTML scrape";
+  if(method.startsWith("web_data_"))return method.replace("web_data_","Structured: ").replace(/_/g," ");
+  return method.replace(/_/g," ");
 }
 function renderGroundTruthRow({t,gt,audit,displayGt}){
   displayGt=displayGt||displayGroundTruth(gt,audit);
   const endpoint=extractEndpoint(gt?.notes||"");
+  const hasGroundTruth=Boolean(displayGt.value);
   const evidence=extractEvidence(gt?.notes||"")||audit?.evidence||"No evidence saved.";
   return `<details class="compact-run" open>
-    <summary><strong>${esc(t.id)}</strong> · ${esc(t.domain)} · ${t.official===false?`<span class="badge fail">QUARANTINED</span>`:`<span class="badge pass">OFFICIAL</span>`} · <strong>${esc(displayGt.value||"no ground truth")}</strong></summary>
+    <summary><strong>${esc(t.id)}</strong> · ${esc(formatTopic(t.domain))} · <strong>${esc(hasGroundTruth?displayGt.value:"no saved answer")}</strong></summary>
     <div class="task-q" style="margin-top:10px">${esc(t.question)}</div>
     <div class="chips">
       <span class="chip">${esc(t.grading)}</span>
       <span class="chip diff">${esc(t.bd_tool)}</span>
       ${endpoint?`<span class="chip ok">used ${esc(endpoint)}</span>`:""}
-      ${auditChip(audit)}
+      ${displayGt.confidence?`<span class="chip ok">confidence ${esc(displayGt.confidence)}</span>`:""}
     </div>
-    ${t.official===false?`<div class="notice" style="margin-top:10px">Quarantined: ${esc(t.exclusion_reason||"Ground truth needs review.")}</div>`:""}
     <div class="gt">
-      <div class="label">Bright Data ground truth</div>
-      <div class="gtv">${esc(displayGt.value||"n/a")}</div>
+      <div class="label">Saved answer used for grading</div>
+      <div class="gtv">${esc(hasGroundTruth?displayGt.value:"Not used for scoring")}</div>
       <div class="gtn">${esc(t.canonical_url)}${displayGt.fetchedAt?` · fetched ${new Date(displayGt.fetchedAt).toLocaleString()}`:""}${displayGt.confidence?` · confidence ${esc(displayGt.confidence)}`:""}</div>
     </div>
     <div class="answer" style="margin-top:12px"><strong>Evidence:</strong><br>${esc(evidence)}</div>
-    <div class="answer"><strong>Ground-truth notes:</strong><br>${esc(displayGt.notes||"No notes saved.")}</div>
-    <div class="answer"><strong>Task grading notes:</strong><br>${esc(t.grading_notes||"")}</div>
+    <div class="answer"><strong>Required source for this task:</strong><br>${esc(t.canonical_url)}</div>
+    <div class="answer"><strong>Grading rule:</strong><br>${esc(t.grading_notes||"The answer must match the saved ground truth value within this task's tolerance.")}</div>
   </details>`;
+}
+function officialReason(t,audit,displayGt){
+  if(auditPassed(audit)) return `I found ${displayGt.value||"a value"} from the required source and saved evidence for it.`;
+  if(displayGt.value) return `I saved a ground-truth value for this task.`;
+  return `I included this task in the bank, but this browser session has not loaded the latest audit record.`;
 }
 function extractEndpoint(notes){
   const match=String(notes||"").match(/Bright Data endpoint:\s*([^.]*)/i);
@@ -846,18 +1435,27 @@ function renderModelsPage(){
       <main class="panel detail-panel">${renderModelDetail(selected)}</main>
     </div>`;
   document.querySelectorAll("[data-model-detail]").forEach(el=>el.addEventListener("click",()=>{state.selectedModel=el.dataset.modelDetail;renderModelsPage();}));
+  ["modelTaskSearch","modelTaskTopic","modelTaskStatus"].forEach(id=>{
+    const el=$(id);
+    if(el) el.addEventListener(id==="modelTaskSearch"?"input":"change",renderModelsPage);
+  });
 }
 function renderModelListItem(model){
   const s=summarizeRuns(runsForModel(model));
+  const outcome=outcomePercents(s);
   return `<div class="model-card ${model===state.selectedModel?"on":""}" data-model-detail="${esc(model)}">
     <div class="model-name">${esc(modelLabel(model))}</div>
     <div class="task-id">${esc(model)}</div>
-    <div class="chips"><span class="chip">${pct(s.accuracy)} acc</span><span class="chip diff">${pct(s.vrr)} VRR</span></div>
+    <div class="chips"><span class="chip">${pctInt(outcome.correct)} right</span><span class="chip bad">${pctInt(outcome.wrong)} wrong</span><span class="chip diff">${pctInt(outcome.abstain)} no response</span></div>
   </div>`;
 }
 function renderModelDetail(model){
   const runs=runsForModel(model);
   const s=summarizeRuns(runs);
+  const outcome=outcomePercents(s);
+  const taskRows=modelTaskRows(model);
+  const buckets=modelConsistencyBuckets(taskRows);
+  const filteredRows=filterModelTaskRows(taskRows);
   const byDomain={};
   runs.forEach(r=>{
     const task=state.tasks.find(t=>t.id===r.task_id);
@@ -866,29 +1464,222 @@ function renderModelDetail(model){
   });
   const domainRows=Object.entries(byDomain).sort().map(([d,rs])=>{
     const ds=summarizeRuns(rs);
-    return `<tr><td>${esc(d)}</td><td class="r">${pct(ds.accuracy)}</td><td class="r">${pct(ds.vrr)}</td><td class="r">${rs.length}</td><td class="r">${Math.round(ds.latency)}ms</td></tr>`;
+    return `<tr><td>${esc(d)}</td><td class="r">${pct(ds.accuracy)}</td><td class="r">${pct(ds.wrongRate)}</td><td class="r">${pct(ds.abstainRate)}</td><td class="r">${pct(ds.vrr)}</td><td class="r">${rs.length}</td><td class="r">${Math.round(ds.latency)}ms</td></tr>`;
   }).join("");
   const failures=runs.filter(r=>!r.passed).slice(-12).reverse();
-  const flaky=state.tasks.map(t=>{
+  const flaky=visibleTasks().map(t=>{
     const rs=runs.filter(r=>r.task_id===t.id);
     const pass=rs.filter(r=>r.passed).length;
     return {t,rs,pass};
   }).filter(x=>x.rs.length&&x.pass>0&&x.pass<x.rs.length).slice(0,10);
+  const topics=[...new Set(taskRows.map(row=>row.task.domain))].sort();
+  const topicValue=$("modelTaskTopic")?.value||"all";
+  const statusValue=$("modelTaskStatus")?.value||"all";
+  const searchValue=$("modelTaskSearch")?.value||"";
   return `
     <div class="model-name">${esc(model)}</div>
     <h3 style="font-size:32px;margin:4px 0 12px">${esc(modelLabel(model))}</h3>
     <div class="cards">
-      <div class="summary-card"><span>Live Exact Accuracy</span><b>${pct(s.accuracy)}</b></div>
-      <div class="summary-card"><span>Verified Retrieval</span><b>${pct(s.vrr)}</b></div>
-      <div class="summary-card"><span>Avg Cost</span><b>$${s.cost.toFixed(4)}</b></div>
-      <div class="summary-card"><span>Avg Latency</span><b>${Math.round(s.latency)}ms</b></div>
+      <div class="summary-card"><span>Right</span><b>${pctInt(outcome.correct)}</b></div>
+      <div class="summary-card"><span>Wrong</span><b>${pctInt(outcome.wrong)}</b></div>
+      <div class="summary-card"><span>No Response</span><b>${pctInt(outcome.abstain)}</b></div>
+      <div class="summary-card"><span>Canonical Source</span><b>${pct(s.vrr)}</b></div>
+    </div>
+    <div class="cards">
+      <div class="summary-card"><span>3/3 Correct</span><b>${buckets.stable}</b></div>
+      <div class="summary-card"><span>2/3 Correct</span><b>${buckets.two}</b></div>
+      <div class="summary-card"><span>1/3 Correct</span><b>${buckets.one}</b></div>
+      <div class="summary-card"><span>0/3 Correct</span><b>${buckets.zero}</b></div>
     </div>
     <h3 style="font-size:24px;margin:18px 0 8px">Vertical Breakdown</h3>
-    <table class="mini-table"><thead><tr><th>Vertical</th><th class="r">Accuracy</th><th class="r">VRR</th><th class="r">Runs</th><th class="r">Latency</th></tr></thead><tbody>${domainRows}</tbody></table>
-    <h3 style="font-size:24px;margin:18px 0 8px">Flaky Tasks</h3>
-    <div class="fail-list">${flaky.map(x=>`<div class="fail-item"><strong>${esc(x.t.id)}</strong> · ${x.pass}/${x.rs.length} passed<br>${esc(x.t.question)}</div>`).join("")||`<div class="empty">No flaky tasks in the selected official runs.</div>`}</div>
-    <h3 style="font-size:24px;margin:18px 0 8px">Recent Failures</h3>
-    <div class="fail-list">${failures.map(r=>{const t=state.tasks.find(task=>task.id===r.task_id);return `<div class="fail-item"><strong>${esc(r.task_id)}</strong> · ${esc(t?.domain||"")} · claim: ${esc(r.extracted_claim||"n/a")}<br>${esc(t?.question||"")}</div>`}).join("")||`<div class="empty">No failures in the selected official runs.</div>`}</div>`;
+    <table class="mini-table"><thead><tr><th>Vertical</th><th class="r">Accuracy</th><th class="r">Wrong</th><th class="r">No Answer</th><th class="r">Canonical Source</th><th class="r">Runs</th><th class="r">Latency</th></tr></thead><tbody>${domainRows}</tbody></table>
+    <h3 style="font-size:24px;margin:18px 0 8px">Task Inspection</h3>
+    <p class="muted" style="font-size:13px;line-height:1.6;margin-bottom:10px">Open any row to see the saved answer, required source, grading rule, and the model's three attempts.</p>
+    <div class="model-tools">
+      <input id="modelTaskSearch" placeholder="Search tasks, claims, expected answers" value="${esc(searchValue)}">
+      <select id="modelTaskTopic"><option value="all">All topics</option>${topics.map(topic=>`<option value="${esc(topic)}" ${topic===topicValue?"selected":""}>${esc(formatTopic(topic))}</option>`).join("")}</select>
+      <select id="modelTaskStatus">
+        ${[
+          ["all","All result patterns"],
+          ["failed","Failed"],
+          ["wrong","Wrong answer"],
+          ["abstain","No answer/refusal"],
+          ["flaky","Flaky"],
+          ["stable","3/3 correct"],
+          ["zero","0/3 correct"],
+          ["unverified","Canonical source not verified"]
+        ].map(([value,label])=>`<option value="${value}" ${value===statusValue?"selected":""}>${label}</option>`).join("")}
+      </select>
+    </div>
+    <div class="task-id" style="margin-bottom:8px">${filteredRows.length} shown / ${taskRows.length} tasks for ${esc(modelLabel(model))}</div>
+    <div class="table-wrap">
+      <div class="inspect-summary inspect-head">
+        <div>Task</div><div>Result Pattern</div><div>Latest Claim</div><div class="r">Avg Time</div>
+      </div>
+      ${filteredRows.map(renderModelTaskRow).join("")||`<div class="empty">No matching tasks for this filter.</div>`}
+    </div>
+    `;
+}
+function modelTaskRows(model){
+  const visible=visibleTasks();
+  return visible.map(task=>{
+    const clean=officialRuns().filter(r=>r.model===model&&r.task_id===task.id).sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+    const errors=[];
+    const pass=clean.filter(r=>r.passed).length;
+    const correctVerified=clean.filter(r=>r.passed&&r.verified_retrieval).length;
+    const latest=clean[clean.length-1]||null;
+    const gt=displayGroundTruth(latestGroundTruth(task.id),latestAudit(task.id));
+    const status=modelTaskStatus(clean,errors);
+    return {task,clean,errors,pass,correctVerified,latest,gt,status};
+  });
+}
+function modelTaskStatus(clean,errors){
+  if(clean.length<3) return "incomplete";
+  const pass=clean.filter(r=>r.passed).length;
+  if(pass===3) return "stable";
+  if(pass===0) return "zero";
+  return "flaky";
+}
+function modelConsistencyBuckets(rows){
+  return rows.reduce((acc,row)=>{
+    if(row.clean.length<3){acc.incomplete++;return acc}
+    if(row.pass===3) acc.stable++;
+    else if(row.pass===2) acc.two++;
+    else if(row.pass===1) acc.one++;
+    else acc.zero++;
+    if(row.errors.length) acc.provider++;
+    return acc;
+  },{stable:0,two:0,one:0,zero:0,incomplete:0,provider:0});
+}
+function filterModelTaskRows(rows){
+  const q=($("modelTaskSearch")?.value||"").toLowerCase();
+  const topic=$("modelTaskTopic")?.value||"all";
+  const status=$("modelTaskStatus")?.value||"all";
+  return rows.filter(row=>{
+    const hay=`${row.task.id} ${row.task.domain} ${row.task.question} ${row.task.canonical_url} ${row.latest?runClaimText(row.latest):""} ${row.gt.value||""}`.toLowerCase();
+    if(q&&!hay.includes(q))return false;
+    if(topic!=="all"&&row.task.domain!==topic)return false;
+    if(status==="all")return true;
+    if(status==="failed")return row.clean.length>=3&&row.pass<3;
+    if(status==="wrong")return row.clean.some(r=>runOutcome(r)==="wrong");
+    if(status==="abstain")return row.clean.some(r=>runOutcome(r)==="abstain");
+    if(status==="unverified")return row.pass>0&&row.correctVerified<row.pass;
+    return row.status===status;
+  });
+}
+function renderModelTaskRow(row){
+  const wrong=row.clean.filter(r=>runOutcome(r)==="wrong").length;
+  const abstain=row.clean.filter(r=>runOutcome(r)==="abstain").length;
+  const correct=row.clean.filter(r=>runOutcome(r)==="correct").length;
+  const cls=row.status==="stable"?"ok":row.status==="flaky"?"diff":wrong?"bad":abstain?"diff":"";
+  const label={
+    stable:"3/3 correct",
+    flaky:"mixed",
+    zero:abstain&&!wrong?"no answer":"0/3 correct",
+    incomplete:"incomplete"
+  }[row.status]||row.status;
+  const verifiedSource=row.pass?`${row.correctVerified}/${row.pass}`:"n/a";
+  const latency=row.clean.length?`${Math.round(avg(row.clean.map(r=>Number(r.latency_ms||0))))}ms`:"n/a";
+  return `<details class="inspect-summary">
+    <summary>
+      <div class="inspect-task inspect-cell"><span class="caret">›</span><span><strong>${esc(row.task.id)}</strong> <span class="muted">· ${esc(formatTopic(row.task.domain))}</span><br>${esc(row.task.question)}</span></div>
+      <div class="inspect-cell">
+        <span class="status-pill ${cls}">${esc(label)}</span>
+        <div class="outcome-strip" title="${correct} correct, ${wrong} wrong, ${abstain} no answer">
+          ${row.clean.map(r=>`<span class="${esc(runOutcome(r))}"></span>`).join("")}
+        </div>
+        <span class="muted">${correct} right · ${wrong} wrong · ${abstain} no answer</span>
+      </div>
+      <div class="inspect-cell latest-claim">${esc(row.latest?runClaimText(row.latest):"n/a")}</div>
+      <div class="inspect-cell r"><span class="muted">${esc(latency)}</span></div>
+    </summary>
+    <div class="inspect-detail">
+      <div class="inspect-evidence-grid">
+        <div class="inspect-answer-box">
+          <div class="label">Expected</div>
+          <div class="gtv">${esc(row.gt.value||"n/a")}</div>
+          <div class="gtn">${row.gt.fetchedAt?`Fetched ${new Date(row.gt.fetchedAt).toLocaleString()}`:"Fetch time unavailable"}</div>
+        </div>
+        <div class="inspect-answer-box">
+          <div class="label">Required Source</div>
+          <div class="source-link">${esc(row.task.canonical_url)}</div>
+          <div class="gtn">${esc(verifiedSource)} correct runs cited the task's canonical source</div>
+        </div>
+      </div>
+      <div class="inspect-rule">${esc(row.task.grading_notes||"The answer must match the saved ground truth value within this task's tolerance.")}</div>
+      <div class="inspect-runs compact-inspect-runs">
+        ${row.clean.slice().reverse().map(renderInspectRun).join("")||`<div class="empty">No scored runs for this model/task yet.</div>`}
+      </div>
+    </div>
+  </details>`;
+}
+function renderInspectRun(r){
+  const outcome=runOutcome(r);
+  const cls=outcome==="correct"?"ok":outcome==="wrong"?"bad":"diff";
+  const label=outcome==="correct"?"Correct":outcome==="wrong"?"Wrong":outcome==="error"?"Provider error":"No answer";
+  const urls=(r.trace||[]).filter(step=>step.action==="url_citation"&&step.target).length;
+  return `<div class="inspect-run">
+    <span class="status-pill ${cls}">${label}</span>
+    <span class="inspect-run-claim">${esc(runClaimText(r))}</span>
+    <span class="muted">${Math.round(r.latency_ms||0)}ms · ${urls} cited URL${urls===1?"":"s"}</span>
+  </div>`;
+}
+function renderFlakyTaskDetail(x){
+  const gt=displayGroundTruth(latestGroundTruth(x.t.id),latestAudit(x.t.id));
+  const sorted=x.rs.slice().sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+  return `<details class="compact-run">
+    <summary><strong>${esc(x.t.id)}</strong> · ${esc(formatTopic(x.t.domain))} · ${x.pass}/${x.rs.length} passed · expected ${esc(gt.value||"n/a")}</summary>
+    <div class="task-q" style="margin-top:10px">${esc(x.t.question)}</div>
+    <div class="chips">
+      <span class="chip">${esc(x.t.grading)}</span>
+      <span class="chip diff">${esc(x.t.tolerance||"no tolerance")}</span>
+      <span class="chip">${esc(x.t.bd_tool)}</span>
+    </div>
+    <div class="gt">
+      <div class="label">Correct answer used by the benchmark</div>
+      <div class="gtv">${esc(gt.value||"n/a")}</div>
+      <div class="gtn">${esc(x.t.canonical_url)}${gt.fetchedAt?` · fetched ${new Date(gt.fetchedAt).toLocaleString()}`:""}</div>
+    </div>
+    <div class="answer"><strong>Grading rule:</strong><br>${esc(x.t.grading_notes||"The answer must match the saved ground truth value within this task's tolerance.")}</div>
+    <table class="mini-table" style="margin-top:12px"><thead><tr><th>Run</th><th class="r">Result</th><th>Claim</th><th class="r">Latency</th><th>Canonical Source</th></tr></thead><tbody>
+      ${sorted.map(r=>`<tr><td>${esc(formatDate(r.created_at))}</td><td class="r"><span class="badge ${r.passed?"pass":"fail"}">${r.passed?"PASS":"FAIL"}</span></td><td>${esc(runClaimText(r))}</td><td class="r">${Math.round(r.latency_ms||0)}ms</td><td>${esc(sourceVerificationSummary(r))}</td></tr>`).join("")}
+    </tbody></table>
+  </details>`;
+}
+function renderFailureDetail(r){
+  const t=state.tasks.find(task=>task.id===r.task_id);
+  const gt=displayGroundTruth(latestGroundTruth(r.task_id),latestAudit(r.task_id));
+  return `<details class="compact-run">
+    <summary><strong>${esc(r.task_id)}</strong> · ${esc(formatTopic(t?.domain||"unknown"))} · claim ${esc(runClaimText(r))} · expected ${esc(gt.value||"n/a")}</summary>
+    <div class="task-q" style="margin-top:10px">${esc(t?.question||"Task not found.")}</div>
+    <div class="chips">
+      <span class="chip bad">FAIL</span>
+      ${r.verified_retrieval?`<span class="chip ok">canonical source verified</span>`:`<span class="chip bad">canonical source not verified</span>`}
+      <span class="chip">${Math.round(r.latency_ms||0)}ms</span>
+      <span class="chip">$${Number(r.estimated_cost_usd||0).toFixed(4)}</span>
+    </div>
+    <div class="gt">
+      <div class="label">Correct answer used by the benchmark</div>
+      <div class="gtv">${esc(gt.value||"n/a")}</div>
+      <div class="gtn">${esc(t?.canonical_url||"")}${gt.fetchedAt?` · fetched ${new Date(gt.fetchedAt).toLocaleString()}`:""}</div>
+    </div>
+    <div class="answer"><strong>Model answer:</strong><br>${renderAnswerText(runAnswerText(r))}</div>
+    <div class="answer"><strong>Why this matters:</strong><br>${esc(t?.grading_notes||"The answer must match the saved ground truth value within this task's tolerance.")}</div>
+    ${renderTraceDisclosure(r.trace||[])}
+  </details>`;
+}
+function sourceVerificationSummary(r){
+  const urls=(r.trace||[]).filter(step=>step.action==="url_citation"&&step.target).map(step=>step.target);
+  if(!urls.length)return "no citation";
+  return r.verified_retrieval?"canonical source matched":"canonical source not matched";
+}
+function formatDate(value){
+  if(!value)return "unknown";
+  try{return new Date(value).toLocaleString()}catch{return String(value)}
+}
+function formatShortDate(value){
+  if(!value)return "n/a";
+  try{return new Date(value).toLocaleDateString(undefined,{month:"short",day:"numeric"})}catch{return String(value)}
 }
 async function loadLiveChecks(){
   try{
@@ -910,21 +1701,238 @@ async function loadLiveChecks(){
 function renderLeaderboard(rows,domain="all"){
   const max=Math.max(...rows.map(r=>r.live_exact_accuracy),.01);
   const caption=domain==="all"?"All topics":domain;
-  return `<div class="task-id" style="margin-bottom:8px">Showing: ${esc(caption)}</div><table><thead><tr><th>#</th><th>Model</th><th>Live Exact Accuracy</th><th class="r">Verified Retrieval Rate</th><th class="r">Tool Calls</th><th class="r">Cost</th><th class="r">Latency</th><th class="r">Runs</th></tr></thead><tbody>
-    ${rows.map((r,i)=>`<tr><td>${i+1}</td><td><strong>${esc(r.model)}</strong></td><td><span class="bar"><i style="width:${Math.round((r.live_exact_accuracy/max)*80)}px"></i></span>${pct(r.live_exact_accuracy)}</td><td class="r">${pct(r.verified_retrieval_rate)}</td><td class="r">${Number(r.avg_tool_calls).toFixed(2)}</td><td class="r">$${Number(r.avg_cost_usd).toFixed(4)}</td><td class="r">${Math.round(r.avg_latency_ms)}ms</td><td class="r">${r.scored_runs}</td></tr>`).join("")}
+  return `<div class="task-id" style="margin-bottom:8px">Showing: ${esc(caption)}</div><table><thead><tr><th>#</th><th>Model</th><th>Right</th><th class="r">Wrong</th><th class="r">No Response</th><th class="r">Canonical Source</th><th class="r">Cost</th><th class="r">Latency</th><th class="r">Runs</th></tr></thead><tbody>
+    ${rows.map((r,i)=>{
+      const outcome=outcomePercents({runs:r.scored_runs,correct:r.correct_runs,wrong:r.wrong_answer_runs,abstained:r.no_answer_runs});
+      return `<tr><td>${i+1}</td><td><strong>${esc(r.model)}</strong></td><td><span class="bar"><i style="width:${Math.round((r.live_exact_accuracy/max)*80)}px"></i></span>${pctInt(outcome.correct)}</td><td class="r">${pctInt(outcome.wrong)}</td><td class="r">${pctInt(outcome.abstain)}</td><td class="r">${pct(r.verified_retrieval_rate)}</td><td class="r">$${Number(r.avg_cost_usd).toFixed(4)}</td><td class="r">${Math.round(r.avg_latency_ms)}ms</td><td class="r">${r.scored_runs}</td></tr>`;
+    }).join("")}
   </tbody></table>`;
+}
+function renderResultsPage(){
+  const el=$("resultsOut");
+  if(!el||!state.tasks.length||!state.runs.length)return;
+  const analysis=resultAnalysis();
+  const topicValue=$("resultTopic")?.value||"all";
+  const modelValue=$("resultModel")?.value||"all";
+  const statusValue=$("resultStatus")?.value||"all";
+  const searchValue=$("resultSearch")?.value||"";
+  const filtered=filterResultTasks(analysis.tasks,topicValue,modelValue,statusValue,searchValue);
+  const missRate=analysis.top?1-Number(analysis.top.live_exact_accuracy||0):0;
+  const zeroRate=analysis.consistency.total?analysis.consistency.zero/analysis.consistency.total:0;
+  const hardest=analysis.topicRows[0];
+  const easiest=analysis.topicRows[analysis.topicRows.length-1];
+  const outcomes=summarizeRuns(officialRuns());
+  el.innerHTML=`
+    <div class="results-v2">
+      <div class="results-hero">
+        <div>
+          <div class="result-kicker">V1 result</div>
+          <h3>The tested stacks got exact live retrieval right only half the time.</h3>
+          <p>I ran 12 model stacks across 43 source-specific web tasks, 3 times each. The pattern was not just refusal: ${outcomes.wrong.toLocaleString()} runs returned a usable value that did not match the independently fetched ground truth.</p>
+        </div>
+        <div class="results-hero-stat">
+          <b>${pct(outcomes.accuracy)}</b>
+          <span>average exact accuracy</span>
+        </div>
+      </div>
+
+      <div class="outcome-cards">
+        <div class="outcome-card"><span>Correct</span><b>${pct(outcomes.accuracy)}</b><p>${outcomes.correct.toLocaleString()} of ${outcomes.runs.toLocaleString()} attempts matched the saved source value.</p></div>
+        <div class="outcome-card"><span>Wrong value</span><b>${pct(outcomes.wrongRate)}</b><p>${outcomes.wrong.toLocaleString()} attempts returned a value, but it was not the benchmark answer.</p></div>
+        <div class="outcome-card"><span>No usable answer</span><b>${pct(outcomes.abstainRate)}</b><p>${outcomes.abstained.toLocaleString()} attempts refused, could not verify, or returned empty.</p></div>
+      </div>
+
+      <div class="results-split">
+        <div class="results-panel">
+          <h3>Model Ranking</h3>
+          <p>The spread matters more than the single average. Grok 4 led the slice, but even the winner missed about ${pct(missRate)} of exact values.</p>
+          <div class="rank-list">
+            ${analysis.modelRows.map((row,i)=>renderResultRankRow(row,i)).join("")}
+          </div>
+        </div>
+        <div class="results-panel">
+          <h3>What I Learned</h3>
+          <p>The failures were practical retrieval failures: wrong fields, stale cached values, nearby facts, and citations that looked convincing without supporting the returned value.</p>
+          <div class="insight-list">
+            <div class="insight"><strong>Citations are not enough.</strong><p>A cited source can still point to the wrong field, stale value, or nearby page. The product risk is not “no answer”; it is a confident wrong answer with a real-looking URL attached.</p></div>
+            <div class="insight"><strong>The best stack still missed.</strong><p>${esc(modelLabel(analysis.top?.model||"The leader"))} led this run at ${analysis.top?pct(analysis.top.live_exact_accuracy):"n/a"} accuracy, which means the top result still failed roughly ${pct(missRate)} of attempts.</p></div>
+            <div class="insight"><strong>Use this as a decision tool, not a trophy list.</strong><p>This v1 slice tells you where to start investigating. The useful move is filtering by the domains and failure types that look like your product.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-split">
+        <div class="results-panel">
+          <h3>Topic Breakdown</h3>
+          <p>${easiest?`${esc(formatTopic(easiest.topic))} was the strongest slice at ${pct(easiest.accuracy)}.`:""} ${hardest?`${esc(formatTopic(hardest.topic))} was the weakest at ${pct(hardest.accuracy)}.`:""} The overall leaderboard is shaped by this task mix.</p>
+          <div class="topic-list">
+            ${analysis.topicRows.map(row=>`<div class="topic-row"><strong>${esc(formatTopic(row.topic))}</strong><span>${pct(row.accuracy)} · ${row.runs} runs</span></div>`).join("")}
+          </div>
+        </div>
+        <div class="results-panel">
+          <h3>Repeatability</h3>
+          <p>I ran each model-task pair 3 times because one lucky correct answer is not reliability.</p>
+          ${renderBarRows([
+            {label:"3/3 correct",value:analysis.consistency.total?analysis.consistency.three/analysis.consistency.total:0,meta:`${analysis.consistency.three} pairs`},
+            {label:"2/3 correct",value:analysis.consistency.total?analysis.consistency.two/analysis.consistency.total:0,meta:`${analysis.consistency.two} pairs`},
+            {label:"1/3 correct",value:analysis.consistency.total?analysis.consistency.one/analysis.consistency.total:0,meta:`${analysis.consistency.one} pairs`},
+            {label:"0/3 correct",value:analysis.consistency.total?analysis.consistency.zero/analysis.consistency.total:0,meta:`${analysis.consistency.zero} pairs`}
+          ])}
+          <div class="insight" style="margin-top:12px"><strong>${pct(zeroRate)} of model-task pairs went 0/3.</strong><p>That is the part I would inspect first before trusting a stack on a domain.</p></div>
+        </div>
+      </div>
+
+      <div class="results-panel">
+        <div class="results-explorer-head">
+          <div>
+            <h3>Inspect The Evidence</h3>
+            <p>Filter by model, topic, or failure pattern, then open a task to compare the expected value against each model's extracted claim.</p>
+          </div>
+          <div class="task-id">${filtered.length} shown / ${analysis.tasks.length} tasks</div>
+        </div>
+        <div class="result-tools">
+          <input id="resultSearch" placeholder="Search tasks, IDs, questions" value="${esc(searchValue)}">
+          <select id="resultTopic"><option value="all">All topics</option>${analysis.topics.map(topic=>`<option value="${esc(topic)}" ${topic===topicValue?"selected":""}>${esc(formatTopic(topic))}</option>`).join("")}</select>
+          <select id="resultModel"><option value="all">All models</option>${defaultModels().map(model=>`<option value="${esc(model)}" ${model===modelValue?"selected":""}>${esc(modelLabel(model))}</option>`).join("")}</select>
+          <select id="resultStatus">
+            ${[
+              ["all","All result patterns"],
+              ["hard","Below 50% accuracy"],
+              ["wrong","Has wrong answers"],
+              ["abstain","Has no-answer runs"],
+              ["allfailed","All runs failed"]
+            ].map(([value,label])=>`<option value="${value}" ${value===statusValue?"selected":""}>${label}</option>`).join("")}
+          </select>
+        </div>
+        <div class="run-stack">${filtered.map(renderResultTaskCard).join("")||`<div class="empty">No matching result rows.</div>`}</div>
+      </div>
+    </div>`;
+  ["resultSearch","resultTopic","resultModel","resultStatus"].forEach(id=>{
+    const input=$(id);
+    if(input) input.addEventListener(id==="resultSearch"?"input":"change",renderResultsPage);
+  });
+}
+function resultAnalysis(){
+  const models=defaultModels();
+  const visible=visibleTasks();
+  const visibleIds=new Set(visible.map(t=>t.id));
+  const clean=officialRuns();
+  const errors=state.runs.filter(r=>r.error&&models.includes(r.model)&&visibleIds.has(r.task_id));
+  const tasks=visible.map(task=>resultTaskRow(task,models,clean,errors));
+  const completeTasks=tasks.filter(row=>row.complete).length;
+  const topicRows=Object.entries(groupBy(clean,r=>state.tasks.find(t=>t.id===r.task_id)?.domain||"unknown")).map(([topic,runs])=>{
+    const s=summarizeRuns(runs);
+    return {topic,runs:runs.length,accuracy:s.accuracy};
+  }).sort((a,b)=>a.accuracy-b.accuracy||b.runs-a.runs);
+  const consistency={three:0,two:0,one:0,zero:0,total:0};
+  models.forEach(model=>visible.forEach(task=>{
+    const runs=clean.filter(r=>r.model===model&&r.task_id===task.id);
+    if(runs.length<3)return;
+    const pass=runs.filter(r=>r.passed).length;
+    consistency.total++;
+    if(pass===3)consistency.three++;
+    else if(pass===2)consistency.two++;
+    else if(pass===1)consistency.one++;
+    else consistency.zero++;
+  }));
+  return {
+    models:models.length,
+    officialTasks:visible.length,
+    visibleTasks:visible.length,
+    completeTasks,
+    cleanRuns:clean.length,
+    errors:errors.length,
+    top:leaderboardRowsForDomain("all")[0],
+    modelRows:leaderboardRowsForDomain("all"),
+    topicRows,
+    consistency,
+    topics:[...new Set(visible.map(t=>t.domain))].sort(),
+    tasks
+  };
+}
+function resultTaskRow(task,models,clean,errors){
+  const runs=clean.filter(r=>r.task_id===task.id);
+  const taskErrors=errors.filter(r=>r.task_id===task.id);
+  const s=summarizeRuns(runs);
+  const complete=models.every(model=>runs.filter(r=>r.model===model).length>=3);
+  const passed=runs.filter(r=>r.passed).length;
+  return {task,runs,errors:taskErrors,summary:s,complete,passed};
+}
+function filterResultTasks(rows,topic,model,status,q){
+  q=String(q||"").toLowerCase();
+  return rows.filter(row=>{
+    if(topic!=="all"&&row.task.domain!==topic)return false;
+    const runs=model==="all"?row.runs:row.runs.filter(r=>r.model===model);
+    const s=summarizeRuns(runs);
+    const hay=`${row.task.id} ${row.task.domain} ${row.task.question} ${row.task.canonical_url}`.toLowerCase();
+    if(q&&!hay.includes(q))return false;
+    if(status==="complete"&&!row.complete)return false;
+    if(status==="hard"&&!(s.runs&&s.accuracy<0.5))return false;
+    if(status==="wrong"&&!runs.some(r=>runOutcome(r)==="wrong"))return false;
+    if(status==="abstain"&&!runs.some(r=>runOutcome(r)==="abstain"))return false;
+    if(status==="allfailed"&&!(s.runs&&s.accuracy===0))return false;
+    return true;
+  });
+}
+function renderResultTaskCard(row){
+  const s=row.summary;
+  const wrong=row.runs.filter(r=>runOutcome(r)==="wrong").length;
+  const abstain=row.runs.filter(r=>runOutcome(r)==="abstain").length;
+  const cls=s.accuracy>=0.5?"ok":"diff";
+  return `<details class="compact-run">
+    <summary><strong>${esc(row.task.id)}</strong> · ${esc(formatTopic(row.task.domain))} · <span class="status-pill ${cls}">${pct(s.accuracy)} accuracy</span> · ${row.passed}/${s.runs} correct</summary>
+    <div class="task-q" style="margin-top:10px">${esc(row.task.question)}</div>
+    <div class="chips">
+      <span class="chip">${s.runs} scored runs</span>
+      <span class="chip ok">${row.passed} correct</span>
+      <span class="chip bad">${wrong} wrong</span>
+      <span class="chip diff">${abstain} no answer</span>
+      <span class="chip diff">${Math.round(s.latency)}ms avg</span>
+      <span class="chip">expected ${esc(displayGroundTruth(latestGroundTruth(row.task.id),latestAudit(row.task.id)).value||"n/a")}</span>
+    </div>
+    <div class="answer"><strong>Required source:</strong><br>${esc(row.task.canonical_url)}</div>
+    <div class="table-wrap"><table class="mini-table"><thead><tr><th>Model</th><th class="r">Correct</th><th class="r">Wrong</th><th class="r">No Answer</th><th>Latest claim</th><th class="r">Canonical Source</th></tr></thead><tbody>
+      ${defaultModels().map(model=>{
+        const runs=row.runs.filter(r=>r.model===model);
+        const ms=summarizeRuns(runs);
+        const pass=runs.filter(r=>r.passed).length;
+        const latest=runs[runs.length-1];
+        const verified=pass?runs.filter(r=>r.passed&&r.verified_retrieval).length+"/"+pass:"n/a";
+        return `<tr><td>${esc(modelLabel(model))}</td><td class="r">${pass}/${runs.length||3}</td><td class="r">${ms.wrong}</td><td class="r">${ms.abstained}</td><td>${esc(latest?runClaimText(latest):"n/a")}</td><td class="r">${esc(verified)}</td></tr>`;
+      }).join("")}
+    </tbody></table></div>
+  </details>`;
+}
+function renderResultRankRow(row,i){
+  const outcome=outcomePercents({runs:row.scored_runs,correct:row.correct_runs,wrong:row.wrong_answer_runs,abstained:row.no_answer_runs});
+  return `<div class="rank-row">
+    <div class="rank-row-num">${i+1}</div>
+    <div>
+      <div class="rank-row-name" title="${esc(modelLabel(row.model))}">${esc(modelLabel(row.model))}</div>
+      <div class="rank-row-sub">${pctInt(outcome.wrong)} wrong · ${pctInt(outcome.abstain)} no answer · ${Math.round(row.avg_latency_ms||0)}ms avg</div>
+      <div class="rank-row-meter"><i style="width:${Math.round((Number(row.live_exact_accuracy)||0)*100)}%"></i></div>
+    </div>
+    <div class="rank-row-score">${pct(row.live_exact_accuracy)}</div>
+  </div>`;
+}
+function renderBarRows(rows,cls=""){
+  const max=Math.max(...rows.map(r=>Number(r.value)||0),.01);
+  return rows.map(row=>`<div class="bar-row"><div class="bar-label" title="${esc(row.label)}">${esc(row.label)}</div><div class="bar-track"><div class="bar-fill ${esc(cls)}" style="width:${Math.round(((Number(row.value)||0)/max)*100)}%"></div></div><div class="bar-value">${pct(row.value)}${row.meta?` · ${esc(row.meta)}`:""}</div></div>`).join("");
+}
+function groupBy(items,fn){
+  return items.reduce((acc,item)=>{const key=fn(item);(acc[key] ||= []).push(item);return acc},{});
 }
 async function loadVotes(){try{const votes=await api("/api/votes");if($("voteCount")) $("voteCount").textContent=votes.length;if($("homeVoteCount")) $("homeVoteCount").textContent=votes.length}catch{}}
 $("domainFilter").addEventListener("change",renderTasks);
 $("taskSearch").addEventListener("input",renderTasksPage);
 $("taskPageDomain").addEventListener("change",renderTasksPage);
+$("taskAccuracyFilter").addEventListener("change",renderTasksPage);
 $("gtSearch").addEventListener("input",renderGroundTruthPage);
-$("gtStatus").addEventListener("change",renderGroundTruthPage);
+$("gtTopic").addEventListener("change",renderGroundTruthPage);
 $("leaderboardDomain").addEventListener("change",renderLeaderboardView);
 $("runLiveCheck").addEventListener("click",runLiveCheck);
 $("prevPair").addEventListener("click",prevPair);
 $("nextPair").addEventListener("click",nextPair);
-$("refreshLeaderboard").addEventListener("click",loadLeaderboard);
 init();
 </script>
 </body>

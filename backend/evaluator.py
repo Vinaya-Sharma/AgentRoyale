@@ -71,7 +71,7 @@ async def extract_supported_value(task: Task, page_text: str) -> tuple[str, str,
         evidence = deterministic.evidence.strip()
         confidence = deterministic.confidence
         notes = deterministic.notes
-    elif task.bd_tool.startswith("web_data_"):
+    elif task.bd_tool.startswith("web_data_") or requires_deterministic_extractor(task):
         raise RuntimeError(f"No deterministic extractor value for {task.bd_tool}")
     else:
         payload = await complete_json(
@@ -86,11 +86,21 @@ async def extract_supported_value(task: Task, page_text: str) -> tuple[str, str,
         notes = str(payload.get("notes", "")).strip()
     if not evidence:
         raise RuntimeError(f"Ground truth for {task.id} had no evidence quote")
-    if not evidence_supported(page_text, evidence, value):
+    if not task.bd_tool.startswith("web_data_") and not evidence_supported(page_text, evidence, value):
         raise RuntimeError(
             f"Ground truth for {task.id} was not visibly supported by the fetched page"
         )
     return value, evidence, confidence, notes
+
+
+def requires_deterministic_extractor(task: Task) -> bool:
+    return any(
+        marker in task.canonical_url
+        for marker in (
+            "api.weather.gov/stations/",
+            "fred.stlouisfed.org/graph/fredgraph.csv",
+        )
+    )
 
 
 def evidence_supported(page_text: str, evidence: str, value: str) -> bool:
@@ -152,6 +162,37 @@ def normalize_evidence(value: str) -> str:
     return text.strip().lower()
 
 
+NO_ANSWER_PATTERNS = (
+    re.compile(
+        r"\b(was\s+)?(can't|cannot|couldn't|unable to)\s+"
+        r"(reliably\s+)?(find|verify|confirm|determine|access|retrieve|provide|load|see|view|open|read|give)\b"
+    ),
+    re.compile(r"\b(no|not enough|insufficient)\s+(reliable\s+)?(information|data|evidence)\b"),
+    re.compile(r"\bnot\s+(available|found|accessible|able to verify)\b"),
+    re.compile(r"\bi\s+(do not|don't)\s+have\s+access\b"),
+    re.compile(
+        r"\bi\s+(can't|cannot|couldn't|am unable to)\s+"
+        r"(reliably\s+)?(load|see|view|access|verify|read|provide)\b"
+    ),
+    re.compile(r"\b(cannot|can't|unable to)\s+give\s+(you\s+)?(the\s+)?exact\b"),
+    re.compile(r"\bno answer\b"),
+    re.compile(r"\bempty response\b"),
+)
+
+
+def classify_model_outcome(*, answer: str, claim: str, passed: bool, error: str | None = None) -> str:
+    if error:
+        return "provider_error"
+    if passed:
+        return "correct"
+    if not answer.strip():
+        return "no_answer"
+    text = normalize_evidence(f"{answer} {claim}")
+    if any(pattern.search(text) for pattern in NO_ANSWER_PATTERNS):
+        return "no_answer"
+    return "wrong_answer"
+
+
 async def run_model_on_task(
     task: Task,
     ground_truth: GroundTruth,
@@ -161,76 +202,104 @@ async def run_model_on_task(
 ) -> ModelRun:
     started = time.perf_counter()
     run_id = str(uuid.uuid4())
-    trace: list[TraceStep] = []
-    try:
-        response = await complete_model_search(task, model)
-        answer, citations, search_requests, has_search_request_count = parse_search_response(response)
-        for idx, citation in enumerate(citations, start=1):
-            trace.append(
-                TraceStep(
-                    n=idx,
-                    action="url_citation",
-                    target=citation.get("url", ""),
-                    ok=True,
-                    latency_ms=None,
-                )
+    settings = get_settings()
+    model_timeout = max(settings.openrouter_timeout_seconds * 6, 180)
+    max_attempts = 2
+    for attempt in range(1, max_attempts + 1):
+        trace: list[TraceStep] = []
+        try:
+            response = await asyncio.wait_for(
+                complete_model_search(task, model),
+                timeout=model_timeout,
             )
-        if not trace and search_requests:
-            trace.append(
-                TraceStep(
-                    n=1,
-                    action="openrouter:web_search",
-                    target=f"{search_requests} search request(s)",
-                    ok=True,
-                    latency_ms=None,
+            answer, citations, search_requests, has_search_request_count = parse_search_response(response)
+            for idx, citation in enumerate(citations, start=1):
+                trace.append(
+                    TraceStep(
+                        n=idx,
+                        action="url_citation",
+                        target=citation.get("url", ""),
+                        ok=True,
+                        latency_ms=None,
+                    )
                 )
+            if not trace and search_requests:
+                trace.append(
+                    TraceStep(
+                        n=1,
+                        action="openrouter:web_search",
+                        target=f"{search_requests} search request(s)",
+                        ok=True,
+                        latency_ms=None,
+                    )
+                )
+            tool_calls = search_requests if has_search_request_count else (1 if citations else 0)
+            clean_answer = answer.strip()
+            if not clean_answer:
+                claim = "empty response"
+                passed = False
+                normalized_claim = None
+            else:
+                claim_payload = await asyncio.wait_for(
+                    complete_json(
+                        build_claim_messages(task, clean_answer),
+                        model=EXTRACTOR_MODEL,
+                        schema_name="claim_extraction",
+                        schema=CLAIM_SCHEMA,
+                    ),
+                    timeout=max(settings.openrouter_timeout_seconds, 60),
+                )
+                claim = str(claim_payload.get("claim", "")).strip()
+                passed, normalized_claim = grade_claim(task, ground_truth.value, claim)
+            outcome = classify_model_outcome(
+                answer=clean_answer,
+                claim=claim,
+                passed=passed,
             )
-        tool_calls = search_requests if has_search_request_count else (1 if citations else 0)
-        claim_payload = await complete_json(
-            build_claim_messages(task, answer),
-            model=EXTRACTOR_MODEL,
-            schema_name="claim_extraction",
-            schema=CLAIM_SCHEMA,
-        )
-        claim = str(claim_payload.get("claim", "")).strip()
-        passed, normalized_claim = grade_claim(task, ground_truth.value, claim)
-        latency_ms = round((time.perf_counter() - started) * 1000, 2)
-        run = ModelRun(
-            run_id=run_id,
-            task_id=task.id,
-            model=model,
-            answer=answer.strip(),
-            extracted_claim=claim,
-            normalized_claim=normalized_claim,
-            passed=passed,
-            verified_retrieval=passed and citations_verify_retrieval(
-                citations,
-                task.canonical_url,
-            ),
-            trace=trace,
-            tool_calls=tool_calls,
-            latency_ms=latency_ms,
-            estimated_cost_usd=estimate_cost(model, "", answer, tool_calls),
-            created_at=now_iso(),
-        )
-    except Exception as exc:
-        latency_ms = round((time.perf_counter() - started) * 1000, 2)
-        run = ModelRun(
-            run_id=run_id,
-            task_id=task.id,
-            model=model,
-            answer="",
-            extracted_claim="",
-            normalized_claim=None,
-            passed=False,
-            verified_retrieval=False,
-            trace=trace,
-            tool_calls=len(trace),
-            latency_ms=latency_ms,
-            estimated_cost_usd=0.0,
-            error=str(exc),
-            created_at=now_iso(),
-        )
+            latency_ms = round((time.perf_counter() - started) * 1000, 2)
+            run = ModelRun(
+                run_id=run_id,
+                task_id=task.id,
+                model=model,
+                answer=clean_answer or "Empty response: the model returned no answer text.",
+                extracted_claim=claim,
+                normalized_claim=normalized_claim,
+                passed=passed,
+                verified_retrieval=passed and citations_verify_retrieval(
+                    citations,
+                    task.canonical_url,
+                ),
+                outcome=outcome,
+                trace=trace,
+                tool_calls=tool_calls,
+                latency_ms=latency_ms,
+                estimated_cost_usd=estimate_cost(model, "", answer, tool_calls),
+                created_at=now_iso(),
+            )
+            break
+        except Exception as exc:
+            if attempt < max_attempts:
+                await asyncio.sleep(2 * attempt)
+                continue
+            latency_ms = round((time.perf_counter() - started) * 1000, 2)
+            error = str(exc) or exc.__class__.__name__
+            run = ModelRun(
+                run_id=run_id,
+                task_id=task.id,
+                model=model,
+                answer="",
+                extracted_claim="",
+                normalized_claim=None,
+                passed=False,
+                verified_retrieval=False,
+                outcome="provider_error",
+                trace=trace,
+                tool_calls=len(trace),
+                latency_ms=latency_ms,
+                estimated_cost_usd=0.0,
+                error=error,
+                created_at=now_iso(),
+            )
     if save:
         save_run(run)
     return run

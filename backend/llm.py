@@ -9,6 +9,11 @@ from openai import AsyncOpenAI
 from backend.config import Settings, get_settings
 
 
+MODEL_ANSWER_MAX_TOKENS = 700
+JSON_MAX_TOKENS = 500
+MODEL_HTTP_TIMEOUT_SECONDS = 180
+
+
 def get_openrouter_client(settings: Settings | None = None) -> AsyncOpenAI:
     settings = settings or get_settings()
     return AsyncOpenAI(
@@ -45,6 +50,7 @@ async def complete_json(
     response = await client.chat.completions.create(
         model=model,
         messages=messages,
+        max_tokens=JSON_MAX_TOKENS,
         response_format={
             "type": "json_schema",
             "json_schema": {
@@ -81,6 +87,7 @@ async def complete_json(
         repaired = await client.chat.completions.create(
             model=model,
             messages=repair_messages,
+            max_tokens=JSON_MAX_TOKENS,
             response_format={"type": "json_object"},
         )
         repaired_content = _chat_completion_content(repaired)
@@ -98,7 +105,11 @@ async def complete_json(
 
 async def complete_text(messages: list[dict[str, str]], *, model: str) -> str:
     client = get_openrouter_client()
-    response = await client.chat.completions.create(model=model, messages=messages)
+    response = await client.chat.completions.create(
+        model=model,
+        messages=messages,
+        max_tokens=MODEL_ANSWER_MAX_TOKENS,
+    )
     return _chat_completion_content(response)
 
 
@@ -108,8 +119,13 @@ async def complete_raw_chat(
     model: str,
 ) -> dict[str, Any]:
     settings = get_settings()
-    payload = {"model": model, "messages": messages}
-    async with httpx.AsyncClient(timeout=settings.openrouter_timeout_seconds) as client:
+    payload = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": MODEL_ANSWER_MAX_TOKENS,
+    }
+    timeout = max(settings.openrouter_timeout_seconds, MODEL_HTTP_TIMEOUT_SECONDS)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(
             f"{settings.openrouter_base_url}/chat/completions",
             headers={
@@ -127,7 +143,12 @@ async def complete_raw_chat(
             raise RuntimeError(
                 f"OpenRouter {response.status_code} for model {model}: {detail}"
             ) from exc
-        return response.json()
+        try:
+            return response.json()
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(
+                f"OpenRouter returned non-JSON response for model {model}: {response.text[:1200]}"
+            ) from exc
 
 
 async def complete_with_web_search(
@@ -152,9 +173,11 @@ async def complete_with_web_search(
     payload = {
         "model": model,
         "messages": messages,
+        "max_tokens": MODEL_ANSWER_MAX_TOKENS,
         "tools": [{"type": "openrouter:web_search", "parameters": parameters}],
     }
-    async with httpx.AsyncClient(timeout=settings.openrouter_timeout_seconds) as client:
+    timeout = max(settings.openrouter_timeout_seconds, MODEL_HTTP_TIMEOUT_SECONDS)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(
             f"{settings.openrouter_base_url}/chat/completions",
             headers={
@@ -172,7 +195,12 @@ async def complete_with_web_search(
             raise RuntimeError(
                 f"OpenRouter {response.status_code} for model {model}: {detail}"
             ) from exc
-        return response.json()
+        try:
+            return response.json()
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(
+                f"OpenRouter returned non-JSON response for model {model}: {response.text[:1200]}"
+            ) from exc
 
 
 def _chat_completion_content(response: Any) -> str:

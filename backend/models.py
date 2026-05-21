@@ -50,6 +50,7 @@ class ModelRun(BaseModel):
     normalized_claim: str | float | None = None
     passed: bool
     verified_retrieval: bool
+    outcome: Literal["correct", "wrong_answer", "no_answer", "provider_error"] | None = None
     trace: list[TraceStep]
     tool_calls: int
     latency_ms: float
@@ -60,7 +61,7 @@ class ModelRun(BaseModel):
 
 class EvaluationRequest(BaseModel):
     task_id: str
-    models: list[str] = Field(default_factory=list, max_length=6)
+    models: list[str] = Field(default_factory=list, max_length=10)
     refresh_ground_truth: bool = True
 
 

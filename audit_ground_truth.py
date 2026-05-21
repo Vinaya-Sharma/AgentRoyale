@@ -9,7 +9,7 @@ from pathlib import Path
 
 from backend.bright_data import fetch_url_with_fallbacks, result_text
 from backend.config import APP_DIR
-from backend.evaluator import EXTRACTOR_MODEL, evidence_supported
+from backend.evaluator import EXTRACTOR_MODEL, evidence_supported, requires_deterministic_extractor
 from backend.extractors import extract_ground_truth
 from backend.grader import GROUND_TRUTH_SCHEMA, build_ground_truth_messages, normalize_value
 from backend.llm import complete_json
@@ -20,6 +20,7 @@ from backend.task_bank import get_official_task_ids, get_tasks
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Audit Agent Royale ground truth extraction.")
     parser.add_argument("--task-id", default="", help="Optional single task id.")
+    parser.add_argument("--task-prefix", default="", help="Optional task id prefix filter.")
     parser.add_argument("--domain", default="", help="Optional domain filter.")
     parser.add_argument("--output", default="storage/ground_truth_audit.csv")
     parser.add_argument("--include-excluded", action="store_true", help="Audit quarantined tasks too.")
@@ -55,7 +56,7 @@ async def audit_task(task, previous):
             evidence = deterministic.evidence.strip()
             confidence = deterministic.confidence
             notes = deterministic.notes
-        elif task.bd_tool.startswith("web_data_"):
+        elif task.bd_tool.startswith("web_data_") or requires_deterministic_extractor(task):
             row["status"] = "unsupported"
             row["notes"] = f"No deterministic extractor value for {task.bd_tool}"
             return row
@@ -71,7 +72,7 @@ async def audit_task(task, previous):
             confidence = payload.get("confidence", "")
             notes = str(payload.get("notes", ""))
         normalized = normalize_value(value, task.grading)
-        supported = evidence_supported(text, evidence, value)
+        supported = task.bd_tool.startswith("web_data_") or evidence_supported(text, evidence, value)
         previous_normalized = previous.normalized_value if previous else None
         changed = previous is not None and str(normalized) != str(previous_normalized)
         row.update(
@@ -105,6 +106,8 @@ async def main() -> None:
         tasks = [task for task in tasks if task.id in official]
     if args.task_id:
         tasks = [task for task in tasks if task.id == args.task_id]
+    if args.task_prefix:
+        tasks = [task for task in tasks if task.id.startswith(args.task_prefix)]
     if args.domain:
         tasks = [task for task in tasks if task.domain == args.domain]
     rows = []

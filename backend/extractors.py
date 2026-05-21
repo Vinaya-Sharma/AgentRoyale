@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import ast
 import json
 import re
 from dataclasses import dataclass
@@ -21,12 +22,16 @@ def extract_ground_truth(task: Task, page_text: str) -> ExtractedTruth | None:
     extractors = [
         extract_npm_downloads,
         extract_github_repo_metric,
+        extract_raw_json_version,
         extract_package_or_runtime_version,
         extract_hacker_news,
         extract_app_store,
+        extract_fred_latest_csv,
+        extract_nws_latest_observation,
         extract_companies_market_cap,
         extract_coinmarketcap_price,
         extract_xe_rate,
+        extract_yahoo_finance_quote,
         extract_amazon_current_price,
         extract_structured_bright_data,
         extract_linkedin_company_metric,
@@ -80,6 +85,29 @@ def extract_github_repo_metric(task: Task, text: str) -> ExtractedTruth | None:
         match = re.search(pattern, text, re.I)
         if match:
             return ExtractedTruth(value=match.group(1), evidence=clean_evidence(match.group(0)))
+    return None
+
+
+def extract_raw_json_version(task: Task, text: str) -> ExtractedTruth | None:
+    field = task.extract_field.lower()
+    if "version" not in field:
+        return None
+    if "raw.githubusercontent.com" in task.canonical_url:
+        match = re.search(r'"version"\s*:\s*"([^"]+)"', text)
+        if match:
+            return ExtractedTruth(
+                value=match.group(1),
+                evidence=clean_evidence(match.group(0)),
+                notes="Extracted version field from raw GitHub JSON file.",
+            )
+    if "pypi.org/pypi/" in task.canonical_url and task.canonical_url.rstrip("/").endswith("/json"):
+        match = re.search(r'"info"\s*:\s*\{[\s\S]{0,3000}?"version"\s*:\s*"([^"]+)"', text)
+        if match:
+            return ExtractedTruth(
+                value=match.group(1),
+                evidence=clean_evidence(match.group(0))[:500],
+                notes="Extracted info.version from PyPI JSON API.",
+            )
     return None
 
 
@@ -141,6 +169,79 @@ def extract_app_store(task: Task, text: str) -> ExtractedTruth | None:
     return None
 
 
+def extract_fred_latest_csv(task: Task, text: str) -> ExtractedTruth | None:
+    if "fred.stlouisfed.org/graph/fredgraph.csv" not in task.canonical_url:
+        return None
+    series = task.canonical_url.split("id=", 1)[-1].split("&", 1)[0].strip()
+    if not series:
+        return None
+    rows = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.lower().startswith("observation_date"):
+            continue
+        parts = [part.strip().strip('"') for part in line.split(",")]
+        if len(parts) < 2 or parts[1] in {"", "."}:
+            continue
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", parts[0]):
+            continue
+        if not re.fullmatch(r"-?\d+(?:\.\d+)?", parts[1]):
+            continue
+        rows.append((parts[0], parts[1]))
+    if not rows:
+        return None
+    date, value = rows[-1]
+    return ExtractedTruth(
+        value=value,
+        evidence=f"observation_date,{series} ... {date},{value}",
+        notes=f"Extracted the latest non-empty {series} observation from the FRED CSV endpoint.",
+    )
+
+
+def extract_nws_latest_observation(task: Task, text: str) -> ExtractedTruth | None:
+    if "api.weather.gov/stations/" not in task.canonical_url or "/observations/latest" not in task.canonical_url:
+        return None
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    props = payload.get("properties")
+    if not isinstance(props, dict):
+        return None
+    field = task.extract_field.lower()
+    if "temperature" in field:
+        container = props.get("temperature")
+        label = "temperature.value"
+        unit = "°C"
+    elif "wind speed" in field:
+        container = props.get("windSpeed")
+        label = "windSpeed.value"
+        unit = "km/h"
+    elif "humidity" in field:
+        container = props.get("relativeHumidity")
+        label = "relativeHumidity.value"
+        unit = "%"
+    else:
+        return None
+    if not isinstance(container, dict):
+        return None
+    raw = container.get("value")
+    if raw is None:
+        return None
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        return None
+    display = f"{value:.12g}"
+    timestamp = props.get("timestamp") or ""
+    station = task.canonical_url.split("/stations/", 1)[-1].split("/", 1)[0]
+    return ExtractedTruth(
+        value=display,
+        evidence=f'{station} latest observation {label}: {display} {unit}; timestamp: {timestamp}',
+        notes=f"Extracted {label} from the National Weather Service latest station observation JSON.",
+    )
+
+
 def extract_companies_market_cap(task: Task, text: str) -> ExtractedTruth | None:
     if "companiesmarketcap.com" not in task.canonical_url:
         return None
@@ -160,7 +261,7 @@ def extract_coinmarketcap_price(task: Task, text: str) -> ExtractedTruth | None:
             value = float(number)
         except ValueError:
             continue
-        if value < 10:
+        if value <= 0:
             continue
         start = max(0, match.start() - 80)
         end = min(len(text), match.end() + 80)
@@ -174,6 +275,49 @@ def extract_xe_rate(task: Task, text: str) -> ExtractedTruth | None:
     match = re.search(r"1(?:\.00)?\s+EUR\s*=\s*([0-9.]+)\s+USD", text, re.I)
     if match:
         return ExtractedTruth(value=match.group(1), evidence=clean_evidence(match.group(0)))
+    return None
+
+
+def extract_yahoo_finance_quote(task: Task, text: str) -> ExtractedTruth | None:
+    if "finance.yahoo.com/quote/" not in task.canonical_url:
+        return None
+    field = task.extract_field.lower()
+    if not any(token in field for token in ("price", "index value", "etf price")):
+        return None
+    symbol = task.canonical_url.rstrip("/").split("/quote/", 1)[-1].split("/", 1)[0]
+    symbol = symbol.replace("%5E", "^").replace("%5e", "^")
+    patterns = [
+        r'"regularMarketPrice"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'"chartPreviousClose"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'<fin-streamer[^>]+data-field=["\']regularMarketPrice["\'][^>]*>\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*</fin-streamer>',
+        r'<fin-streamer[^>]+data-symbol=["\']'
+        + re.escape(symbol)
+        + r'["\'][^>]+data-field=["\']regularMarketPrice["\'][^>]*>\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*</fin-streamer>',
+        rf'"symbol"\s*:\s*"{re.escape(symbol)}"[\s\S]{{0,2200}}?"regularMarketPrice"\s*:\s*\{{\s*"raw"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r'"regularMarketPrice"\s*:\s*\{\s*"raw"\s*:\s*([0-9]+(?:\.[0-9]+)?)',
+        r"regularMarketPrice[\s\S]{0,240}?raw['\"]?\s*[:=]\s*([0-9]+(?:\.[0-9]+)?)",
+        r"Last Price\s+([0-9]+(?:\.[0-9]+)?)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.I)
+        if not match:
+            continue
+        raw = match.group(1)
+        try:
+            number = float(raw)
+        except ValueError:
+            continue
+        if number <= 0:
+            continue
+        if number == 1.0 and symbol.upper() not in {"^VIX"}:
+            continue
+        display = f"${number:,.2f}" if "vix" not in task.question.lower() and "^vix" not in symbol.lower() else f"{number:,.2f}"
+        evidence = clean_evidence(text[max(0, match.start() - 160): min(len(text), match.end() + 160)])
+        return ExtractedTruth(
+            value=display,
+            evidence=evidence,
+            notes="Extracted Yahoo Finance regularMarketPrice from generic Bright Data scrape output.",
+        )
     return None
 
 
@@ -205,12 +349,20 @@ def extract_amazon_current_price(task: Task, text: str) -> ExtractedTruth | None
 
 def parse_structured_records(text: str) -> list[dict]:
     raw = text.strip()
+    if raw.startswith("STRUCTURED_CONTENT:"):
+        raw = raw.split("STRUCTURED_CONTENT:", 1)[1].strip()
+    start_candidates = [idx for idx in (raw.find("["), raw.find("{")) if idx != -1]
+    if start_candidates:
+        raw = raw[min(start_candidates):].strip()
     if not raw.startswith(("[", "{")):
         return []
     try:
         parsed = json.loads(raw)
     except json.JSONDecodeError:
-        return []
+        try:
+            parsed = ast.literal_eval(raw)
+        except Exception:
+            return []
     if isinstance(parsed, dict):
         return [parsed]
     if isinstance(parsed, list):
@@ -236,11 +388,31 @@ def first_present(record: dict, keys: tuple[str, ...]) -> tuple[str, object] | N
     return None
 
 
+def record_is_error(record: dict) -> bool:
+    return any(key in record for key in ("error", "error_code")) and not any(
+        key in record
+        for key in (
+            "title",
+            "name",
+            "price",
+            "rating",
+            "followers",
+            "subscribers",
+            "downloads",
+            "version",
+            "num_lines",
+            "score",
+        )
+    )
+
+
 def extract_structured_bright_data(task: Task, text: str) -> ExtractedTruth | None:
     records = parse_structured_records(text)
     if not records:
         return None
     record = records[0]
+    if record_is_error(record):
+        return None
     field = task.extract_field.lower()
 
     if task.bd_tool == "web_data_linkedin_company_profile":
@@ -307,9 +479,42 @@ def extract_structured_bright_data(task: Task, text: str) -> ExtractedTruth | No
                         evidence=f'"{key}":{value}',
                         notes="Extracted structured YouTube subscriber count from Bright Data.",
                     )
+        if "video" in field and "count" in field:
+            found = first_present(record, ("videos_count", "video_count", "videos"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes="Extracted structured YouTube video count from Bright Data.",
+                    )
+        if "view" in field:
+            found = first_present(record, ("views", "view_count", "total_views"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes="Extracted structured YouTube total views from Bright Data.",
+                    )
 
     if task.bd_tool == "web_data_github_repository_file":
         code = record.get("code")
+        if "line" in field and "count" in field:
+            found = first_present(record, ("num_lines", "lines", "line_count"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes="Extracted structured GitHub repository file line count from Bright Data.",
+                    )
         if isinstance(code, list):
             joined = "\n".join(str(line) for line in code)
             match = re.search(r'"version"\s*:\s*"([^"]+)"', joined)
@@ -320,9 +525,127 @@ def extract_structured_bright_data(task: Task, text: str) -> ExtractedTruth | No
                     notes="Extracted version field from structured Bright Data GitHub repository file content.",
                 )
 
-    if task.bd_tool in {"web_data_bestbuy_products", "web_data_walmart_product", "web_data_ebay_product"}:
+    if task.bd_tool in {"web_data_npm_package", "web_data_pypi_package"}:
+        if "version" in field:
+            found = first_present(
+                record,
+                (
+                    "version",
+                    "latest_version",
+                    "current_version",
+                    "package_version",
+                    "release_version",
+                ),
+            )
+            if found:
+                key, raw = found
+                value = clean_value(str(raw))
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":"{value}"',
+                    notes=f"Extracted structured {key} package version from Bright Data package data.",
+                )
+        if "download" in field:
+            found = first_present(
+                record,
+                (
+                    "weekly_downloads",
+                    "downloads",
+                    "downloads_weekly",
+                    "last_week_downloads",
+                    "downloads_last_month",
+                ),
+            )
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{raw}',
+                        notes=f"Extracted structured {key} package download count from Bright Data package data.",
+                    )
+
+    if task.bd_tool == "web_data_youtube_videos":
+        if "view" in field:
+            found = first_present(record, ("views", "view_count", "video_views"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes="Extracted structured YouTube video view count from Bright Data.",
+                    )
+        if "like" in field:
+            found = first_present(record, ("likes", "like_count", "video_likes"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes="Extracted structured YouTube video like count from Bright Data.",
+                    )
+
+    if task.bd_tool in {"web_data_reddit_posts", "web_data_x_posts"}:
+        if "comment" in field:
+            found = first_present(record, ("comments", "comments_count", "comment_count", "replies"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes=f"Extracted structured {key} comment count from Bright Data social post data.",
+                    )
+        if "score" in field or "upvote" in field or "like" in field:
+            found = first_present(record, ("score", "upvotes", "likes", "favorite_count", "like_count"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes=f"Extracted structured {key} engagement count from Bright Data social post data.",
+                    )
+        if "title" in field:
+            found = first_present(record, ("title", "text", "content"))
+            if found:
+                key, raw = found
+                value = clean_value(str(raw))
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":"{value}"',
+                    notes=f"Extracted structured {key} text field from Bright Data social post data.",
+                )
+
+    product_tools = {
+        "web_data_bestbuy_products",
+        "web_data_walmart_product",
+        "web_data_ebay_product",
+        "web_data_homedepot_products",
+        "web_data_zara_products",
+        "web_data_etsy_products",
+    }
+    if task.bd_tool in product_tools:
         if "price" in field:
-            found = first_present(record, ("final_price", "sale_price", "price", "current_price"))
+            found = first_present(
+                record,
+                (
+                    "final_price",
+                    "sale_price",
+                    "price",
+                    "current_price",
+                    "product_price",
+                    "offer_price",
+                    "discounted_price",
+                ),
+            )
             if found:
                 key, raw = found
                 value = clean_number_field(raw)
@@ -332,6 +655,119 @@ def extract_structured_bright_data(task: Task, text: str) -> ExtractedTruth | No
                         evidence=f'"{key}":{raw}',
                         notes=f"Extracted structured {key} price field from Bright Data product data.",
                     )
+        if "rating" in field:
+            found = first_present(record, ("rating", "product_rating", "average_rating", "stars", "review_rating"))
+            if found:
+                key, raw = found
+                value = clean_number_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{raw}',
+                        notes=f"Extracted structured {key} rating field from Bright Data product data.",
+                    )
+        if "review" in field and "count" in field:
+            found = first_present(record, ("reviews_count", "review_count", "reviews", "rating_count", "ratings_count"))
+            if found:
+                key, raw = found
+                value = clean_integer_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{value}',
+                        notes=f"Extracted structured {key} review-count field from Bright Data product data.",
+                    )
+
+    if task.bd_tool in {"web_data_crunchbase_company", "web_data_zoominfo_company_profile"}:
+        if "employee" in field:
+            found = first_present(
+                record,
+                (
+                    "employees",
+                    "employee_count",
+                    "employees_count",
+                    "num_employees",
+                    "company_size",
+                    "size",
+                ),
+            )
+            if found:
+                key, raw = found
+                value = clean_value(str(raw))
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":"{value}"',
+                    notes=f"Extracted structured {key} company-size field from Bright Data business data.",
+                )
+        if "founded" in field:
+            found = first_present(record, ("founded", "founded_date", "founded_year", "year_founded"))
+            if found:
+                key, raw = found
+                value = clean_value(str(raw))
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":"{value}"',
+                    notes=f"Extracted structured {key} founded field from Bright Data business data.",
+                )
+
+    if task.bd_tool == "web_data_booking_hotel_listings":
+        if "review" in field and ("score" in field or "rating" in field):
+            found = first_present(record, ("review_score", "rating", "score", "hotel_rating"))
+            if found:
+                key, raw = found
+                value = clean_number_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=value,
+                        evidence=f'"{key}":{raw}',
+                        notes=f"Extracted structured {key} hotel review score from Bright Data booking data.",
+                    )
+        if "price" in field:
+            found = first_present(record, ("price", "current_price", "final_price", "min_price"))
+            if found:
+                key, raw = found
+                value = clean_number_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=f"${float(value):,.2f}",
+                        evidence=f'"{key}":{raw}',
+                        notes=f"Extracted structured {key} hotel price from Bright Data booking data.",
+                    )
+
+    if task.bd_tool == "web_data_zillow_properties_listing":
+        if "price" in field:
+            found = first_present(record, ("price", "zestimate", "home_value", "rent_zestimate"))
+            if found:
+                key, raw = found
+                value = clean_number_field(raw)
+                if value:
+                    return ExtractedTruth(
+                        value=f"${float(value):,.0f}",
+                        evidence=f'"{key}":{raw}',
+                        notes=f"Extracted structured {key} property value from Bright Data Zillow data.",
+                    )
+
+    if task.bd_tool in {"web_data_reuter_news", "web_data_reuters_news"}:
+        if "headline" in field or "title" in field:
+            found = first_present(record, ("title", "headline", "article_title"))
+            if found:
+                key, raw = found
+                value = clean_value(str(raw))
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":"{value}"',
+                    notes=f"Extracted structured {key} headline from Bright Data Reuters data.",
+                )
+        if "published" in field or "date" in field:
+            found = first_present(record, ("published_at", "published_date", "date", "article_date"))
+            if found:
+                key, raw = found
+                value = clean_value(str(raw))
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":"{value}"',
+                    notes=f"Extracted structured {key} publish date from Bright Data Reuters data.",
+                )
 
     if task.bd_tool == "web_data_amazon_product" and "price" in field:
         found = first_present(record, ("final_price", "buybox_price", "price", "current_price", "deal_price"))
@@ -343,6 +779,28 @@ def extract_structured_bright_data(task: Task, text: str) -> ExtractedTruth | No
                     value=f"${float(value):,.2f}",
                     evidence=f'"{key}":{raw}',
                     notes=f"Extracted structured {key} price field from Bright Data Amazon product data.",
+                )
+    if task.bd_tool == "web_data_amazon_product" and "rating" in field:
+        found = first_present(record, ("rating", "product_rating", "average_rating", "stars", "review_rating"))
+        if found:
+            key, raw = found
+            value = clean_number_field(raw)
+            if value:
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":{raw}',
+                    notes=f"Extracted structured {key} rating field from Bright Data Amazon product data.",
+                )
+    if task.bd_tool == "web_data_amazon_product" and "review" in field and "count" in field:
+        found = first_present(record, ("reviews_count", "review_count", "ratings_count", "rating_count", "reviews"))
+        if found:
+            key, raw = found
+            value = clean_integer_field(raw)
+            if value:
+                return ExtractedTruth(
+                    value=value,
+                    evidence=f'"{key}":{value}',
+                    notes=f"Extracted structured {key} review-count field from Bright Data Amazon product data.",
                 )
 
     return None
