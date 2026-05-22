@@ -340,7 +340,3 @@ curl -X POST http://127.0.0.1:8790/api/evaluations \
     "refresh_ground_truth": true
   }'
 ```
-
-## License
-
-No license has been added yet. Treat this repository as all rights reserved unless a license file is added.
