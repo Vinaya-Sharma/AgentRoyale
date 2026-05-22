@@ -1464,19 +1464,26 @@ async function loadLiveChecks(){
         return Number.isFinite(createdMs)&&createdMs>=RECENT_LIVE_CHECKS_SINCE_MS;
       })
       .sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at));
-    $("liveCheckHistory").innerHTML=recent.length?recent.map(check=>`
-      <div class="task-card clickable" data-live-check="${esc(check.check_id)}">
-        <div class="task-id">${esc(check.task.id)} · ${new Date(check.created_at).toLocaleString()}</div>
-        <div class="task-q">${esc(check.task.question)}</div>
-        <div class="chips"><span class="chip">ground truth: ${esc(check.ground_truth.value)}</span><span class="chip diff">${check.runs.filter(r=>r.passed).length}/${check.runs.length} passed</span></div>
-      </div>`).join(""):`<div class="empty">No live checks since May 21 at 2:00 PM PT.</div>`;
-    document.querySelectorAll("[data-live-check]").forEach(el=>el.addEventListener("click",()=>{
-      const check=state.liveChecks.find(item=>item.check_id===el.dataset.liveCheck);
-      if(check) renderEvaluation(check);
-    }));
+    $("liveCheckHistory").innerHTML=recent.length?recent.map(renderLiveCheckHistoryItem).join(""):`<div class="empty">No live checks since May 21 at 2:00 PM PT.</div>`;
   }catch(e){
     $("liveCheckHistory").innerHTML=`<div class="empty">Could not load recent live checks.</div>`;
   }
+}
+function renderLiveCheckHistoryItem(check){
+  const passed=check.runs.filter(r=>r.passed).length;
+  return `<details class="compact-run live-check-detail">
+    <summary>
+      <strong>${esc(check.task.id)}</strong> · ${esc(formatDate(check.created_at))} · <span class="badge ${passed===check.runs.length?"pass":"fail"}">${passed}/${check.runs.length} passed</span>
+      <div class="task-q" style="margin-top:8px">${esc(check.task.question)}</div>
+      <div class="chips"><span class="chip">ground truth: ${esc(check.ground_truth.value)}</span><span class="chip diff">${esc(formatTopic(check.task.domain))}</span></div>
+    </summary>
+    <div class="gt">
+      <div class="label">Live ground truth</div>
+      <div class="gtv">${esc(check.ground_truth.value)}</div>
+      <div class="gtn">${esc(check.task.canonical_url)} · fetched ${new Date(check.ground_truth.fetched_at).toLocaleString()} · confidence ${esc(check.ground_truth.extraction_confidence)}</div>
+    </div>
+    <div class="live-result-grid">${check.runs.map(run=>renderRun(run,{title:modelLabel(run.model)})).join("")}</div>
+  </details>`;
 }
 function renderLeaderboard(rows,domain="all"){
   const max=Math.max(...rows.map(r=>r.live_exact_accuracy),.01);
