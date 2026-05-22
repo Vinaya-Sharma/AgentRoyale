@@ -280,7 +280,7 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
         <div id="evalOut"></div>
         <div class="section-title">
           <div class="label">Recent live checks</div>
-          <div id="liveCheckHistory"><div class="empty">No live checks yet.</div></div>
+          <div id="liveCheckHistory"><div class="empty">Loading recent live checks...</div></div>
         </div>
       </main>
     </div>
@@ -1474,7 +1474,9 @@ async function loadLiveChecks(){
       const check=state.liveChecks.find(item=>item.check_id===el.dataset.liveCheck);
       if(check) renderEvaluation(check);
     }));
-  }catch{}
+  }catch(e){
+    $("liveCheckHistory").innerHTML=`<div class="empty">Could not load recent live checks.</div>`;
+  }
 }
 function renderLeaderboard(rows,domain="all"){
   const max=Math.max(...rows.map(r=>r.live_exact_accuracy),.01);
