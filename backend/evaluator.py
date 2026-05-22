@@ -208,8 +208,10 @@ async def run_model_on_task(
     for attempt in range(1, max_attempts + 1):
         trace: list[TraceStep] = []
         try:
+            model_messages = build_model_answer_messages(task)
+            prompt_text = "\n".join(message.get("content", "") for message in model_messages)
             response = await asyncio.wait_for(
-                complete_model_search(task, model),
+                complete_model_search(task, model, messages=model_messages),
                 timeout=model_timeout,
             )
             answer, citations, search_requests, has_search_request_count = parse_search_response(response)
@@ -273,7 +275,7 @@ async def run_model_on_task(
                 trace=trace,
                 tool_calls=tool_calls,
                 latency_ms=latency_ms,
-                estimated_cost_usd=estimate_cost(model, "", answer, tool_calls),
+                estimated_cost_usd=estimate_cost(model, prompt_text, answer, tool_calls),
                 created_at=now_iso(),
             )
             break
@@ -322,8 +324,13 @@ async def evaluate_models(
     return ground_truth, runs
 
 
-async def complete_model_search(task: Task, model: str) -> dict:
-    messages = build_model_answer_messages(task)
+async def complete_model_search(
+    task: Task,
+    model: str,
+    *,
+    messages: list[dict[str, str]] | None = None,
+) -> dict:
+    messages = messages or build_model_answer_messages(task)
     if model.startswith("perplexity/"):
         return await complete_raw_chat(messages, model=model)
     return await complete_with_web_search(messages, model=model)
@@ -372,18 +379,69 @@ def citations_verify_retrieval(citations: list[dict], canonical_url: str) -> boo
     return False
 
 
+OPENROUTER_PRICE_PER_TOKEN: dict[str, dict[str, float]] = {
+    # Official OpenRouter /api/v1/models pricing checked May 21, 2026.
+    # Values are USD per token, not per 1K or 1M tokens.
+    "openai/gpt-4o": {"prompt": 0.0000025, "completion": 0.00001},
+    "openai/gpt-4o-mini": {"prompt": 0.00000015, "completion": 0.0000006},
+    "google/gemini-3.1-flash-lite": {
+        "prompt": 0.00000025,
+        "completion": 0.0000015,
+        "web_search": 0.014,
+    },
+    "anthropic/claude-opus-4.7": {
+        "prompt": 0.000005,
+        "completion": 0.000025,
+        "web_search": 0.01,
+    },
+    "perplexity/sonar-pro-search": {
+        "prompt": 0.000003,
+        "completion": 0.000015,
+        "web_search": 0.018,
+    },
+    "google/gemini-2.5-pro": {
+        "prompt": 0.00000125,
+        "completion": 0.00001,
+        "web_search": 0.014,
+    },
+    "anthropic/claude-sonnet-4.6": {
+        "prompt": 0.000003,
+        "completion": 0.000015,
+        "web_search": 0.01,
+    },
+    "x-ai/grok-4.3": {
+        "prompt": 0.00000125,
+        "completion": 0.0000025,
+        "web_search": 0.005,
+    },
+    "openai/gpt-oss-120b": {"prompt": 0.000000039, "completion": 0.00000018},
+    "deepseek/deepseek-v4-flash": {
+        "prompt": 0.000000112,
+        "completion": 0.000000224,
+    },
+    "perplexity/sonar-deep-research": {
+        "prompt": 0.000002,
+        "completion": 0.000008,
+        "web_search": 0.005,
+    },
+    "nvidia/nemotron-3-super-120b-a12b": {
+        "prompt": 0.00000009,
+        "completion": 0.00000045,
+    },
+}
+
+DEFAULT_SEARCH_REQUEST_USD = 0.005
+
+
 def estimate_cost(model: str, source: str, answer: str, search_requests: int = 0) -> float:
-    # OpenRouter pricing varies by model and changes over time. This MVP stores
-    # a transparent rough estimate until provider billing ingestion is added.
-    chars = len(source) + len(answer)
-    approx_tokens = max(chars / 4, 1)
-    if "gpt-4o" in model:
-        per_1k = 0.005
-    elif "claude" in model:
-        per_1k = 0.006
-    elif "gemini" in model:
-        per_1k = 0.002
-    else:
-        per_1k = 0.003
-    search_cost = search_requests * 0.005
-    return round((approx_tokens / 1000) * per_1k + search_cost, 5)
+    # Directional estimate only. V1 did not persist OpenRouter usage.cost or token counts,
+    # so this approximates tokens from text length and applies current model-specific pricing.
+    pricing = OPENROUTER_PRICE_PER_TOKEN.get(model, {})
+    prompt_price = pricing.get("prompt", 0.000003)
+    completion_price = pricing.get("completion", 0.000003)
+    search_price = pricing.get("web_search", DEFAULT_SEARCH_REQUEST_USD)
+    prompt_tokens = max(len(source) / 4, 1)
+    completion_tokens = max(len(answer) / 4, 1)
+    token_cost = prompt_tokens * prompt_price + completion_tokens * completion_price
+    search_cost = max(search_requests, 0) * search_price
+    return round(token_cost + search_cost, 5)

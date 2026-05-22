@@ -88,25 +88,6 @@ class LiveCheck(BaseModel):
     created_at: str
 
 
-class VoteRequest(BaseModel):
-    task_id: str
-    left_run_id: str
-    right_run_id: str
-    vote: Literal["left", "right", "tie"]
-    left_ideal: bool = False
-    right_ideal: bool = False
-
-
-class Vote(BaseModel):
-    task_id: str
-    left_run_id: str
-    right_run_id: str
-    vote: Literal["left", "right", "tie"]
-    left_ideal: bool = False
-    right_ideal: bool = False
-    created_at: str
-
-
 class LeaderboardRow(BaseModel):
     model: str
     total_runs: int

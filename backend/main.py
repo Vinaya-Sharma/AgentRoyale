@@ -13,13 +13,13 @@ from fastapi.staticfiles import StaticFiles
 from backend.config import APP_DIR, get_settings
 from backend.batch import run_batch_collect
 from backend.evaluator import evaluate_models, refresh_ground_truth
-from backend.models import BatchRequest, ConfigResponse, EvaluationRequest, EvaluationResponse, LiveCheck, Vote, VoteRequest
-from backend.store import build_leaderboard, latest_ground_truth_by_task, list_correct_runs_by_task, list_live_checks, list_runs, list_votes, now_iso, save_live_check, save_vote
+from backend.models import BatchRequest, ConfigResponse, EvaluationRequest, EvaluationResponse, LiveCheck
+from backend.store import build_leaderboard, latest_ground_truth_by_task, list_live_checks, list_runs, now_iso, save_live_check
 from backend.task_bank import get_excluded_tasks, get_task, get_tasks
 
 
 # Launch note:
-# The public v1 site intentionally presents a frozen 43-task slice computed in
+# The public v1 site intentionally presents a frozen 32-task launch set computed in
 # the frontend from complete model coverage. Some backend endpoints still expose
 # broader development data and utilities used during benchmark construction.
 # Treat those as internal/debug surfaces unless they are explicitly wired into
@@ -149,8 +149,8 @@ async def leaderboard() -> list[dict]:
 @app.get("/api/results.csv")
 async def results_csv() -> Response:
     # Internal/dev export. The launch UI hides this endpoint because it is based
-    # on the broader backend leaderboard, not the frontend's frozen 43-task v1
-    # slice.
+    # on the broader backend leaderboard, not the frontend's frozen 32-task v1
+    # launch set.
     rows = build_leaderboard()
     fieldnames = [
         "rank",
@@ -194,40 +194,6 @@ async def batch_runs(req: BatchRequest) -> dict:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
 
-@app.get("/api/arena/pairs")
-async def arena_pairs() -> list[dict]:
-    tasks_by_id = {task.id: task for task in get_tasks()}
-    pairs: list[dict] = []
-    for task_id, runs in list_correct_runs_by_task().items():
-        unique: list = []
-        seen_models: set[str] = set()
-        for run in reversed(runs):
-            if run.model in seen_models:
-                continue
-            seen_models.add(run.model)
-            unique.append(run)
-            if len(unique) == 2:
-                break
-        if len(unique) < 2:
-            continue
-        task = tasks_by_id.get(task_id)
-        if not task:
-            continue
-        pairs.append(
-            {
-                "task": task.model_dump(),
-                "left": unique[0].model_dump(),
-                "right": unique[1].model_dump(),
-            }
-        )
-    return pairs
-
-
-@app.get("/api/votes")
-async def votes() -> list[dict]:
-    return [vote.model_dump() for vote in list_votes()]
-
-
 @app.get("/api/ground-truth-audit")
 async def ground_truth_audit() -> list[dict]:
     storage_dir = APP_DIR / "storage"
@@ -257,13 +223,6 @@ def _audit_priority(row: dict) -> int:
     if status:
         return 1
     return 0
-
-
-@app.post("/api/votes")
-async def vote(req: VoteRequest) -> dict:
-    item = Vote(**req.model_dump(), created_at=now_iso())
-    save_vote(item)
-    return item.model_dump()
 
 
 if frontend_dir.exists():

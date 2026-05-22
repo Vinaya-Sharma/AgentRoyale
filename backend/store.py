@@ -8,7 +8,7 @@ from statistics import mean, pstdev
 from typing import Any
 
 from backend.config import get_settings
-from backend.models import GroundTruth, LeaderboardRow, LiveCheck, ModelRun, Vote
+from backend.models import GroundTruth, LeaderboardRow, LiveCheck, ModelRun
 from backend.task_bank import get_official_task_ids
 
 
@@ -59,28 +59,12 @@ def save_live_check(item: LiveCheck) -> None:
     append_jsonl("live_checks.jsonl", item.model_dump())
 
 
-def save_vote(item: Vote) -> None:
-    append_jsonl("votes.jsonl", item.model_dump())
-
-
 def list_runs() -> list[ModelRun]:
     return [ModelRun.model_validate(row) for row in read_jsonl("runs.jsonl")]
 
 
 def list_live_checks() -> list[LiveCheck]:
     return [LiveCheck.model_validate(row) for row in read_jsonl("live_checks.jsonl")]
-
-
-def list_votes() -> list[Vote]:
-    return [Vote.model_validate(row) for row in read_jsonl("votes.jsonl")]
-
-
-def list_correct_runs_by_task() -> dict[str, list[ModelRun]]:
-    grouped: dict[str, list[ModelRun]] = defaultdict(list)
-    for run in list_runs():
-        if run.passed and not run.error:
-            grouped[run.task_id].append(run)
-    return grouped
 
 
 def latest_ground_truth_by_task() -> dict[str, GroundTruth]:
@@ -94,8 +78,8 @@ def latest_ground_truth_by_task() -> dict[str, GroundTruth]:
 def build_leaderboard() -> list[LeaderboardRow]:
     # Development leaderboard over all currently official tasks. The public v1
     # site computes its launch leaderboard in the frontend from the frozen
-    # 43-task complete-coverage slice, so do not use this function as the v1
-    # public scoreboard without applying the same slice.
+    # 32-task public launch set, so do not use this function as the v1
+    # public scoreboard without applying the same task filter.
     settings = get_settings()
     default_models = set(settings.default_models)
     official_task_ids = get_official_task_ids()
