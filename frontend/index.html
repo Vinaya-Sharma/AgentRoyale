@@ -600,6 +600,7 @@ const PUBLIC_V1_TASK_IDS=[
 const PUBLIC_V1_TASK_ID_SET=new Set(PUBLIC_V1_TASK_IDS);
 const LIVE_CHECK_LIMIT=2;
 const LIVE_CHECK_COUNT_KEY="agentRoyaleLiveCheckCount";
+const RECENT_LIVE_CHECKS_SINCE_MS=Date.UTC(2026,4,21,21,0,0);
 const LIVE_CHECK_DISABLED_MODELS=new Set([
   "anthropic/claude-sonnet-4.6",
   "anthropic/claude-opus-4.7",
@@ -1457,13 +1458,18 @@ async function loadLiveChecks(){
   try{
     const checks=await api("/api/live-checks");
     state.liveChecks=checks;
-    const recent=checks.slice(-5).reverse();
+    const recent=checks
+      .filter(check=>{
+        const createdMs=Date.parse(check.created_at);
+        return Number.isFinite(createdMs)&&createdMs>=RECENT_LIVE_CHECKS_SINCE_MS;
+      })
+      .sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at));
     $("liveCheckHistory").innerHTML=recent.length?recent.map(check=>`
       <div class="task-card clickable" data-live-check="${esc(check.check_id)}">
         <div class="task-id">${esc(check.task.id)} · ${new Date(check.created_at).toLocaleString()}</div>
         <div class="task-q">${esc(check.task.question)}</div>
         <div class="chips"><span class="chip">ground truth: ${esc(check.ground_truth.value)}</span><span class="chip diff">${check.runs.filter(r=>r.passed).length}/${check.runs.length} passed</span></div>
-      </div>`).join(""):`<div class="empty">No live checks yet.</div>`;
+      </div>`).join(""):`<div class="empty">No live checks since May 21 at 2:00 PM PT.</div>`;
     document.querySelectorAll("[data-live-check]").forEach(el=>el.addEventListener("click",()=>{
       const check=state.liveChecks.find(item=>item.check_id===el.dataset.liveCheck);
       if(check) renderEvaluation(check);
