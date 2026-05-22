@@ -2,6 +2,8 @@
 
 **Evaluating AI stacks in live-web environments.**
 
+Live site: https://agentroyale.onrender.com/
+
 Agent Royale is a live-web retrieval benchmark for AI search systems. I built it to test one narrow question:
 
 > Can AI search stacks retrieve exact, current values from the public web when the answer has to match a specific source?
