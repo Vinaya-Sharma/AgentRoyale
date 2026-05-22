@@ -18,6 +18,8 @@
 !backend/*.py
 !frontend/
 !frontend/index.html
+!frontend/assets/
+!frontend/assets/**
 
 # Final task bank
 !data/
