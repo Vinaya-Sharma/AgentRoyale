@@ -150,45 +150,45 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
     <div class="landing-grid">
       <div class="landing-card">
         <div class="landing-icon">01</div>
-        <h3>Task Bank Creation</h3>
-        <p>Each question has a required source, field, and grading rule. The answers change over time, so models cannot rely on memorized static answer keys.</p>
+        <h3>Task Construction</h3>
+        <p>Each task specifies a required canonical source, a target field, a tolerance, and a grading rule. Answers are live and change over time.</p>
         <hr>
-        <p>Examples: “Using Yahoo Finance, what is NVDA’s current regular-market quote price in USD?” or “On the Hacker News front page right now, what is the title of the #1 ranked story?”</p>
+        <p>Example tasks: "Using Yahoo Finance, what is NVDA's current regular-market quote price in USD?" and "On the Hacker News front page, what is the title of the #1 ranked story?"</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">02</div>
         <h3>Model Selection</h3>
-        <p>I chose a mix of consumer flagships, search-first models, efficient models, and open-weight-style stacks.</p>
+        <p>The evaluation included consumer flagships, search-augmented models, efficient models, and open-weight-style stacks — twelve configurations in total.</p>
         <hr>
-        <p>Each stack ran the same task bank three times so I could see whether it was consistently correct or just occasionally lucky.</p>
+        <p>Each stack was run three times per task to distinguish consistent accuracy from single-run chance correctness.</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">03</div>
-        <h3>Grading</h3>
-        <p>I normalized answers and applied task-specific grading rules before scoring each run for exact accuracy.</p>
+        <h3>Grading Protocol</h3>
+        <p>Answers were normalized and graded against independently fetched source values using task-specific rules.</p>
         <hr>
-        <p>I did not use an LLM judge because that would add another layer of subjective interpretation. A judge model might reward a plausible explanation, forgive an approximate value, or miss that the model answered with the wrong field. For this benchmark, I wanted the grading to be stricter: the extracted claim either matches the independently fetched value or it does not.</p>
+        <p>An LLM judge was deliberately excluded to prevent leniency toward plausible but incorrect values. The extracted claim either matches the independently fetched value or it does not.</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">04</div>
-        <h3>Additional Metrics</h3>
-        <p>I logged source matching, citation behavior, estimated cost, latency, and consistency across repeated runs.</p>
+        <h3>Secondary Metrics</h3>
+        <p>Source matching, citation behavior, estimated cost per run, latency, and cross-run consistency were logged for each model stack.</p>
         <hr>
-        <p>Those metrics help builders make decisions based on what they value: accuracy, speed, price, reliability, or lowest risk of false information.</p>
+        <p>These allow practitioners to make stack selection decisions across multiple dimensions beyond raw accuracy.</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">05</div>
-        <h3>Keep In Mind</h3>
-        <p>This is one v1 run, not a universal ranking of every model forever. The public task bank has 32 questions, and the domain mix is uneven.</p>
+        <h3>Limitations</h3>
+        <p>This is a single v1 run on a 32-question task bank with an uneven domain distribution. Results should not be interpreted as a permanent ranking of model capability.</p>
         <hr>
-        <p>My goal is to run another experiment within the next week with a larger task bank but smaller contestant stack: Grok 4, Sonar Pro Search, Gemini Pro, Nemotron 3 Super, DeepSeek V4 Flash, GPT-4o, Claude Sonnet, and Gemini Flash Lite.</p>
+        <p>A follow-up evaluation (v2) is planned with a larger and more balanced task bank, a refined ground-truth pipeline, and a smaller set of stacks evaluated more rigorously.</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">06</div>
-        <h3>What’s Next</h3>
-        <p>V2 will be out soon with a larger and more balanced task bank, a new ground-truth pipeline, accurate cost logging, stronger citation verification, clearer failure labels, and a smaller set of models tested more rigorously.</p>
+        <h3>Future Work</h3>
+        <p>V2 will expand the task bank, improve domain balance, introduce accurate cost logging, and add stronger citation verification and failure categorisation.</p>
         <hr>
-        <p>The goal is to turn Agent Royale from a one-off experiment into a decision tool for teams choosing AI search and retrieval stacks.</p>
+        <p>The longer-term goal is a continuously updated evaluation resource for practitioners selecting AI search and retrieval infrastructure.</p>
       </div>
     </div>
   </div>
