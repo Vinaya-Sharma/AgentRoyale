@@ -198,6 +198,17 @@ Planned improvements:
 
 The goal is to turn Agent Royale from a one-off experiment into a decision tool for teams choosing AI search and retrieval stacks.
 
+## Contact
+
+I built Agent Royale as a starting point for testing AI retrieval stacks against the task banks that actually matter to a team.
+
+If you want to test your own source-specific questions, reach out:
+
+```text
+Vinaya Sharma
+vinayasharma00@gmail.com
+```
+
 ## Tech Stack
 
 - **Backend**: Python, FastAPI, Uvicorn, Pydantic
