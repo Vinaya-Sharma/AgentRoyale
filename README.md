@@ -271,6 +271,27 @@ BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 AGENT_ARENA_SEARCH_ENGINE=native
 ```
 
+Optional Supabase persistence for public Live Check history:
+
+```bash
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+Create this table in Supabase:
+
+```sql
+create table if not exists public.live_checks (
+  check_id text primary key,
+  created_at timestamptz not null,
+  task_id text not null,
+  payload jsonb not null
+);
+
+create index if not exists live_checks_created_at_idx
+  on public.live_checks (created_at desc);
+```
+
 Optional model override:
 
 ```bash

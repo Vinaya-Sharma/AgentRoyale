@@ -7,6 +7,8 @@ from pathlib import Path
 from statistics import mean, pstdev
 from typing import Any
 
+import httpx
+
 from backend.config import get_settings
 from backend.models import GroundTruth, LeaderboardRow, LiveCheck, ModelRun
 from backend.task_bank import get_official_task_ids
@@ -47,6 +49,60 @@ def read_jsonl(name: str) -> list[dict[str, Any]]:
     return rows
 
 
+def _supabase_live_checks_enabled() -> bool:
+    settings = get_settings()
+    return bool(settings.supabase_url and settings.supabase_service_key)
+
+
+def _supabase_headers() -> dict[str, str]:
+    settings = get_settings()
+    return {
+        "apikey": settings.supabase_service_key,
+        "Authorization": f"Bearer {settings.supabase_service_key}",
+        "Content-Type": "application/json",
+    }
+
+
+def _supabase_live_checks_url() -> str:
+    settings = get_settings()
+    return f"{settings.supabase_url}/rest/v1/live_checks"
+
+
+def save_live_check_to_supabase(payload: dict[str, Any]) -> None:
+    if not _supabase_live_checks_enabled():
+        return
+    body = {
+        "check_id": payload["check_id"],
+        "created_at": payload["created_at"],
+        "task_id": payload.get("task", {}).get("id", ""),
+        "payload": payload,
+    }
+    headers = {
+        **_supabase_headers(),
+        "Prefer": "resolution=merge-duplicates,return=minimal",
+    }
+    with httpx.Client(timeout=10) as client:
+        response = client.post(_supabase_live_checks_url(), headers=headers, json=body)
+        response.raise_for_status()
+
+
+def read_live_checks_from_supabase() -> list[dict[str, Any]]:
+    if not _supabase_live_checks_enabled():
+        return []
+    params = {
+        "select": "payload",
+        "order": "created_at.asc",
+    }
+    with httpx.Client(timeout=10) as client:
+        response = client.get(
+            _supabase_live_checks_url(),
+            headers=_supabase_headers(),
+            params=params,
+        )
+        response.raise_for_status()
+    return [row["payload"] for row in response.json() if row.get("payload")]
+
+
 def save_ground_truth(item: GroundTruth) -> None:
     append_jsonl("ground_truth.jsonl", item.model_dump())
 
@@ -56,7 +112,13 @@ def save_run(item: ModelRun) -> None:
 
 
 def save_live_check(item: LiveCheck) -> None:
-    append_jsonl("live_checks.jsonl", item.model_dump())
+    payload = item.model_dump()
+    append_jsonl("live_checks.jsonl", payload)
+    try:
+        save_live_check_to_supabase(payload)
+    except Exception:
+        # Do not fail the public demo after the expensive live check has completed.
+        pass
 
 
 def list_runs() -> list[ModelRun]:
@@ -64,7 +126,13 @@ def list_runs() -> list[ModelRun]:
 
 
 def list_live_checks() -> list[LiveCheck]:
-    return [LiveCheck.model_validate(row) for row in read_jsonl("live_checks.jsonl")]
+    try:
+        rows = read_live_checks_from_supabase()
+    except Exception:
+        rows = []
+    if not rows:
+        rows = read_jsonl("live_checks.jsonl")
+    return [LiveCheck.model_validate(row) for row in rows]
 
 
 def latest_ground_truth_by_task() -> dict[str, GroundTruth]:

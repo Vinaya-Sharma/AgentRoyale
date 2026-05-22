@@ -41,6 +41,8 @@ class Settings:
     frontend_origins: tuple[str, ...]
     data_path: Path
     storage_dir: Path
+    supabase_url: str
+    supabase_service_key: str
 
     @property
     def bright_data_mcp_url_with_token(self) -> str:
@@ -104,4 +106,7 @@ def get_settings() -> Settings:
         frontend_origins=tuple(dict.fromkeys(origins)),
         data_path=Path(os.getenv("AGENT_ARENA_TASKS_PATH", APP_DIR / "data" / "tasks.csv")),
         storage_dir=Path(os.getenv("AGENT_ARENA_STORAGE_DIR", APP_DIR / "storage")),
+        supabase_url=os.getenv("SUPABASE_URL", "").rstrip("/"),
+        supabase_service_key=os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+        or os.getenv("SUPABASE_SECRET_KEY", ""),
     )
