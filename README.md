@@ -206,12 +206,8 @@ The goal is to turn Agent Royale from a one-off experiment into a decision tool 
 
 I built Agent Royale as a starting point for testing AI retrieval stacks against the task banks that actually matter to a team.
 
-If you want to test your own source-specific questions, reach out:
+If you want to test your own source-specific questions, reach out at vinayasharma00@gmail.com. 
 
-```text
-Vinaya Sharma
-vinayasharma00@gmail.com
-```
 
 ## Tech Stack
 
