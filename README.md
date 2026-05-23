@@ -4,23 +4,25 @@
 
 Live site: https://agentroyale.onrender.com/
 
-Agent Royale is a live-web retrieval benchmark for AI search systems. I built it to test one narrow question:
+Agent Royale is a live-web retrieval benchmark for AI search systems. I built it to test whether AI models can reliably search the public web and return exact, current, source-specific values.
 
-> Can AI search stacks retrieve exact, current values from the public web when the answer has to match a specific source?
+In the public v1 run, I tested 12 model/retrieval stacks on 32 live-web tasks. Each stack answered each task 3 times, producing 1,152 scored attempts.
 
-In the public v1 run, I tested 12 model/retrieval stacks on 32 source-specific live-web tasks. Each model answered each task 3 times, producing 1,152 scored attempts.
+The tested stacks returned the exact correct value 54% of the time. They returned a wrong value 33% of the time and no usable answer 13% of the time.
 
-The tested stacks returned the exact right value 54% of the time. They returned a wrong usable value 33% of the time, and returned no usable answer 13% of the time. The most uncomfortable part is that many wrong answers still looked polished and cited legitimate sources.
+The most uncomfortable finding was that many wrong answers still looked polished, confident, and properly cited.
 
 ## Why This Exists
 
 I have started relying on AI more and more to find real data quickly: prices, counts, ratings, versions, finance fields, company metrics, and sources I do not want to manually dig through.
 
-The answers often look confident. They cite links. They sound useful.
+The answers often look confident. They cite links. They sound useful. And yet, they are frequently wrong.
 
-But citation is not the same as correctness.
+Most real retrieval failures are not dramatic. They are boring but costly: stale prices, wrong quote fields, wrong regions, wrong product variants, company-size ranges instead of employee counts, and citations that look right but do not actually support the answer.
 
-Most real retrieval failures are boring but expensive: stale prices, wrong quote fields, company-size ranges instead of employee counts, wrong regions, wrong product variants, and citations that look right but do not support the answer. Agent Royale is my attempt to measure that failure directly.
+When a user asks for a specific source, field, and current value, we should expect the system to retrieve that exact information — not a nearby value, stale snippet, or plausible-looking approximation.
+
+Agent Royale is my attempt to measure where AI search retrieval stands today and provide a benchmark for tracking progress over time.
 
 ## V1 Results
 
