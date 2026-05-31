@@ -92,6 +92,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .claim {{ font-weight:750; }}
     .truth {{ font-weight:750; color:#175cd3; }}
     .failure {{ color:var(--bad); font-weight:750; }}
+    .source {{ color:#475467; font-size:12px; max-width:260px; overflow-wrap:anywhere; }}
     .catch-list {{ display:grid; gap:10px; }}
     .catch {{ border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:8px; background:#fff; padding:13px 14px; }}
     .catch-title {{ display:flex; justify-content:space-between; gap:14px; align-items:center; margin-bottom:8px; }}
@@ -154,7 +155,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
     <h2>Run Details</h2>
     <table>
-      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Failure</th><th>Answer</th></tr></thead>
+      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Failure</th><th>Required source</th><th>Answer</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
@@ -166,7 +167,8 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
 
 def render_record(record: RunRecord) -> str:
-    status = '<span class="pass">PASS</span>' if record.passed else '<span class="fail">FAIL</span>'
+    status_label = "SOURCE FAIL" if record.failure_mode == "wrong_source" else ("PASS" if record.passed else "FAIL")
+    status = f'<span class="{"pass" if record.passed and not record.failure_mode else "fail"}">{status_label}</span>'
     return (
         "<tr>"
         f"<td>{status}</td>"
@@ -174,6 +176,7 @@ def render_record(record: RunRecord) -> str:
         f"<td class=\"claim\">{esc(record.extracted_claim)}</td>"
         f"<td class=\"truth\">{esc(record.ground_truth)}</td>"
         f"<td class=\"failure\">{esc(pretty_label(record.failure_mode or 'correct'))}</td>"
+        f"<td class=\"source\">{esc(record.required_source)}</td>"
         f"<td class=\"answer\">{esc(record.answer or record.error or '')}</td>"
         "</tr>"
     )
