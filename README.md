@@ -9,19 +9,23 @@
 
 Live site: https://agentroyale.onrender.com/
 
-Agent Royale tests whether AI search, RAG, browser, and agent stacks can return exact, current, source-specific facts from the public web.
+I started relying on AI agents to look things up quickly: package versions, prices, download counts, company metrics, finance fields, subscription plans. The kind of stuff that is annoying to dig for manually, but important enough that the exact value matters.
 
-It is built for one uncomfortable failure mode:
+The answers often looked right. They had citations. The sources existed. But the value would be quietly off: a stale price, the wrong npm download window, a package version from npm when I asked for a GitHub release tag, followers instead of employees, a plausible number from the wrong page.
 
-> AI agents can cite real sources and still return the wrong value.
+That is the failure Agent Royale is built around:
 
-V1 proved the problem across 1,152 scored attempts. V2 turns that proof into a developer workflow: choose a task pack, connect your stack, run the eval, and get a report showing exact accuracy, failure modes, citations, latency, and cost.
+> an agent can cite a real source and still return the wrong value.
+
+V1 was the experiment: 32 live-web tasks, 12 model/retrieval stacks, 3 runs each, 1,152 scored attempts. Average exact accuracy was 54%. The best stack hit 78%, which still means roughly one in five exact lookups failed.
+
+V2 is the dev tool version. Pick a task pack, connect your agent endpoint or local function, run the eval, and get a report showing the agent's claim, the oracle value, the required source, the cited source, and why each task passed or failed.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
 The preview above is generated from a real run of `examples/dev_research_agent.py` against the GitHub and npm task packs. The example agent calls public APIs, gets several tasks right, and makes realistic retrieval mistakes that Agent Royale catches.
 
-Agent Royale is not trying to be a generic eval framework. It is a focused runner for exact live-web retrieval:
+Agent Royale is not trying to be a generic eval framework. It is for source-specific tasks where close enough is still wrong:
 
 - prices
 - package versions
@@ -34,7 +38,7 @@ Agent Royale is not trying to be a generic eval framework. It is a focused runne
 
 ## Why Builders Use It
 
-Agent Royale helps answer the question that matters before launch:
+Agent Royale helps answer the question that matters before you put a browsing agent in front of users:
 
 > Does our agent actually retrieve the right current value from the required source?
 
@@ -43,7 +47,7 @@ Use it to:
 - catch stale or unsupported answers before users do
 - compare model + search + scraper + RAG configurations
 - regression-test a production agent in CI
-- publish a screenshot-friendly reliability report
+- produce a report that explains what failed, not just a score
 - contribute reusable task packs for common live-web workflows
 
 ## What You Get
@@ -55,6 +59,8 @@ Use it to:
 - **Failure labels**: wrong value, wrong source, unsupported citation, no answer, tool failure.
 - **Reports**: terminal summary, JSONL runs, and local HTML reports.
 - **CI gates**: fail a build when exact accuracy drops below threshold.
+
+Each task defines the question, the required source, the oracle source, the expected answer type, and the grading rule. The agent only sees the question. Agent Royale fetches the oracle value separately, extracts the agent's claim, checks the citation source, and writes the result.
 
 ## Quickstart
 
@@ -238,9 +244,9 @@ jobs:
 
 ## V1 Benchmark
 
-Agent Royale began as a live-web retrieval benchmark for AI search systems. I built it to test whether AI models can reliably search the public web and return exact, current, source-specific values.
+Agent Royale began as a live-web retrieval benchmark. I wanted to know how often AI search stacks could return the exact current value from the source I asked for, not a nearby value from somewhere else.
 
-In the public v1 run, I tested 12 model/retrieval stacks on 32 live-web tasks. Each stack answered each task 3 times, producing 1,152 scored attempts.
+In the public v1 run, 12 model/retrieval stacks answered 32 live-web tasks 3 times each, producing 1,152 scored attempts.
 
 The tested stacks returned the exact correct value 54% of the time. They returned a wrong value 33% of the time and no usable answer 13% of the time.
 
@@ -248,15 +254,11 @@ The most uncomfortable finding was that many wrong answers still looked polished
 
 ## Why This Exists
 
-I have started relying on AI more and more to find real data quickly: prices, counts, ratings, versions, finance fields, company metrics, and sources I do not want to manually dig through.
+Most retrieval failures are not dramatic. They are boring, easy to miss, and costly in production: stale prices, wrong quote fields, wrong regions, wrong product variants, company-size ranges instead of employee counts, and citations that look right but do not support the answer.
 
-The answers often look confident. They cite links. They sound useful. And yet, they are frequently wrong.
+When a user asks for a specific source, field, and current value, the system should retrieve that exact information. Not a nearby value. Not a stale snippet. Not a plausible approximation.
 
-Most real retrieval failures are not dramatic. They are boring but costly: stale prices, wrong quote fields, wrong regions, wrong product variants, company-size ranges instead of employee counts, and citations that look right but do not actually support the answer.
-
-When a user asks for a specific source, field, and current value, we should expect the system to retrieve that exact information — not a nearby value, stale snippet, or plausible-looking approximation.
-
-Agent Royale is my attempt to measure where AI search retrieval stands today and provide a benchmark for tracking progress over time.
+Agent Royale is a way to turn that expectation into a test.
 
 ## V1 Results
 
