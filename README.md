@@ -9,7 +9,7 @@ Unit tests for AI agents that browse the web.
 
 **Live site:** https://agentroyale.onrender.com/
 
-I started relying on AI more and more to look things up quickly: prices, package versions, follower counts, finance fields, company sizes. Things I didn't want to dig for manually. The answers would come back looking right, with citations and everything, and yet they'd be off. Not wrong in some obvious way you'd catch immediately, just quietly wrong: a stale price, a field from the wrong column, an employee range when I asked for a headcount. The citations were real. The sources existed. The values just didn't match what was actually on the page.
+I started relying on AI more and more to look things up quickly: prices, package versions, follower counts, finance fields, company sizes. Things I didn't want to dig for manually. The answers would come back looking right, with citations and everything, and yet they'd be off. Not wrong in some obvious way you'd catch immediately, just quietly wrong: a stale price, a field from the wrong column, an employee range when I asked for a headcount. The citations were real. The sources existed. But the returned value was still wrong.
 
 So I ran an experiment. I wrote 32 tasks, each asking for a specific value from a specific public source, and ran 12 model/retrieval stacks against each one three times. That's 1,152 scored attempts. The average exact accuracy across all stacks was 54%. The best stack, Grok 4, hit 78%, meaning it still got roughly one in five wrong. Most failures weren't refusals or hallucinated sources. They were wrong values that looked completely fine.
 
