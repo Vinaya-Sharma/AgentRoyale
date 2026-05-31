@@ -125,7 +125,7 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
   --report reports/bright-data-linkedin.html
 ```
 
-See [docs/bright-data.md](docs/bright-data.md) for setup details and [docs/bright-data-run.md](docs/bright-data-run.md) for a real run walkthrough.
+See [docs/bright-data.md](docs/bright-data.md) for setup details.
 
 ## V1 Results
 
@@ -463,12 +463,9 @@ The best first PR is a task pack for a source your own agent depends on.
 
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [ROADMAP.md](ROADMAP.md)
-- [Good first issues](docs/good-first-issues.md)
 - [Task spec](docs/task-spec.md)
 - [Adapter contract](docs/adapter-contract.md)
 - [Bright Data ground truth](docs/bright-data.md)
-- [Real Bright Data run](docs/bright-data-run.md)
-- [Launch checklist](docs/launch-checklist.md)
 
 ## Contact
 
