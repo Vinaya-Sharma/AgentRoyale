@@ -80,8 +80,8 @@ tasks:
       - package_metadata
       - dynamic_count
       - downloads
-      - v1_task
-    notes: "Adapted from v1_dev_005. The required source is npm's downloads API."
+      - experiment_task
+    notes: "Adapted from the original experiment. The required source is npm's downloads API."
     ground_truth:
       method: http_json
       url: "https://api.npmjs.org/downloads/point/last-week/lodash"
@@ -98,8 +98,8 @@ tasks:
       - package_metadata
       - dynamic_count
       - downloads
-      - v1_task
-    notes: "Adapted from v1_dev_006. The required source is npm's downloads API."
+      - experiment_task
+    notes: "Adapted from the original experiment. The required source is npm's downloads API."
     ground_truth:
       method: http_json
       url: "https://api.npmjs.org/downloads/point/last-week/react"

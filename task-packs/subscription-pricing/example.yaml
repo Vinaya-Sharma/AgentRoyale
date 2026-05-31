@@ -1,7 +1,7 @@
 # Agent Royale task pack: subscription pricing.
 #
 # Subscription pages are intentionally messier than GitHub/npm APIs: markup,
-# region, experiments, and plan names change. These tasks demonstrate the V2
+# region, experiments, and plan names change. These tasks demonstrate the
 # page-parser path, not a guarantee that every pricing page will stay stable.
 # If a regex stops matching, quarantine or update that task rather than relaxing
 # the grading standard.

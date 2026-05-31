@@ -46,9 +46,9 @@ ground_truth:
   regex: "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
 ```
 
-## What Gets Reused From V1
+## What Gets Reused From The Experiment
 
-The V2 CLI reuses the existing V1 Bright Data client:
+The local runner reuses the Bright Data client built for the original experiment:
 
 - MCP URL/token handling
 - Bright Data tool arguments
@@ -57,7 +57,7 @@ The V2 CLI reuses the existing V1 Bright Data client:
 - retry and timeout settings
 - structured-content extraction
 
-This keeps the V2 runner aligned with the benchmark machinery that powered the original Agent Royale experiment.
+This keeps the runner aligned with the benchmark machinery that powered the original Agent Royale experiment.
 
 ## Product Positioning
 

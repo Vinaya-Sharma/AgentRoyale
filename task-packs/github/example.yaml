@@ -82,8 +82,8 @@ tasks:
       - github
       - repository_file
       - package_version
-      - v1_task
-    notes: "Adapted from v1_dev_003. Ground truth reads the version field from Vue's package.json on GitHub."
+      - experiment_task
+    notes: "Adapted from the original experiment. Ground truth reads the version field from Vue's package.json on GitHub."
     ground_truth:
       method: http_json
       url: "https://raw.githubusercontent.com/vuejs/core/main/packages/vue/package.json"

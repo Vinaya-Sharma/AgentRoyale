@@ -1,6 +1,6 @@
 # Agent Royale Task Packs
 
-These packs are intentionally small, readable, and source-specific. They are examples of the V2 direction: developers should be able to inspect the task, understand the oracle, and decide whether the task is fair for their stack.
+These packs are intentionally small, readable, and source-specific. Developers should be able to inspect the task, understand the oracle, and decide whether the task is fair for their stack.
 
 ## Packs
 

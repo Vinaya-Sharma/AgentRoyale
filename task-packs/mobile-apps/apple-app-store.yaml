@@ -15,8 +15,8 @@ tasks:
       - mobile_apps
       - apple_app_store
       - rating
-      - v1_task
-    notes: "Adapted from v1_app_001. Oracle reads averageUserRating from Apple's lookup API."
+      - experiment_task
+    notes: "Adapted from the original experiment. Oracle reads averageUserRating from Apple's lookup API."
     ground_truth:
       method: http_json
       url: "https://itunes.apple.com/lookup?id=6448311069&country=us"
@@ -32,8 +32,8 @@ tasks:
       - mobile_apps
       - apple_app_store
       - app_version
-      - v1_task
-    notes: "Adapted from v1_app_002. Oracle reads version from Apple's lookup API."
+      - experiment_task
+    notes: "Adapted from the original experiment. Oracle reads version from Apple's lookup API."
     ground_truth:
       method: http_json
       url: "https://itunes.apple.com/lookup?id=6448311069&country=us"
@@ -49,8 +49,8 @@ tasks:
       - mobile_apps
       - apple_app_store
       - rating
-      - v1_task
-    notes: "Adapted from v1_app_005. Oracle reads averageUserRating from Apple's lookup API."
+      - experiment_task
+    notes: "Adapted from the original experiment. Oracle reads averageUserRating from Apple's lookup API."
     ground_truth:
       method: http_json
       url: "https://itunes.apple.com/lookup?id=585027354&country=us"
@@ -66,8 +66,8 @@ tasks:
       - mobile_apps
       - apple_app_store
       - app_version
-      - v1_task
-    notes: "Adapted from v1_app_007. Oracle reads version from Apple's lookup API."
+      - experiment_task
+    notes: "Adapted from the original experiment. Oracle reads version from Apple's lookup API."
     ground_truth:
       method: http_json
       url: "https://itunes.apple.com/lookup?id=310633997&country=us"

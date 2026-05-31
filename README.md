@@ -13,9 +13,11 @@ I started relying on AI more and more to look things up quickly: prices, package
 
 So I ran an experiment. I wrote 32 tasks, each asking for a specific value from a specific public source, and ran 12 model/retrieval stacks against each one three times. That's 1,152 scored attempts. The average exact accuracy across all stacks was 54%. The best stack, Grok 4, hit 78%, meaning it still got roughly one in five wrong. Most failures weren't refusals or hallucinated sources. They were wrong values that looked completely fine.
 
-V2 is a runner you can point at your own stack. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
+That made the next step obvious: turn the experiment into something other developers could run on their own agents.
 
-The repo now includes 32 example tasks, including v1 tasks ported into V2 task packs.
+Agent Royale is that runner. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
+
+The repo includes 32 example tasks adapted from the original experiment and cleaned up into reusable task packs.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -77,7 +79,7 @@ Targets accept:
 - `openrouter:provider/model` for an OpenRouter model adapter
 - `examples/echo_agent.py:answer` for a local Python function
 
-See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpoint contract.
+See [docs/quickstart.md](docs/quickstart.md) for the task schema and endpoint contract.
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
@@ -131,7 +133,7 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
 
 See [docs/bright-data.md](docs/bright-data.md) for setup details.
 
-## V1 Results
+## Experiment Results
 
 | Metric | Value |
 |---|---|
@@ -179,11 +181,11 @@ See [docs/bright-data.md](docs/bright-data.md) for setup details.
 The live site at [agentroyale.onrender.com](https://agentroyale.onrender.com/) has six views:
 
 - **Home**: the experiment narrative, headline stats, and examples where models cited real sources but returned wrong values
-- **Leaderboard**: exact accuracy, wrong-answer rate, no-response rate, source checks, latency, and estimated cost across the 32-task v1 snapshot
+- **Leaderboard**: exact accuracy, wrong-answer rate, no-response rate, source checks, latency, and estimated cost across the 32-task experiment snapshot
 - **Live Check**: pick a task and a set of models, refresh live ground truth, run them, and see the grades on demand
 - **Tasks**: task-level performance, model consistency, saved ground truth, citations, and failure patterns
 - **Models**: per-model report cards
-- **Methodology**: how task design works, how ground truth is fetched, how scoring works, and what v1 found
+- **Methodology**: how task design works, how ground truth is fetched, how scoring works, and what the experiment found
 
 ## Methodology
 
@@ -212,7 +214,7 @@ Tasks are phrased as real user questions, specific enough that only one answer i
 
 > Using Stripe's LinkedIn company profile, how many people does LinkedIn currently show as employees?
 
-Every task points at a live URL rather than a static fact, so the model has to actually retrieve something instead of pulling from training data. The v1 benchmark uses 32 tasks with complete coverage across all 12 stacks, after trimming for domain balance.
+Every task points at a live URL rather than a static fact, so the model has to actually retrieve something instead of pulling from training data. The public experiment used 32 tasks with complete coverage across all 12 stacks, after trimming for domain balance.
 
 ### Model Selection
 
@@ -252,12 +254,12 @@ nvidia/nemotron-3-super-120b-a12b
 - **No Answer Rate**: refusal, empty response, or explicit "couldn't find it"
 - **Canonical Source**: among correct answers, cited URL matched required source
 - **Latency**: measured runtime
-- **Estimated Cost**: based on model pricing, not controlled in v1
+- **Estimated Cost**: based on model pricing, not controlled in the first experiment
 - **Consistency**: whether a model got the same task right across all three attempts
 
 ### Caveats
 
-32 tasks is a small sample with uneven domain coverage. Ground truth and model runs were timestamped separately in v1, which matters for fast-changing values. The model calls ran in about 2 hours and 11 minutes, but many saved ground-truth values were fetched earlier. Citation scoring checks URL overlap only, not whether the cited passage actually supported the answer. Cost figures are estimates based on published pricing. Provider behavior, model routing, and web pages all change over time.
+32 tasks is a small sample with uneven domain coverage. Ground truth and model runs were timestamped separately in the first experiment, which matters for fast-changing values. The model calls ran in about 2 hours and 11 minutes, but many saved ground-truth values were fetched earlier. Citation scoring checks URL overlap only, not whether the cited passage actually supported the answer. Cost figures are estimates based on published pricing. Provider behavior, model routing, and web pages all change over time.
 
 ## What Comes Next
 
@@ -420,7 +422,7 @@ POST /api/batch-runs
 curl -X POST http://127.0.0.1:8790/api/evaluations \
   -H 'Content-Type: application/json' \
   -d '{
-    "task_id": "v1_fin_001",
+    "task_id": "finance_nvda_regular_market_price",
     "models": [
       "openai/gpt-4o",
       "perplexity/sonar-pro-search"
@@ -450,11 +452,11 @@ frontend/
 storage/
   ground_truth.jsonl
   runs.jsonl
-  v1_ground_truth_audit.csv
+  ground_truth.jsonl
   launch-snapshots/
 task-packs/           task packs (smoke, github, npm, finance, mobile apps, subscription-pricing, bright-data)
 examples/             local agent, OpenAI Agents SDK example
-docs/                 v2 quickstart, task spec, adapter contract, CI, integrations, Bright Data
+docs/                 quickstart, task spec, adapter contract, CI, integrations, Bright Data
 ```
 
 ## Tech Stack

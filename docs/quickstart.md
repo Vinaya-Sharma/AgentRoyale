@@ -1,6 +1,6 @@
-# Agent Royale V2 Quickstart
+# Agent Royale Quickstart
 
-Agent Royale V2 is a local runner for testing whether an AI search, RAG, browser, or agent stack returns exact source-specific values.
+Agent Royale is a local runner for testing whether an AI search, RAG, browser, or agent stack returns exact source-specific values.
 
 ## Validate A Task Pack
 
@@ -100,7 +100,7 @@ tasks:
       source_url: "github.com/vercel/next.js"
 ```
 
-Supported ground-truth methods in this V2 slice:
+Supported ground-truth methods:
 
 - `static`: fixed value for smoke tests or manual snapshots.
 - `http_json`: fetch JSON and read a dotted field path.

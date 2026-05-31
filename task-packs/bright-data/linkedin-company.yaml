@@ -4,7 +4,7 @@
 #   BRIGHT_DATA_API_KEY=...
 #   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 #
-# These tasks use the existing V1 Bright Data client as the independent oracle.
+# These tasks use the Bright Data client from the original experiment as the independent oracle.
 name: bright-data-linkedin-company
 description: LinkedIn company metric tasks backed by Bright Data structured company profile ground truth.
 tasks:
@@ -54,8 +54,8 @@ tasks:
       - requires_api_key
       - linkedin
       - company_intelligence
-      - v1_task
-    notes: "Adapted from v1_rec_002. Ground truth reads Bright Data's followers field."
+      - experiment_task
+    notes: "Adapted from the original experiment. Ground truth reads Bright Data's followers field."
     ground_truth:
       method: bright_data
       tool: web_data_linkedin_company_profile
@@ -73,8 +73,8 @@ tasks:
       - requires_api_key
       - linkedin
       - company_intelligence
-      - v1_task
-    notes: "Adapted from v1_rec_003. Ground truth reads Bright Data's employees_in_linkedin field."
+      - experiment_task
+    notes: "Adapted from the original experiment. Ground truth reads Bright Data's employees_in_linkedin field."
     ground_truth:
       method: bright_data
       tool: web_data_linkedin_company_profile
@@ -92,8 +92,8 @@ tasks:
       - requires_api_key
       - linkedin
       - company_intelligence
-      - v1_task
-    notes: "Adapted from v1_rec_005. Ground truth reads Bright Data's employees_in_linkedin field."
+      - experiment_task
+    notes: "Adapted from the original experiment. Ground truth reads Bright Data's employees_in_linkedin field."
     ground_truth:
       method: bright_data
       tool: web_data_linkedin_company_profile
@@ -111,8 +111,8 @@ tasks:
       - requires_api_key
       - linkedin
       - company_intelligence
-      - v1_task
-    notes: "Adapted from v1_rec_008. Ground truth reads Bright Data's followers field."
+      - experiment_task
+    notes: "Adapted from the original experiment. Ground truth reads Bright Data's followers field."
     ground_truth:
       method: bright_data
       tool: web_data_linkedin_company_profile
