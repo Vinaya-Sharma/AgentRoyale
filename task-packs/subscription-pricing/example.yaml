@@ -1,0 +1,77 @@
+# Agent Royale task pack: subscription pricing.
+#
+# Subscription pages are intentionally messier than GitHub/npm APIs: markup,
+# region, experiments, and plan names change. These tasks demonstrate the V2
+# page-parser path, not a guarantee that every pricing page will stay stable.
+# If a regex stops matching, quarantine or update that task rather than relaxing
+# the grading standard.
+name: subscription-pricing
+description: Source-specific pricing tasks for subscription plans, regions, and billing intervals.
+tasks:
+  - id: sub_netflix_standard_with_ads_us
+    question: "Using Netflix's official US pricing help page, what is the monthly price of the Standard with ads plan in USD?"
+    required_source: "help.netflix.com"
+    answer_type: currency
+    tolerance: 0
+    labels:
+      - subscription_pricing
+      - official_source
+      - us_region
+      - monthly_price
+    notes: "HTML parser example. Region and plan wording matter; reject ad-free Standard or Premium prices."
+    ground_truth:
+      method: http_regex
+      url: "https://help.netflix.com/en/node/24926"
+      regex: "Standard\\s+with\\s+ads[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      source_url: "help.netflix.com/en/node/24926"
+
+  - id: sub_github_copilot_pro_monthly_us
+    question: "Using GitHub's official pricing page, what is the monthly price of GitHub Copilot Pro in USD?"
+    required_source: "github.com/pricing"
+    answer_type: currency
+    tolerance: 0
+    labels:
+      - subscription_pricing
+      - official_source
+      - developer_tools
+      - monthly_price
+    notes: "HTML parser example. The intended field is Copilot Pro monthly price, not Business or Enterprise."
+    ground_truth:
+      method: http_regex
+      url: "https://github.com/pricing"
+      regex: "Copilot\\s+Pro[\\s\\S]{0,1200}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)\\s*(?:/|per)?\\s*(?:month|mo)"
+      source_url: "github.com/pricing"
+
+  - id: sub_slack_pro_monthly_us
+    question: "Using Slack's official pricing page, what is the monthly price of the Pro plan in USD when billed monthly?"
+    required_source: "slack.com/pricing"
+    answer_type: currency
+    tolerance: 0
+    labels:
+      - subscription_pricing
+      - official_source
+      - b2b_saas
+      - monthly_price
+    notes: "HTML parser example. The task asks for billed-monthly pricing, not annual effective monthly pricing."
+    ground_truth:
+      method: http_regex
+      url: "https://slack.com/pricing"
+      regex: "Pro[\\s\\S]{0,1600}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)[\\s\\S]{0,400}?(?:billed\\s+monthly|monthly)"
+      source_url: "slack.com/pricing"
+
+  - id: sub_cursor_pro_monthly_us
+    question: "Using Cursor's official pricing page, what is the monthly price of the Pro plan in USD?"
+    required_source: "cursor.com/pricing"
+    answer_type: currency
+    tolerance: 0
+    labels:
+      - subscription_pricing
+      - official_source
+      - developer_tools
+      - monthly_price
+    notes: "HTML parser example for a developer tool subscription page."
+    ground_truth:
+      method: http_regex
+      url: "https://cursor.com/pricing"
+      regex: "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)\\s*(?:/|per)?\\s*(?:month|mo)"
+      source_url: "cursor.com/pricing"

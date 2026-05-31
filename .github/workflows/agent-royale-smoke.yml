@@ -1,0 +1,36 @@
+name: Agent Royale Smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate task packs
+        run: python -m agent_royale validate task-packs
+
+      - name: Run smoke eval
+        run: |
+          python -m agent_royale run task-packs/static-smoke.yaml \
+            --target examples/echo_agent.py:answer \
+            --report reports/agent-royale-smoke.html \
+            --fail-under-exact 1.0
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-royale-smoke-report
+          path: reports/agent-royale-smoke.html

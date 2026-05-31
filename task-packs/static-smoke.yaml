@@ -1,0 +1,28 @@
+name: static-smoke
+description: Offline smoke tasks for checking a local Agent Royale target contract.
+tasks:
+  - id: smoke_price
+    question: "Using Example Pricing, what is the current monthly price of the Pro plan in USD?"
+    required_source: "example.com/pricing"
+    answer_type: currency
+    tolerance: 0
+    labels:
+      - smoke
+      - pricing
+    ground_truth:
+      method: static
+      value: "$19.00"
+      source_url: "example.com/pricing"
+
+  - id: smoke_followers
+    question: "Using Example Social, how many followers does the account currently show?"
+    required_source: "example.com/social"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - smoke
+      - social
+    ground_truth:
+      method: static
+      value: 12500
+      source_url: "example.com/social"

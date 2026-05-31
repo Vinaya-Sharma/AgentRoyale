@@ -1,10 +1,191 @@
 # Agent Royale
 
-**Evaluating AI stacks in live-web environments.**
+**Unit tests for AI agents that browse the web.**
+
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Task packs welcome](https://img.shields.io/badge/task%20packs-welcome-0f766e)](CONTRIBUTING.md)
+[![Good first issues](https://img.shields.io/badge/good%20first%20issues-open-a16207)](CONTRIBUTING.md)
 
 Live site: https://agentroyale.onrender.com/
 
-Agent Royale is a live-web retrieval benchmark for AI search systems. I built it to test whether AI models can reliably search the public web and return exact, current, source-specific values.
+Agent Royale tests whether AI search, RAG, browser, and agent stacks can return exact, current, source-specific facts from the public web.
+
+It is built for one uncomfortable failure mode:
+
+> AI agents can cite real sources and still return the wrong value.
+
+V1 proved the problem across 1,152 scored attempts. V2 turns that proof into a developer workflow: choose a task pack, connect your stack, run the eval, and get a report showing exact accuracy, failure modes, citations, latency, and cost.
+
+![Agent Royale report preview](docs/assets/report-preview.png)
+
+Agent Royale is not trying to be a generic eval framework. It is a focused runner for exact live-web retrieval:
+
+- prices
+- package versions
+- repo stars
+- download counts
+- finance fields
+- company metrics
+- subscription plans
+- other facts where "close enough" is still wrong
+
+## Why Builders Use It
+
+Agent Royale helps answer the question that matters before launch:
+
+> Does our agent actually retrieve the right current value from the required source?
+
+Use it to:
+
+- catch stale or unsupported answers before users do
+- compare model + search + scraper + RAG configurations
+- regression-test a production agent in CI
+- publish a screenshot-friendly reliability report
+- contribute reusable task packs for common live-web workflows
+
+## What You Get
+
+- **Task packs**: readable YAML files for source-specific questions.
+- **Bring-your-own-stack targets**: endpoint, Python function, or configured OpenRouter adapter.
+- **Ground-truth adapters**: static values, JSON APIs, and page regex extractors.
+- **Deterministic graders**: exact string, number, currency, percentage, date, and enum matching.
+- **Failure labels**: wrong value, wrong source, unsupported citation, no answer, tool failure.
+- **Reports**: terminal summary, JSONL runs, and local HTML reports.
+- **CI gates**: fail a build when exact accuracy drops below threshold.
+
+## Quickstart
+
+Install locally:
+
+```bash
+pip install -e .
+agent-royale --version
+```
+
+Run the offline smoke pack against the included demo target:
+
+```bash
+python -m agent_royale validate task-packs/static-smoke.yaml
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target examples/echo_agent.py:answer \
+  --report reports/smoke.html
+```
+
+See it catch a wrong answer:
+
+```bash
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target examples/flaky_agent.py:answer \
+  --report reports/failure-demo.html
+```
+
+Run against your own local agent endpoint:
+
+```bash
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/local-agent.html \
+  --fail-under-exact 0.8
+```
+
+Targets can be:
+
+- `http://localhost:3000/api/agent` for a local or staging endpoint
+- `openrouter:provider/model` for an OpenRouter model adapter, if configured
+- `examples/echo_agent.py:answer` for a local Python function
+
+Outputs:
+
+- terminal summary
+- JSONL run log
+- screenshot-friendly HTML report
+- nonzero exit status when `--fail-under-exact` is missed
+
+## Example Task Packs
+
+- `task-packs/github/example.yaml`
+- `task-packs/npm/example.yaml`
+- `task-packs/subscription-pricing/example.yaml`
+
+Validate all packs:
+
+```bash
+python -m agent_royale validate task-packs
+```
+
+Run a pack against your own stack:
+
+```bash
+python -m agent_royale run task-packs/github/example.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/github.html \
+  --fail-under-exact 0.8
+```
+
+See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpoint contract.
+
+See [docs/github-actions.md](docs/github-actions.md) for CI examples.
+
+## Why Not Promptfoo Or LangSmith?
+
+Agent Royale is narrower on purpose. Promptfoo, LangSmith, Braintrust, and Ragas are useful broad eval and observability systems. Agent Royale focuses on one specific wedge: exact, source-specific live-web retrieval with deterministic ground truth, citation support checks, failure labels, and shareable reports. It can complement those tools rather than replace them.
+
+Contributor docs:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [ROADMAP.md](ROADMAP.md)
+- [Task spec](docs/task-spec.md)
+- [Adapter contract](docs/adapter-contract.md)
+- [Good first issues](docs/good-first-issues.md)
+- [Launch post draft](docs/launch-post.md)
+
+Local endpoint example:
+
+```bash
+uvicorn examples.local_agent:app --host 127.0.0.1 --port 3000
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/local-agent.html
+```
+
+## GitHub Actions
+
+Agent Royale can run in CI like a normal test suite:
+
+```yaml
+name: Agent Royale
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  retrieval-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m agent_royale validate task-packs
+      - run: |
+          python -m agent_royale run task-packs/static-smoke.yaml \
+            --target examples/echo_agent.py:answer \
+            --report reports/agent-royale.html \
+            --fail-under-exact 1.0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-royale-report
+          path: reports/agent-royale.html
+```
+
+## V1 Benchmark
+
+Agent Royale began as a live-web retrieval benchmark for AI search systems. I built it to test whether AI models can reliably search the public web and return exact, current, source-specific values.
 
 In the public v1 run, I tested 12 model/retrieval stacks on 32 live-web tasks. Each stack answered each task 3 times, producing 1,152 scored attempts.
 

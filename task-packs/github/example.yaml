@@ -1,0 +1,74 @@
+# Agent Royale task pack: GitHub repository metadata.
+#
+# These tasks use GitHub's public REST API as the ground-truth adapter and ask
+# the tested stack to answer from GitHub-facing sources. This is a good starter
+# pack because the facts are dynamic but the oracle is clean and deterministic.
+name: github-metadata
+description: Exact retrieval tasks for GitHub repository stars, forks, issues, and latest releases.
+tasks:
+  - id: github_nextjs_stars
+    question: "Using GitHub, how many stars does the vercel/next.js repository currently have?"
+    required_source: "github.com/vercel/next.js"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - github
+      - repository_metadata
+      - dynamic_count
+      - stars
+    notes: "Ground truth comes from the GitHub REST API stargazers_count field."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/vercel/next.js"
+      field: "stargazers_count"
+      source_url: "github.com/vercel/next.js"
+
+  - id: github_vscode_open_issues
+    question: "Using GitHub, how many open issues does the microsoft/vscode repository currently show?"
+    required_source: "github.com/microsoft/vscode"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - github
+      - repository_metadata
+      - dynamic_count
+      - issues
+    notes: "GitHub's open_issues_count includes open pull requests; task wording intentionally says GitHub's displayed open-issues count."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/microsoft/vscode"
+      field: "open_issues_count"
+      source_url: "github.com/microsoft/vscode"
+
+  - id: github_fastapi_forks
+    question: "Using GitHub, how many forks does the fastapi/fastapi repository currently show?"
+    required_source: "github.com/fastapi/fastapi"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - github
+      - repository_metadata
+      - dynamic_count
+      - forks
+    notes: "Tests whether a stack can distinguish forks from stars and watchers."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/fastapi/fastapi"
+      field: "forks_count"
+      source_url: "github.com/fastapi/fastapi"
+
+  - id: github_playwright_latest_release
+    question: "Using GitHub Releases, what is the latest release tag for microsoft/playwright?"
+    required_source: "github.com/microsoft/playwright/releases"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - github
+      - releases
+      - package_version
+    notes: "Latest release tags are a common devtool research task and often get confused with npm package versions."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/microsoft/playwright/releases/latest"
+      field: "tag_name"
+      source_url: "github.com/microsoft/playwright/releases/latest"

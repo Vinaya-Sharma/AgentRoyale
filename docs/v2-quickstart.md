@@ -1,0 +1,138 @@
+# Agent Royale V2 Quickstart
+
+Agent Royale V2 is a local runner for testing whether an AI search, RAG, browser, or agent stack returns exact source-specific values.
+
+## Validate A Task Pack
+
+```bash
+python -m agent_royale validate task-packs/static-smoke.yaml
+python -m agent_royale validate task-packs/github/example.yaml
+```
+
+## Run The Offline Smoke Pack
+
+Install locally:
+
+```bash
+pip install -e .
+agent-royale --version
+```
+
+```bash
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target examples/echo_agent.py:answer \
+  --report reports/smoke.html
+```
+
+Run an intentionally failing demo:
+
+```bash
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target examples/flaky_agent.py:answer \
+  --report reports/failure-demo.html
+```
+
+Or run the same smoke pack against a local HTTP endpoint:
+
+```bash
+uvicorn examples.local_agent:app --host 127.0.0.1 --port 3000
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/local-agent.html
+```
+
+The target can be:
+
+- `http://localhost:3000/api/agent` for a local/prod endpoint.
+- `openrouter:provider/model` for an OpenRouter model adapter, if configured.
+- `examples/echo_agent.py:answer` for a local Python function.
+
+## Endpoint Contract
+
+Agent Royale sends:
+
+```json
+{
+  "question": "Using GitHub, how many stars does the vercel/next.js repository currently have?",
+  "task": {
+    "id": "github_nextjs_stars",
+    "required_source": "github.com/vercel/next.js",
+    "answer_type": "number"
+  }
+}
+```
+
+Your stack should return:
+
+```json
+{
+  "answer": "129000",
+  "citations": [
+    {
+      "url": "https://github.com/vercel/next.js",
+      "quote": "129k stars"
+    }
+  ],
+  "trace": {
+    "search_queries": ["vercel next.js GitHub stars"],
+    "tools_used": ["web.search"],
+    "latency_ms": 4210,
+    "cost_usd": 0.012
+  }
+}
+```
+
+## Minimal Task Schema
+
+```yaml
+name: my-task-pack
+tasks:
+  - id: github_nextjs_stars
+    question: "Using GitHub, how many stars does the vercel/next.js repository currently have?"
+    required_source: "github.com/vercel/next.js"
+    answer_type: number
+    tolerance: 0
+    labels: [github, devtools]
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/vercel/next.js"
+      field: "stargazers_count"
+      source_url: "github.com/vercel/next.js"
+```
+
+Supported ground-truth methods in this V2 slice:
+
+- `static`: fixed value for smoke tests or manual snapshots.
+- `http_json`: fetch JSON and read a dotted field path.
+- `http_regex`: fetch text/HTML and capture a value with a regex.
+
+Supported answer types:
+
+- `string`
+- `number`
+- `currency`
+- `percentage`
+- `date`
+- `enum`
+
+## CI Thresholds
+
+```bash
+python -m agent_royale run task-packs/github/example.yaml \
+  --target http://localhost:3000/api/agent \
+  --fail-under-exact 0.8
+```
+
+The command exits with status `2` when exact accuracy is below the threshold.
+
+## Example Packs
+
+- `task-packs/github/example.yaml`: repository stars, forks, issues, and latest releases.
+- `task-packs/npm/example.yaml`: package versions, license metadata, and recent downloads.
+- `task-packs/subscription-pricing/example.yaml`: official pricing-page examples with explicit parser notes.
+
+## More Docs
+
+- [Task spec](task-spec.md)
+- [Adapter contract](adapter-contract.md)
+- [GitHub Actions](github-actions.md)

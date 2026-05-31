@@ -1,0 +1,71 @@
+# Agent Royale task pack: npm package metadata.
+#
+# These tasks use npm's public registry and download APIs. They are designed to
+# catch stale package versions, wrong packages, and confused download windows.
+name: npm-packages
+description: Exact retrieval tasks for npm latest versions, licenses, and recent download counts.
+tasks:
+  - id: npm_react_latest
+    question: "Using npm, what is the latest published version of the react package?"
+    required_source: "npmjs.com/package/react"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - package_version
+    notes: "Ground truth comes from registry.npmjs.org/react/latest version."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/react/latest"
+      field: "version"
+      source_url: "npmjs.com/package/react"
+
+  - id: npm_vite_latest
+    question: "Using npm, what is the latest published version of the vite package?"
+    required_source: "npmjs.com/package/vite"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - package_version
+    notes: "Tests freshness on a fast-moving frontend package."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/vite/latest"
+      field: "version"
+      source_url: "npmjs.com/package/vite"
+
+  - id: npm_typescript_license
+    question: "Using npm, what license does the latest typescript package version list?"
+    required_source: "npmjs.com/package/typescript"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - license
+    notes: "A small exact-string task that catches unsupported or guessed package metadata."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/typescript/latest"
+      field: "license"
+      source_url: "npmjs.com/package/typescript"
+
+  - id: npm_next_weekly_downloads
+    question: "Using npm's download stats, how many downloads did the next package have in the last week?"
+    required_source: "api.npmjs.org/downloads/point/last-week/next"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - dynamic_count
+      - downloads
+    notes: "The required source is npm's downloads API; do not accept lifetime downloads or npm package page popularity snippets."
+    ground_truth:
+      method: http_json
+      url: "https://api.npmjs.org/downloads/point/last-week/next"
+      field: "downloads"
+      source_url: "api.npmjs.org/downloads/point/last-week/next"
