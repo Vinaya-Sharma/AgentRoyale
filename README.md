@@ -1,77 +1,50 @@
 # Agent Royale
 
-**Unit tests for AI agents that browse the web.**
+Unit tests for AI agents that browse the web.
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Task packs welcome](https://img.shields.io/badge/task%20packs-welcome-0f766e)](CONTRIBUTING.md)
 [![Good first issues](https://img.shields.io/badge/good%20first%20issues-open-a16207)](CONTRIBUTING.md)
 
-Live site: https://agentroyale.onrender.com/
+**Live site:** https://agentroyale.onrender.com/
 
-I started relying on AI agents to look things up quickly: package versions, prices, download counts, company metrics, finance fields, subscription plans. The kind of stuff that is annoying to dig for manually, but important enough that the exact value matters.
+I started relying on AI more and more to look things up quickly: prices, package versions, follower counts, finance fields, company sizes. Things I didn't want to dig for manually. The answers would come back looking right, with citations and everything, and yet they'd be off. Not wrong in some obvious way you'd catch immediately, just quietly wrong: a stale price, a field from the wrong column, an employee range when I asked for a headcount. The citations were real. The sources existed. The values just didn't match what was actually on the page.
 
-The answers often looked right. They had citations. The sources existed. But the value would be quietly off: a stale price, the wrong npm download window, a package version from npm when I asked for a GitHub release tag, followers instead of employees, a plausible number from the wrong page.
+So I ran an experiment. I wrote 32 tasks, each asking for a specific value from a specific public source, and ran 12 model/retrieval stacks against each one three times. That's 1,152 scored attempts. The average exact accuracy across all stacks was 54%. The best stack, Grok 4, hit 78%, meaning it still got roughly one in five wrong. Most failures weren't refusals or hallucinated sources. They were wrong values that looked completely fine.
 
-That is the failure Agent Royale is built around:
-
-> an agent can cite a real source and still return the wrong value.
-
-V1 was the experiment: 32 live-web tasks, 12 model/retrieval stacks, 3 runs each, 1,152 scored attempts. Average exact accuracy was 54%. The best stack hit 78%, which still means roughly one in five exact lookups failed.
-
-V2 is the dev tool version. Pick a task pack, connect your agent endpoint or local function, run the eval, and get a report showing the agent's claim, the oracle value, the required source, the cited source, and why each task passed or failed.
+V2 is a runner you can point at your own stack. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
-The preview above is generated from a real run of `examples/dev_research_agent.py` against the GitHub and npm task packs. The example agent calls public APIs, gets several tasks right, and makes realistic retrieval mistakes that Agent Royale catches.
+The preview above is from a real run of `examples/dev_research_agent.py` against the GitHub and npm task packs. The example agent calls public APIs, gets several tasks right, and makes the kinds of retrieval mistakes Agent Royale is built to catch.
 
-Agent Royale is not trying to be a generic eval framework. It is for source-specific tasks where close enough is still wrong:
+Here is a second real run, using `openrouter:openai/gpt-4o-mini` as the target and Bright Data as the ground-truth extractor for LinkedIn company fields:
 
-- prices
-- package versions
-- repo stars
-- download counts
-- finance fields
-- company metrics
-- subscription plans
-- other facts where "close enough" is still wrong
+![Agent Royale Bright Data OpenRouter report preview](docs/assets/bright-data-openrouter-preview.png)
 
-## Why Builders Use It
+## What It Tests
 
-Agent Royale helps answer the question that matters before you put a browsing agent in front of users:
-
-> Does our agent actually retrieve the right current value from the required source?
-
-Use it to:
-
-- catch stale or unsupported answers before users do
-- compare model + search + scraper + RAG configurations
-- regression-test a production agent in CI
-- produce a report that explains what failed, not just a score
-- contribute reusable task packs for common live-web workflows
+The tasks that expose this problem are ones where there's a single correct current value and everything else is wrong: the exact price of a subscription plan, the current version of an npm package, a repo's star count right now, a specific quote field on Yahoo Finance, a company's reported employee count. The answer is either right or it isn't. A range, an approximation, a cached value from last month, an answer from the wrong source: all wrong.
 
 ## What You Get
 
-- **Task packs**: readable YAML files for source-specific questions.
-- **Bring-your-own-stack targets**: endpoint, Python function, or configured OpenRouter adapter.
-- **Ground-truth adapters**: static values, JSON APIs, and page regex extractors.
-- **Deterministic graders**: exact string, number, currency, percentage, date, and enum matching.
-- **Failure labels**: wrong value, wrong source, unsupported citation, no answer, tool failure.
-- **Reports**: terminal summary, JSONL runs, and local HTML reports.
-- **CI gates**: fail a build when exact accuracy drops below threshold.
-
-Each task defines the question, the required source, the oracle source, the expected answer type, and the grading rule. The agent only sees the question. Agent Royale fetches the oracle value separately, extracts the agent's claim, checks the citation source, and writes the result.
+- Task packs: YAML files defining source-specific questions with ground truth
+- Target support: HTTP endpoint, Python function, or OpenRouter adapter if configured
+- Ground truth adapters: static values, JSON APIs, page regex extractors, Bright Data extraction
+- Graders: exact string, number, currency, percentage, date, enum
+- Failure labels: wrong value, wrong source, unsupported citation, no answer, tool failure
+- Reports: terminal summary, JSONL run log, HTML report
+- CI gates: nonzero exit when `--fail-under-exact` threshold is missed
 
 ## Quickstart
-
-Install locally:
 
 ```bash
 pip install -e .
 agent-royale --version
 ```
 
-Run the offline smoke pack against the included demo target:
+Run the smoke pack against the included demo target:
 
 ```bash
 python -m agent_royale validate task-packs/static-smoke.yaml
@@ -80,7 +53,7 @@ python -m agent_royale run task-packs/static-smoke.yaml \
   --report reports/smoke.html
 ```
 
-See it catch a wrong answer:
+Watch it catch a wrong answer:
 
 ```bash
 python -m agent_royale run task-packs/static-smoke.yaml \
@@ -88,7 +61,7 @@ python -m agent_royale run task-packs/static-smoke.yaml \
   --report reports/failure-demo.html
 ```
 
-Run against your own local agent endpoint:
+Run against your own local agent:
 
 ```bash
 python -m agent_royale run task-packs/static-smoke.yaml \
@@ -97,35 +70,30 @@ python -m agent_royale run task-packs/static-smoke.yaml \
   --fail-under-exact 0.8
 ```
 
-Targets can be:
-
+Targets accept:
 - `http://localhost:3000/api/agent` for a local or staging endpoint
-- `openrouter:provider/model` for an OpenRouter model adapter, if configured
+- `openrouter:provider/model` for an OpenRouter model adapter
 - `examples/echo_agent.py:answer` for a local Python function
 
-Outputs:
+See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpoint contract.
+See [docs/github-actions.md](docs/github-actions.md) for CI examples.
+See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
+See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
 
-- terminal summary
-- JSONL run log
-- screenshot-friendly HTML report
-- nonzero exit status when `--fail-under-exact` is missed
+## Task Packs
 
-## Example Task Packs
+```
+task-packs/static-smoke.yaml              offline smoke tests for the target contract
+task-packs/github/example.yaml            repo stars, forks, open issues, latest releases
+task-packs/npm/example.yaml               versions, licenses, download counts
+task-packs/subscription-pricing/example.yaml   official pricing-page examples
+task-packs/bright-data/linkedin-company.yaml   LinkedIn company metrics
+task-packs/bright-data/ecommerce-pricing.yaml  ecommerce product pricing
+```
 
-Current packs:
+GitHub and npm packs use public APIs. The current Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. App store, travel, local business, and dynamic pricing packs are good next contributions.
 
-- `task-packs/static-smoke.yaml`: offline smoke tests for the target contract.
-- `task-packs/github/example.yaml`: GitHub repository stars, forks, open issues, and latest releases.
-- `task-packs/npm/example.yaml`: npm versions, licenses, and download counts.
-- `task-packs/subscription-pricing/example.yaml`: official pricing-page examples.
-- `task-packs/bright-data/linkedin-company.yaml`: LinkedIn company metrics.
-- `task-packs/bright-data/ecommerce-pricing.yaml`: ecommerce product pricing.
-
-Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, app store, and dynamic pricing task packs.
-
-More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
-
-Want to contribute? The best first PR is a task pack for a source your agent depends on.
+More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 
 Validate all packs:
 
@@ -133,7 +101,7 @@ Validate all packs:
 python -m agent_royale validate task-packs
 ```
 
-Run a pack against your own stack:
+Run a pack:
 
 ```bash
 python -m agent_royale run task-packs/github/example.yaml \
@@ -142,47 +110,218 @@ python -m agent_royale run task-packs/github/example.yaml \
   --fail-under-exact 0.8
 ```
 
-See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpoint contract.
-
-See [docs/github-actions.md](docs/github-actions.md) for CI examples.
-See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
-See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
-
 ## Bright Data Ground Truth
 
 Some task packs require `BRIGHT_DATA_API_KEY` for web extraction:
 
-```bash
+```
 BRIGHT_DATA_API_KEY=...
 BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+```
 
+```bash
 python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
   --target http://localhost:3000/api/agent \
   --report reports/bright-data-linkedin.html
 ```
 
-See [docs/bright-data.md](docs/bright-data.md).
-See [docs/bright-data-run.md](docs/bright-data-run.md) for a real Bright Data-backed OpenRouter run.
+See [docs/bright-data.md](docs/bright-data.md) for setup details and [docs/bright-data-run.md](docs/bright-data-run.md) for a real run walkthrough.
 
-## Why Not Promptfoo Or LangSmith?
+## V1 Results
 
-Agent Royale is narrower on purpose. Promptfoo, LangSmith, Braintrust, and Ragas are useful broad eval and observability systems. Agent Royale focuses on one specific wedge: exact, source-specific live-web retrieval with deterministic ground truth, citation support checks, failure labels, and shareable reports. It can complement those tools rather than replace them.
+| Metric | Value |
+|---|---|
+| Tasks | 32 |
+| Model stacks | 12 |
+| Runs per model per task | 3 |
+| Scored attempts | 1,152 |
+| Correct | 619 |
+| Wrong | 385 |
+| No answer | 148 |
+| Average exact accuracy | 54% |
+| Top stack | 78% (Grok 4) |
 
-Contributor docs:
+### By Model
 
-- [CONTRIBUTING.md](CONTRIBUTING.md)
-- [ROADMAP.md](ROADMAP.md)
-- [Integrations](docs/integrations.md)
-- [OpenRouter example](docs/openrouter.md)
-- [Task spec](docs/task-spec.md)
-- [Adapter contract](docs/adapter-contract.md)
-- [Bright Data ground truth](docs/bright-data.md)
-- [Real Bright Data run](docs/bright-data-run.md)
-- [Good first issues](docs/good-first-issues.md)
-- [Launch post draft](docs/launch-post.md)
-- [Launch checklist](docs/launch-checklist.md)
+| Model | Accuracy | Wrong | No answer | Canonical source |
+|---|---|---|---|---|
+| Grok 4 | 78% | 21% | 1% | 85% |
+| Gemini Pro | 64% | 30% | 6% | 82% |
+| Nemotron 3 Super | 61% | 31% | 7% | 83% |
+| Sonar Pro Search | 59% | 29% | 11% | 79% |
+| DeepSeek V4 Flash | 57% | 29% | 14% | 95% |
+| GPT-4o Mini | 56% | 42% | 2% | 78% |
+| Gemini Flash Lite | 54% | 46% | 0% | 0% |
+| Claude Sonnet | 53% | 46% | 1% | 76% |
+| GPT-4o | 52% | 48% | 0% | 82% |
+| Claude Opus | 46% | 50% | 4% | 34% |
+| GPT-OSS 120B | 35% | 18% | 47% | 97% |
+| Sonar Deep Research | 28% | 11% | 60% | 96% |
 
-Local endpoint example:
+### By Topic
+
+| Topic | Tasks | Accuracy | Most common failure |
+|---|---|---|---|
+| Subscriptions | 3 | 80% | Clean page structure kept errors low |
+| Mobile apps | 7 | 71% | Source freshness varied |
+| Finance | 6 | 70% | Wrong field, stale value, wrong source |
+| Ecommerce | 2 | 63% | Page noise tripped up extraction |
+| Research / dev | 3 | 38% | Stale search results, wrong fields |
+| Social media | 5 | 37% | Counts changed fast; models used stale snippets |
+| Recruiting / LinkedIn | 6 | 23% | Followers vs employees vs ranges, all confused |
+
+## What the Site Shows
+
+The live site at [agentroyale.onrender.com](https://agentroyale.onrender.com/) has six views:
+
+- **Home**: the experiment narrative, headline stats, and examples where models cited real sources but returned wrong values
+- **Leaderboard**: exact accuracy, wrong-answer rate, no-response rate, source checks, latency, and estimated cost across the 32-task v1 snapshot
+- **Live Check**: pick a task and a set of models, refresh live ground truth, run them, and see the grades on demand
+- **Tasks**: task-level performance, model consistency, saved ground truth, citations, and failure patterns
+- **Models**: per-model report cards
+- **Methodology**: how task design works, how ground truth is fetched, how scoring works, and what v1 found
+
+## Methodology
+
+Each task specifies a required source, a target field, a normalization rule, a grading rule, and a saved ground-truth value. The model gets the question. It does not get the saved answer.
+
+Ground truth is fetched independently from the required source via Bright Data or a public API. The grader compares the model's extracted claim against that value.
+
+```
+question
+  -> model stack with web retrieval
+  -> raw answer and citations
+  -> extracted value
+  -> compare to independently fetched ground truth
+  -> stored result
+```
+
+There's no LLM judge. Grading is deterministic because that's the only way to be sure you're not rewarding confident-sounding wrong answers. The extracted claim either matches the source value or it doesn't.
+
+### Task Design
+
+Tasks are phrased as real user questions, specific enough that only one answer is correct:
+
+> Using Yahoo Finance, what is NVDA's current regular-market quote price in USD?
+
+> Using Netflix's official US pricing help page, what is the current monthly price of the Standard with ads plan?
+
+> Using Stripe's LinkedIn company profile, how many people does LinkedIn currently show as employees?
+
+Every task points at a live URL rather than a static fact, so the model has to actually retrieve something instead of pulling from training data. The v1 benchmark uses 32 tasks with complete coverage across all 12 stacks, after trimming for domain balance.
+
+### Model Selection
+
+I picked stacks that represent the realistic options a team might choose from, not just the biggest names:
+
+| Bucket | Models | Reason |
+|---|---|---|
+| Consumer flagships | GPT-4o, Claude Sonnet, Gemini Pro | Most common starting point |
+| Search-first | Sonar Deep Research, Sonar Pro Search, Grok 4 | Built around live web access |
+| Cheaper options | DeepSeek V4 Flash, Gemini Flash Lite, GPT-4o Mini | What teams run at scale |
+| Open-weight style | GPT-OSS 120B, Nemotron 3 Super | Infrastructure deployments |
+| Reasoning | Claude Opus | Testing whether more reasoning helps with stale or conflicting data |
+
+Configured model IDs:
+
+```
+anthropic/claude-sonnet-4.6
+anthropic/claude-opus-4.7
+openai/gpt-4o
+openai/gpt-4o-mini
+openai/gpt-oss-120b
+google/gemini-2.5-pro
+google/gemini-3.1-flash-lite
+perplexity/sonar-pro-search
+perplexity/sonar-deep-research
+x-ai/grok-4.3
+deepseek/deepseek-v4-flash
+nvidia/nemotron-3-super-120b-a12b
+```
+
+"Model stack" means the model plus its retrieval path: search config, citation handling, provider routing, tool setup. That combination is what teams actually ship, and it matters more than the base model alone.
+
+### Metrics
+
+- **Exact Accuracy**: correct runs / all scored runs
+- **Wrong Answer Rate**: returned a value, did not match ground truth
+- **No Answer Rate**: refusal, empty response, or explicit "couldn't find it"
+- **Canonical Source**: among correct answers, cited URL matched required source
+- **Latency**: measured runtime
+- **Estimated Cost**: based on model pricing, not controlled in v1
+- **Consistency**: whether a model got the same task right across all three attempts
+
+### Caveats
+
+32 tasks is a small sample with uneven domain coverage. Ground truth and model runs were timestamped separately in v1, which matters for fast-changing values. The model calls ran in about 2 hours and 11 minutes, but many saved ground-truth values were fetched earlier. Citation scoring checks URL overlap only, not whether the cited passage actually supported the answer. Cost figures are estimates based on published pricing. Provider behavior, model routing, and web pages all change over time.
+
+## What Comes Next
+
+- Larger and more balanced task bank
+- More Bright Data-backed task packs for messy public web sources
+- Ground truth snapshot stored alongside every run
+- Cost logging from actual provider usage data
+- Citation verification at the passage level
+- Clearer failure labels: wrong source, wrong field, stale value, unit mismatch, unsupported claim, no answer, provider failure
+- Decision views: cheapest accurate stack, fastest accurate stack, most reliable by domain
+- Custom task-bank upload for teams testing against their own workflows
+
+## Promptfoo / LangSmith
+
+Promptfoo and LangSmith cover broad eval and observability. This covers exact source-specific retrieval with deterministic ground truth, per-failure-type labels, citation checks, and shareable HTML reports. They solve different problems and work fine together.
+
+## Setup
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Copy `.env.example` to `.env`:
+
+```
+OPENROUTER_API_KEY=...
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+BRIGHT_DATA_API_KEY=...
+BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+AGENT_ARENA_SEARCH_ENGINE=native
+```
+
+Optional Supabase for Live Check history:
+
+```
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+```sql
+create table if not exists public.live_checks (
+  check_id text primary key,
+  created_at timestamptz not null,
+  task_id text not null,
+  payload jsonb not null
+);
+
+create index if not exists live_checks_created_at_idx
+  on public.live_checks (created_at desc);
+```
+
+To override the default model set:
+
+```
+AGENT_ARENA_MODELS=anthropic/claude-sonnet-4.6,openai/gpt-4o,google/gemini-2.5-pro
+```
+
+## Running Locally
+
+```bash
+uvicorn backend.main:app --host 127.0.0.1 --port 8790
+```
+
+Open `http://127.0.0.1:8790`. The static frontend at `frontend/index.html` works without the server, but the live features need FastAPI running.
+
+Local agent endpoint example:
 
 ```bash
 uvicorn examples.local_agent:app --host 127.0.0.1 --port 3000
@@ -200,7 +339,7 @@ export OPENAI_API_KEY=...
 uvicorn app:app --host 127.0.0.1 --port 3000
 ```
 
-Then, from the repo root:
+Then from the repo root:
 
 ```bash
 python -m agent_royale run task-packs/github/example.yaml \
@@ -208,9 +347,25 @@ python -m agent_royale run task-packs/github/example.yaml \
   --report reports/openai-agent-github.html
 ```
 
-## GitHub Actions
+## Running a Benchmark
 
-Agent Royale can run in CI like a normal test suite:
+```bash
+python3 run_benchmark.py
+```
+
+Subset by domain:
+
+```bash
+python3 run_benchmark.py --domain finance --limit 2 --models openai/gpt-4o,perplexity/sonar-pro-search
+```
+
+Logs go to `storage/ground_truth.jsonl` and `storage/runs.jsonl`. Export a snapshot after a run:
+
+```bash
+python3 export_launch_snapshot.py
+```
+
+## GitHub Actions
 
 ```yaml
 name: Agent Royale
@@ -242,346 +397,9 @@ jobs:
           path: reports/agent-royale.html
 ```
 
-## V1 Benchmark
-
-Agent Royale began as a live-web retrieval benchmark. I wanted to know how often AI search stacks could return the exact current value from the source I asked for, not a nearby value from somewhere else.
-
-In the public v1 run, 12 model/retrieval stacks answered 32 live-web tasks 3 times each, producing 1,152 scored attempts.
-
-The tested stacks returned the exact correct value 54% of the time. They returned a wrong value 33% of the time and no usable answer 13% of the time.
-
-The most uncomfortable finding was that many wrong answers still looked polished, confident, and properly cited.
-
-## Why This Exists
-
-Most retrieval failures are not dramatic. They are boring, easy to miss, and costly in production: stale prices, wrong quote fields, wrong regions, wrong product variants, company-size ranges instead of employee counts, and citations that look right but do not support the answer.
-
-When a user asks for a specific source, field, and current value, the system should retrieve that exact information. Not a nearby value. Not a stale snippet. Not a plausible approximation.
-
-Agent Royale is a way to turn that expectation into a test.
-
-## V1 Results
-
-| Metric | Value |
-| --- | ---: |
-| Public task bank | 32 tasks |
-| Model stacks | 12 |
-| Runs per model per task | 3 |
-| Scored attempts | 1,152 |
-| Correct exact values | 619 |
-| Wrong usable values | 385 |
-| No-answer responses | 148 |
-| Average exact accuracy | 54% |
-| Top stack accuracy | 78% |
-
-The best stack in this run was Grok 4 at 78% exact accuracy. Even that means it missed roughly 1 in 5 exact values.
-
-### Results By Model
-
-| Model stack | Accuracy | Wrong | No answer | Canonical source |
-| --- | ---: | ---: | ---: | ---: |
-| Grok 4 | 78% | 21% | 1% | 85% |
-| Gemini Pro | 64% | 30% | 6% | 82% |
-| Nemotron 3 Super | 61% | 31% | 7% | 83% |
-| Sonar Pro Search | 59% | 29% | 11% | 79% |
-| DeepSeek V4 Flash | 57% | 29% | 14% | 95% |
-| GPT-4o Mini | 56% | 42% | 2% | 78% |
-| Gemini Flash Lite | 54% | 46% | 0% | 0% |
-| Claude Sonnet | 53% | 46% | 1% | 76% |
-| GPT-4o | 52% | 48% | 0% | 82% |
-| Claude Opus | 46% | 50% | 4% | 34% |
-| GPT-OSS 120B | 35% | 18% | 47% | 97% |
-| Sonar Deep Research | 28% | 11% | 60% | 96% |
-
-### Results By Topic
-
-| Topic | Tasks | Accuracy | What broke most often |
-| --- | ---: | ---: | --- |
-| Subscriptions | 3 | 80% | Plans and prices were comparatively easier when pages exposed clean values. |
-| Mobile apps | 7 | 71% | Ratings and counts were easier, but source and freshness still varied. |
-| Finance | 6 | 70% | Models confused live quote fields, stale values, close prices, and alternate sources. |
-| Ecommerce | 2 | 63% | Product pages were workable, but price extraction still failed under page noise. |
-| Research / dev | 3 | 38% | Package, repository, and metadata tasks exposed stale search results and wrong fields. |
-| Social media | 5 | 37% | Counts changed often, sources were inconsistent, and models leaned on stale snippets. |
-| Recruiting / LinkedIn | 6 | 23% | Models mixed up followers, employee ranges, and structured employee fields. |
-
-## What The Site Shows
-
-The launch site is the main deliverable.
-
-- **Home**: the experiment narrative, headline stats, and examples where models cited real sources but returned wrong values.
-- **Leaderboard**: exact accuracy, wrong-answer rate, no-response rate, source checks, latency, and estimated cost across the 32-task public v1 snapshot.
-- **Live Check**: a demo loop where you can pick one task and selected models, refresh live ground truth, run the models, extract their claims, and grade them on demand.
-- **Tasks**: task-level performance, model consistency, saved ground truth, citations, and failure patterns.
-- **Models**: report cards for each model stack.
-- **Methodology**: the complete explanation of why I built the benchmark, how task design works, how ground truth is fetched, how scoring works, what v1 found, and what changes next.
-
-The Task Bank and Results views still exist in the frontend code as analysis/evidence pages, but they are hidden from the public navigation for this launch.
-
-## Methodology
-
-I made the task rubric fixed, but the answer live.
-
-Each task has a:
-
-- required public source
-- target field
-- tolerance or normalization rule
-- deterministic grading rule
-- saved ground-truth value
-- source URL, timestamp, and evidence
-
-The model gets a normal source-specific question, but it does not get the saved answer.
-
-Separately, Agent Royale fetches ground truth from the required source using Bright Data or a stable public API. The grader then compares the model's extracted claim against that independently fetched value.
-
-```text
-question
-  -> model stack with web retrieval
-  -> raw answer and citations
-  -> extracted value
-  -> compare to saved ground truth
-  -> stored result
-```
-
-There is no LLM judge deciding whether an answer "seems right." I avoided LLM judging because this benchmark is about exact retrieval, not persuasive writing. A judge model might reward a plausible explanation, forgive an approximate value, or miss that the answer used the wrong field. Here, the extracted claim either matches the independently fetched source value or it does not.
-
-## Task Design
-
-Each task is written like a real user question, but constrained enough to have one answer I can verify.
-
-For example:
-
-```text
-Using Yahoo Finance, what is NVDA's current regular-market quote price in USD?
-Using Netflix's official US pricing help page, what is the current monthly price of the Standard with ads plan in USD?
-Using Stripe's LinkedIn company profile, how many people does LinkedIn currently show as employees?
-```
-
-I chose dynamic web facts so the model has to engage in retrieval instead of relying on memorized static answer keys. The candidate pool included finance, ecommerce, app stores, LinkedIn/company metrics, social metrics, developer tools, subscriptions, real estate, travel, and business intelligence.
-
-For the public v1 launch, I only show tasks where every model had complete coverage: 3 clean runs for each of the 12 model stacks. After trimming overweighted app, LinkedIn, and developer tasks, that left 32 tasks in the frozen public benchmark.
-
-## Model Selection
-
-I tested practical stacks people might actually choose: consumer flagships, search-first systems, efficient/value models, open-weight-style stacks, and advanced reasoning models.
-
-| Bucket | Models in v1 | Why I included them |
-| --- | --- | --- |
-| Consumer flagships | GPT-4o, Claude Sonnet, Gemini Pro | The models many people reach for first. |
-| Search specialists | Sonar Deep Research, Sonar Pro Search, Grok 4 | Stacks that explicitly position around live information or search. |
-| Efficient/value | DeepSeek V4 Flash, Gemini Flash Lite, GPT-4o Mini | Cheaper or faster options that teams might use at scale. |
-| Open-weight style | GPT-OSS 120B, Nemotron 3 Super | Infrastructure-style stacks where strict extraction and formatting matter. |
-| Advanced reasoning | Claude Opus | A test of whether more reasoning helps with contradictory or stale web data. |
-
-Configured model IDs:
-
-```text
-anthropic/claude-sonnet-4.6
-anthropic/claude-opus-4.7
-openai/gpt-4o
-openai/gpt-4o-mini
-openai/gpt-oss-120b
-google/gemini-2.5-pro
-google/gemini-3.1-flash-lite
-perplexity/sonar-pro-search
-perplexity/sonar-deep-research
-x-ai/grok-4.3
-deepseek/deepseek-v4-flash
-nvidia/nemotron-3-super-120b-a12b
-```
-
-By model stack, I mean the model plus the retrieval path used in this runner. That matters because builders do not deploy a base model alone; they deploy a model connected to search, citations, routing, provider behavior, and tool configuration.
-
-## Metrics
-
-- **Live Exact Accuracy**: correct scored runs divided by all scored runs.
-- **Wrong Answer Rate**: runs where the model returned a usable value, but it did not match ground truth.
-- **No Answer Rate**: refusals, empty responses, or answers that clearly said the model could not find the value.
-- **Canonical Source**: among correct answers, whether a cited URL matched or overlapped the required source URL.
-- **Latency**: measured runtime for the model run.
-- **Estimated Cost**: directional cost estimate based on model pricing; cost was not a controlled factor in v1.
-- **Consistency**: whether a model got the same task right across repeated attempts.
-
-Canonical Source is intentionally limited in v1. It is a reference signal, not proof that the cited passage fully supports the answer. It is rare but possible that the ideal source URL is imperfect, and it is also possible that the correct answer appears on other legitimate sites.
-
-## What To Keep In Mind
-
-This is one v1 run, not a universal ranking of every model forever.
-
-- The public task bank has 32 questions.
-- The domain mix is uneven.
-- The leaderboard is a frozen snapshot from one experiment.
-- Ground truth and model runs were timestamped separately in v1.
-- Citation scoring checks URL overlap, not passage-level support.
-- Estimated cost is directional, not actual provider billing.
-- Provider behavior, model routing, search tools, and web pages can all change.
-
-The most important limitation is timing: the model calls ran in about 2 hours and 11 minutes, but many saved ground-truth values were fetched earlier. In v2, I will refresh ground truth immediately before each task's model calls.
-
-## What Comes Next
-
-V2 will be stricter, cleaner, and more useful for decisions.
-
-Planned improvements:
-
-- larger and more balanced task bank
-- new ground-truth pipeline
-- ground truth refreshed immediately before each task's model calls
-- exact ground-truth snapshot stored on every model run
-- accurate cost logging from provider usage data
-- stronger citation verification beyond URL overlap
-- clearer failure labels: wrong source, wrong field, stale value, unit mismatch, unsupported claim, no answer, and provider/API failure
-- smaller model set tested more rigorously
-- decision views for cheapest acceptable, fastest accurate, safest, and most reliable retrieval stacks by domain
-- custom task-bank upload so teams can evaluate stacks against their own workflows
-
-The goal is to turn Agent Royale from a one-off experiment into a decision tool for teams choosing AI search and retrieval stacks.
-
-## Contact
-
-I built Agent Royale as a starting point for testing AI retrieval stacks against the task banks that actually matter to a team.
-
-If you want to test your own source-specific questions, reach out at vinayasharma00@gmail.com. 
-
-
-## Tech Stack
-
-- **Backend**: Python, FastAPI, Uvicorn, Pydantic
-- **Model calls**: OpenRouter-compatible API calls
-- **Ground truth**: Bright Data and stable public APIs
-- **Frontend**: vanilla HTML, CSS, and JavaScript in one static file
-- **Storage**: CSV task bank plus JSONL logs
-- **Evaluation**: deterministic exact, numeric, and currency graders
-
-No database or frontend build step is required.
-
-## Repo Structure
-
-```text
-agent-arena/
-  backend/
-    main.py          FastAPI routes and frontend serving
-    evaluator.py     ground-truth refresh and model-run orchestration
-    grader.py        extraction, normalization, and grading helpers
-    extractors.py    source-specific ground-truth extractors
-    bright_data.py   Bright Data client
-    llm.py           OpenRouter client
-    store.py         JSONL persistence and leaderboard math
-    task_bank.py     CSV task-bank loader
-  data/
-    tasks.csv        development task bank
-    excluded_tasks.json
-  frontend/
-    index.html       launch site UI
-  storage/
-    ground_truth.jsonl
-    runs.jsonl
-    v1_ground_truth_audit.csv
-    launch-snapshots/
-  run_benchmark.py
-  audit_ground_truth.py
-  export_launch_snapshot.py
-  seed_ground_truth_from_audit.py
-```
-
-Some historical audit files and development probes remain in the repository because they document how the task bank was constructed. The public v1 site filters the visible benchmark down to the frozen 32-task launch set.
-
-## Setup
-
-Create a virtual environment and install dependencies:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-Create environment variables in `.env` or copy from `.env.example`:
-
-```bash
-OPENROUTER_API_KEY=...
-OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
-BRIGHT_DATA_API_KEY=...
-BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
-AGENT_ARENA_SEARCH_ENGINE=native
-```
-
-Optional Supabase persistence for public Live Check history:
-
-```bash
-SUPABASE_URL=https://your-project-ref.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=...
-```
-
-Create this table in Supabase:
-
-```sql
-create table if not exists public.live_checks (
-  check_id text primary key,
-  created_at timestamptz not null,
-  task_id text not null,
-  payload jsonb not null
-);
-
-create index if not exists live_checks_created_at_idx
-  on public.live_checks (created_at desc);
-```
-
-Optional model override:
-
-```bash
-AGENT_ARENA_MODELS=anthropic/claude-sonnet-4.6,openai/gpt-4o,google/gemini-2.5-pro
-```
-
-## Run Locally
-
-From the repo root:
-
-```bash
-uvicorn backend.main:app --host 127.0.0.1 --port 8790
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8790
-```
-
-You can also open the static frontend directly at `frontend/index.html`, but the live backend features need the FastAPI server.
-
-## Run A Benchmark
-
-Run the configured model set over the task bank:
-
-```bash
-python3 run_benchmark.py
-```
-
-Useful smoke test:
-
-```bash
-python3 run_benchmark.py --domain finance --limit 2 --models openai/gpt-4o,perplexity/sonar-pro-search
-```
-
-Generated logs are written to:
-
-```text
-storage/ground_truth.jsonl
-storage/runs.jsonl
-```
-
-Export a launch snapshot after a benchmark run:
-
-```bash
-python3 export_launch_snapshot.py
-```
-
 ## API
 
-Common local endpoints:
-
-```text
+```
 GET  /api/health
 GET  /api/config
 GET  /api/tasks
@@ -593,8 +411,6 @@ POST /api/evaluations
 POST /api/live-checks
 POST /api/batch-runs
 ```
-
-Example evaluation:
 
 ```bash
 curl -X POST http://127.0.0.1:8790/api/evaluations \
@@ -608,3 +424,52 @@ curl -X POST http://127.0.0.1:8790/api/evaluations \
     "refresh_ground_truth": true
   }'
 ```
+
+## Repo Structure
+
+```
+agent_royale/         core runner and grader
+backend/
+  main.py             FastAPI routes and frontend serving
+  evaluator.py        ground-truth refresh and model-run orchestration
+  grader.py           extraction, normalization, grading
+  extractors.py       source-specific ground-truth extractors
+  bright_data.py      Bright Data client
+  llm.py              OpenRouter client
+  store.py            JSONL persistence and leaderboard math
+  task_bank.py        CSV task-bank loader
+data/
+  tasks.csv           development task bank
+  excluded_tasks.json
+frontend/
+  index.html          launch site
+storage/
+  ground_truth.jsonl
+  runs.jsonl
+  v1_ground_truth_audit.csv
+  launch-snapshots/
+task-packs/           task packs (smoke, github, npm, subscription-pricing, bright-data)
+examples/             local agent, OpenAI Agents SDK example
+docs/                 v2 quickstart, task spec, adapter contract, CI, integrations, Bright Data
+```
+
+## Tech Stack
+
+Python, FastAPI, Uvicorn, Pydantic. Model calls via OpenRouter. Ground truth via Bright Data and public APIs. Frontend is one static HTML file. Storage is CSV and JSONL. No database, no build step.
+
+## Contributing
+
+The best first PR is a task pack for a source your own agent depends on.
+
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [ROADMAP.md](ROADMAP.md)
+- [Good first issues](docs/good-first-issues.md)
+- [Task spec](docs/task-spec.md)
+- [Adapter contract](docs/adapter-contract.md)
+- [Bright Data ground truth](docs/bright-data.md)
+- [Real Bright Data run](docs/bright-data-run.md)
+- [Launch checklist](docs/launch-checklist.md)
+
+## Contact
+
+vinayasharma00@gmail.com
