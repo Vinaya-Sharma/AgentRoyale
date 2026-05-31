@@ -130,6 +130,8 @@ The command exits with status `2` when exact accuracy is below the threshold.
 
 - `task-packs/github/example.yaml`: repository stars, forks, issues, and latest releases.
 - `task-packs/npm/example.yaml`: package versions, license metadata, and recent downloads.
+- `task-packs/finance/yahoo-quotes.yaml`: Yahoo Finance regular-market quote fields.
+- `task-packs/mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields.
 - `task-packs/subscription-pricing/example.yaml`: official pricing-page examples with explicit parser notes.
 
 ## Realistic Dev-Agent Demo

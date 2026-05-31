@@ -22,6 +22,8 @@ def answer(question: str, task: dict[str, Any]) -> dict[str, Any]:
             return github_repo_field(client, "fastapi/fastapi", "forks_count")
         if task_id == "github_playwright_latest_release":
             return npm_latest_version(client, "playwright", note="Mistake: used npm package version instead of GitHub release tag.")
+        if task_id == "github_vue_package_version":
+            return github_vue_package_version(client)
         if task_id == "npm_react_latest":
             return npm_latest_version(client, "react")
         if task_id == "npm_vite_latest":
@@ -37,6 +39,10 @@ def answer(question: str, task: dict[str, Any]) -> dict[str, Any]:
             )
         if task_id == "npm_next_weekly_downloads":
             return npm_next_monthly_downloads(client)
+        if task_id == "npm_lodash_weekly_downloads":
+            return npm_weekly_downloads(client, "lodash")
+        if task_id == "npm_react_weekly_downloads":
+            return npm_weekly_downloads(client, "react")
     return {"answer": "", "citations": [], "trace": {"tools_used": ["example.no_match"]}}
 
 
@@ -75,6 +81,30 @@ def npm_latest_version(client: httpx.Client, package: str, note: str = "") -> di
         f"version {value}",
         ["npm.registry"],
         note=note,
+    )
+
+
+def github_vue_package_version(client: httpx.Client) -> dict[str, Any]:
+    url = "https://raw.githubusercontent.com/vuejs/core/main/packages/vue/package.json"
+    payload = get_json(client, url)
+    value = str(payload.get("version", ""))
+    return response(
+        value,
+        "https://github.com/vuejs/core/blob/main/packages/vue/package.json",
+        f"version {value}",
+        ["github.raw"],
+    )
+
+
+def npm_weekly_downloads(client: httpx.Client, package: str) -> dict[str, Any]:
+    url = f"https://api.npmjs.org/downloads/point/last-week/{package}"
+    payload = get_json(client, url)
+    value = payload["downloads"]
+    return response(
+        str(value),
+        url,
+        f"last-week downloads {value}",
+        ["npm.downloads"],
     )
 
 

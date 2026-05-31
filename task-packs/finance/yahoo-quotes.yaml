@@ -1,0 +1,121 @@
+# Agent Royale task pack: Yahoo Finance quote fields.
+#
+# These tasks are adapted from the v1 benchmark. The oracle uses Yahoo's chart
+# JSON endpoint for the current regular-market price, while the task asks the
+# agent to answer from the public Yahoo Finance quote page.
+name: yahoo-finance-quotes
+description: Exact retrieval tasks for current Yahoo Finance regular-market values.
+tasks:
+  - id: finance_nvda_regular_market_price
+    question: "Using Yahoo Finance, what is NVDA's current regular-market quote price in USD?"
+    required_source: "finance.yahoo.com/quote/NVDA"
+    answer_type: currency
+    tolerance: 5
+    labels:
+      - finance
+      - yahoo_finance
+      - stock_quote
+      - v1_task
+    notes: "Adapted from v1_fin_001. Oracle reads chart.result.0.meta.regularMarketPrice."
+    ground_truth:
+      method: http_json
+      url: "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=1d&interval=1d"
+      field: "chart.result.0.meta.regularMarketPrice"
+      source_url: "finance.yahoo.com/quote/NVDA"
+      headers:
+        User-Agent: "agent-royale-task-pack"
+
+  - id: finance_aapl_regular_market_price
+    question: "Using Yahoo Finance, what is AAPL's current regular-market quote price in USD?"
+    required_source: "finance.yahoo.com/quote/AAPL"
+    answer_type: currency
+    tolerance: 3
+    labels:
+      - finance
+      - yahoo_finance
+      - stock_quote
+      - v1_task
+    notes: "Adapted from v1_fin_002. Oracle reads chart.result.0.meta.regularMarketPrice."
+    ground_truth:
+      method: http_json
+      url: "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=1d&interval=1d"
+      field: "chart.result.0.meta.regularMarketPrice"
+      source_url: "finance.yahoo.com/quote/AAPL"
+      headers:
+        User-Agent: "agent-royale-task-pack"
+
+  - id: finance_tsla_regular_market_price
+    question: "Using Yahoo Finance, what is TSLA's current regular-market quote price in USD?"
+    required_source: "finance.yahoo.com/quote/TSLA"
+    answer_type: currency
+    tolerance: 5
+    labels:
+      - finance
+      - yahoo_finance
+      - stock_quote
+      - v1_task
+    notes: "Adapted from v1_fin_003. Oracle reads chart.result.0.meta.regularMarketPrice."
+    ground_truth:
+      method: http_json
+      url: "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=1d&interval=1d"
+      field: "chart.result.0.meta.regularMarketPrice"
+      source_url: "finance.yahoo.com/quote/TSLA"
+      headers:
+        User-Agent: "agent-royale-task-pack"
+
+  - id: finance_meta_regular_market_price
+    question: "Using Yahoo Finance, what is META's current regular-market quote price in USD?"
+    required_source: "finance.yahoo.com/quote/META"
+    answer_type: currency
+    tolerance: 5
+    labels:
+      - finance
+      - yahoo_finance
+      - stock_quote
+      - v1_task
+    notes: "Adapted from v1_fin_005. Oracle reads chart.result.0.meta.regularMarketPrice."
+    ground_truth:
+      method: http_json
+      url: "https://query1.finance.yahoo.com/v8/finance/chart/META?range=1d&interval=1d"
+      field: "chart.result.0.meta.regularMarketPrice"
+      source_url: "finance.yahoo.com/quote/META"
+      headers:
+        User-Agent: "agent-royale-task-pack"
+
+  - id: finance_qqq_regular_market_price
+    question: "Using Yahoo Finance, what is QQQ's current regular-market quote price in USD?"
+    required_source: "finance.yahoo.com/quote/QQQ"
+    answer_type: currency
+    tolerance: 2
+    labels:
+      - finance
+      - yahoo_finance
+      - etf_quote
+      - v1_task
+    notes: "Adapted from v1_fin_007. Oracle reads chart.result.0.meta.regularMarketPrice."
+    ground_truth:
+      method: http_json
+      url: "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=1d&interval=1d"
+      field: "chart.result.0.meta.regularMarketPrice"
+      source_url: "finance.yahoo.com/quote/QQQ"
+      headers:
+        User-Agent: "agent-royale-task-pack"
+
+  - id: finance_vix_regular_market_value
+    question: "Using Yahoo Finance, what is the current regular-market value for the VIX index (^VIX)?"
+    required_source: "finance.yahoo.com/quote/%5EVIX"
+    answer_type: number
+    tolerance: 1
+    labels:
+      - finance
+      - yahoo_finance
+      - market_index
+      - v1_task
+    notes: "Adapted from v1_fin_008. Oracle reads chart.result.0.meta.regularMarketPrice."
+    ground_truth:
+      method: http_json
+      url: "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?range=1d&interval=1d"
+      field: "chart.result.0.meta.regularMarketPrice"
+      source_url: "finance.yahoo.com/quote/%5EVIX"
+      headers:
+        User-Agent: "agent-royale-task-pack"

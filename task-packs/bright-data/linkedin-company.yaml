@@ -43,3 +43,79 @@ tasks:
       url: "https://www.linkedin.com/company/anthropicresearch/"
       field: "followers"
       source_url: "linkedin.com/company/anthropicresearch"
+
+  - id: bd_linkedin_openai_followers
+    question: "Using OpenAI's LinkedIn company profile, how many followers does LinkedIn currently show?"
+    required_source: "linkedin.com/company/openai"
+    answer_type: number
+    tolerance: 5000
+    labels:
+      - bright_data
+      - requires_api_key
+      - linkedin
+      - company_intelligence
+      - v1_task
+    notes: "Adapted from v1_rec_002. Ground truth reads Bright Data's followers field."
+    ground_truth:
+      method: bright_data
+      tool: web_data_linkedin_company_profile
+      url: "https://www.linkedin.com/company/openai/"
+      field: "followers"
+      source_url: "linkedin.com/company/openai"
+
+  - id: bd_linkedin_anthropic_employees
+    question: "Using Anthropic's LinkedIn company profile, how many people does LinkedIn currently show as employees?"
+    required_source: "linkedin.com/company/anthropicresearch"
+    answer_type: number
+    tolerance: 100
+    labels:
+      - bright_data
+      - requires_api_key
+      - linkedin
+      - company_intelligence
+      - v1_task
+    notes: "Adapted from v1_rec_003. Ground truth reads Bright Data's employees_in_linkedin field."
+    ground_truth:
+      method: bright_data
+      tool: web_data_linkedin_company_profile
+      url: "https://www.linkedin.com/company/anthropicresearch/"
+      field: "employees_in_linkedin"
+      source_url: "linkedin.com/company/anthropicresearch"
+
+  - id: bd_linkedin_databricks_employees
+    question: "Using Databricks' LinkedIn company profile, how many people does LinkedIn currently show as employees?"
+    required_source: "linkedin.com/company/databricks"
+    answer_type: number
+    tolerance: 100
+    labels:
+      - bright_data
+      - requires_api_key
+      - linkedin
+      - company_intelligence
+      - v1_task
+    notes: "Adapted from v1_rec_005. Ground truth reads Bright Data's employees_in_linkedin field."
+    ground_truth:
+      method: bright_data
+      tool: web_data_linkedin_company_profile
+      url: "https://www.linkedin.com/company/databricks/"
+      field: "employees_in_linkedin"
+      source_url: "linkedin.com/company/databricks"
+
+  - id: bd_linkedin_nvidia_followers
+    question: "Using NVIDIA's LinkedIn company profile, how many followers does LinkedIn currently show?"
+    required_source: "linkedin.com/company/nvidia"
+    answer_type: number
+    tolerance: 10000
+    labels:
+      - bright_data
+      - requires_api_key
+      - linkedin
+      - company_intelligence
+      - v1_task
+    notes: "Adapted from v1_rec_008. Ground truth reads Bright Data's followers field."
+    ground_truth:
+      method: bright_data
+      tool: web_data_linkedin_company_profile
+      url: "https://www.linkedin.com/company/nvidia/"
+      field: "followers"
+      source_url: "linkedin.com/company/nvidia"

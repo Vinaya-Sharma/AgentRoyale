@@ -1,0 +1,75 @@
+# Agent Royale task pack: Apple App Store metadata.
+#
+# These tasks are adapted from the v1 benchmark. The oracle uses Apple's public
+# iTunes lookup API while the tested agent is asked to answer from the public US
+# App Store listing.
+name: apple-app-store
+description: Exact retrieval tasks for US Apple App Store rating and version fields.
+tasks:
+  - id: app_chatgpt_ios_rating
+    question: "Using the US Apple App Store listing for ChatGPT, what rating number is shown right now?"
+    required_source: "apps.apple.com/us/app/chatgpt/id6448311069"
+    answer_type: number
+    tolerance: 0.1
+    labels:
+      - mobile_apps
+      - apple_app_store
+      - rating
+      - v1_task
+    notes: "Adapted from v1_app_001. Oracle reads averageUserRating from Apple's lookup API."
+    ground_truth:
+      method: http_json
+      url: "https://itunes.apple.com/lookup?id=6448311069&country=us"
+      field: "results.0.averageUserRating"
+      source_url: "apps.apple.com/us/app/chatgpt/id6448311069"
+
+  - id: app_chatgpt_ios_version
+    question: "Using the US Apple App Store listing for ChatGPT, what app version is listed right now?"
+    required_source: "apps.apple.com/us/app/chatgpt/id6448311069"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - mobile_apps
+      - apple_app_store
+      - app_version
+      - v1_task
+    notes: "Adapted from v1_app_002. Oracle reads version from Apple's lookup API."
+    ground_truth:
+      method: http_json
+      url: "https://itunes.apple.com/lookup?id=6448311069&country=us"
+      field: "results.0.version"
+      source_url: "apps.apple.com/us/app/chatgpt/id6448311069"
+
+  - id: app_google_maps_ios_rating
+    question: "Using the US Apple App Store listing for Google Maps, what rating number is shown right now?"
+    required_source: "apps.apple.com/us/app/google-maps/id585027354"
+    answer_type: number
+    tolerance: 0.1
+    labels:
+      - mobile_apps
+      - apple_app_store
+      - rating
+      - v1_task
+    notes: "Adapted from v1_app_005. Oracle reads averageUserRating from Apple's lookup API."
+    ground_truth:
+      method: http_json
+      url: "https://itunes.apple.com/lookup?id=585027354&country=us"
+      field: "results.0.averageUserRating"
+      source_url: "apps.apple.com/us/app/google-maps/id585027354"
+
+  - id: app_whatsapp_ios_version
+    question: "Using the US Apple App Store listing for WhatsApp Messenger, what app version is listed right now?"
+    required_source: "apps.apple.com/us/app/whatsapp-messenger/id310633997"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - mobile_apps
+      - apple_app_store
+      - app_version
+      - v1_task
+    notes: "Adapted from v1_app_007. Oracle reads version from Apple's lookup API."
+    ground_truth:
+      method: http_json
+      url: "https://itunes.apple.com/lookup?id=310633997&country=us"
+      field: "results.0.version"
+      source_url: "apps.apple.com/us/app/whatsapp-messenger/id310633997"

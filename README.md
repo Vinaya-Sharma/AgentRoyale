@@ -15,6 +15,8 @@ So I ran an experiment. I wrote 32 tasks, each asking for a specific value from 
 
 V2 is a runner you can point at your own stack. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
 
+The repo now includes 32 example tasks, including v1 tasks ported into V2 task packs.
+
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
 The preview above is from a real run of `examples/dev_research_agent.py` against the GitHub and npm task packs. The example agent calls public APIs, gets several tasks right, and makes the kinds of retrieval mistakes Agent Royale is built to catch.
@@ -86,12 +88,14 @@ See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack e
 task-packs/static-smoke.yaml              offline smoke tests for the target contract
 task-packs/github/example.yaml            repo stars, forks, open issues, latest releases
 task-packs/npm/example.yaml               versions, licenses, download counts
+task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fields
+task-packs/mobile-apps/apple-app-store.yaml   Apple App Store rating and version fields
 task-packs/subscription-pricing/example.yaml   official pricing-page examples
 task-packs/bright-data/linkedin-company.yaml   LinkedIn company metrics
 task-packs/bright-data/ecommerce-pricing.yaml  ecommerce product pricing
 ```
 
-GitHub and npm packs use public APIs. The current Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. App store, travel, local business, and dynamic pricing packs are good next contributions.
+GitHub, npm, finance, and Apple App Store packs use public APIs. The current Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 
@@ -448,7 +452,7 @@ storage/
   runs.jsonl
   v1_ground_truth_audit.csv
   launch-snapshots/
-task-packs/           task packs (smoke, github, npm, subscription-pricing, bright-data)
+task-packs/           task packs (smoke, github, npm, finance, mobile apps, subscription-pricing, bright-data)
 examples/             local agent, OpenAI Agents SDK example
 docs/                 v2 quickstart, task spec, adapter contract, CI, integrations, Bright Data
 ```

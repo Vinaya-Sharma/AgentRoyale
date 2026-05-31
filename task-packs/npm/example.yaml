@@ -69,3 +69,39 @@ tasks:
       url: "https://api.npmjs.org/downloads/point/last-week/next"
       field: "downloads"
       source_url: "api.npmjs.org/downloads/point/last-week/next"
+
+  - id: npm_lodash_weekly_downloads
+    question: "Using npm's download stats, how many downloads did the lodash package have in the last week?"
+    required_source: "api.npmjs.org/downloads/point/last-week/lodash"
+    answer_type: number
+    tolerance: 5000000
+    labels:
+      - npm
+      - package_metadata
+      - dynamic_count
+      - downloads
+      - v1_task
+    notes: "Adapted from v1_dev_005. The required source is npm's downloads API."
+    ground_truth:
+      method: http_json
+      url: "https://api.npmjs.org/downloads/point/last-week/lodash"
+      field: "downloads"
+      source_url: "api.npmjs.org/downloads/point/last-week/lodash"
+
+  - id: npm_react_weekly_downloads
+    question: "Using npm's download stats, how many downloads did the react package have in the last week?"
+    required_source: "api.npmjs.org/downloads/point/last-week/react"
+    answer_type: number
+    tolerance: 3000000
+    labels:
+      - npm
+      - package_metadata
+      - dynamic_count
+      - downloads
+      - v1_task
+    notes: "Adapted from v1_dev_006. The required source is npm's downloads API."
+    ground_truth:
+      method: http_json
+      url: "https://api.npmjs.org/downloads/point/last-week/react"
+      field: "downloads"
+      source_url: "api.npmjs.org/downloads/point/last-week/react"
