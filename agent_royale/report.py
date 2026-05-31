@@ -5,6 +5,7 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 from statistics import median
+from urllib.parse import urlparse
 
 from agent_royale.schema import RunRecord
 
@@ -32,6 +33,8 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
         by_task[record.task_id].append(record)
     target = records[0].target if records else "unknown"
     created_at = records[0].created_at if records else ""
+    source_summary = summarize_required_sources(records)
+    grading_summary = summarize_grading(records)
     rows = "\n".join(render_record(record) for record in sorted(records, key=lambda item: (item.passed, item.task_id)))
     failing_records = [record for record in records if not record.passed]
     catch_cards = "\n".join(render_catch(record) for record in failing_records[:3])
@@ -66,7 +69,6 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     h2 {{ margin:28px 0 12px; font-size:20px; letter-spacing:0; }}
     p {{ margin:0; color:var(--muted); line-height:1.5; }}
     code {{ font-family:"SFMono-Regular", Consolas, monospace; font-size:12px; }}
-    .eyebrow {{ color:var(--blue); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }}
     .subhead {{ max-width:760px; font-size:16px; }}
     .meta {{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }}
     .pill {{ border:1px solid var(--line); background:rgba(255,255,255,.82); border-radius:999px; padding:7px 10px; color:#344054; font-size:12px; font-weight:700; }}
@@ -79,6 +81,9 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .label {{ color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-top:8px; font-weight:800; }}
     .insight {{ margin-top:16px; border:1px solid #c7d7fe; background:#eff6ff; border-radius:8px; padding:14px 16px; display:grid; grid-template-columns:128px minmax(0,1fr); gap:14px; align-items:start; }}
     .insight strong {{ color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }}
+    .method {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px; }}
+    .method-card {{ border:1px solid var(--line); background:#fff; border-radius:8px; padding:14px 16px; }}
+    .method-card strong {{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#344054; margin-bottom:6px; }}
     .split {{ display:grid; grid-template-columns:.82fr 1.18fr; gap:22px; align-items:start; }}
     table {{ width:100%; border-collapse:separate; border-spacing:0; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:0 8px 24px rgba(15,23,42,.04); }}
     th,td {{ text-align:left; padding:12px 14px; border-bottom:1px solid #e8ecf3; vertical-align:middle; font-size:14px; }}
@@ -103,16 +108,15 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .status-dot.correct {{ background:var(--good); }}
     .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer {{ background:var(--bad); }}
     footer {{ margin-top:24px; color:var(--muted); font-size:12px; }}
-    @media(max-width:860px) {{ header,.split {{ grid-template-columns:1fr; }} .grid {{ grid-template-columns:1fr 1fr; }} .insight {{ grid-template-columns:1fr; }} th:nth-child(6),td:nth-child(6) {{ display:none; }} }}
+    @media(max-width:860px) {{ header,.split,.method {{ grid-template-columns:1fr; }} .grid {{ grid-template-columns:1fr 1fr; }} .insight {{ grid-template-columns:1fr; }} th:nth-child(6),td:nth-child(6) {{ display:none; }} }}
   </style>
 </head>
 <body>
   <main class="wrap">
     <header>
       <div>
-        <div class="eyebrow">Agent Royale V2</div>
-        <h1>Agent Royale Report</h1>
-        <p class="subhead">Unit-test results for an AI agent that browses the web. Ground truth is fetched independently, then each answer is graded without an LLM judge.</p>
+        <h1>Agent Royale Eval Report</h1>
+        <p class="subhead">This run tested one agent target against {total} live-web tasks. Each row shows the agent's extracted claim, the oracle value, the required source, and the reason the task passed or failed.</p>
         <div class="meta">
           <span class="pill">target: {esc(target)}</span>
           <span class="pill">runs: {total}</span>
@@ -122,19 +126,34 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
       <div class="verdict">
         <div class="score">{accuracy:.0%}</div>
         <div class="verdict-label">{esc(verdict)}</div>
-        <p>Exact accuracy across {total} run{'s' if total != 1 else ''}</p>
+        <p>Exact pass rate across {total} run{'s' if total != 1 else ''}</p>
       </div>
     </header>
 
     <section class="grid">
       <div class="card"><div class="num">{passed}</div><div class="label">Correct</div></div>
-      <div class="card"><div class="num">{wrong}</div><div class="label">Bad claims</div></div>
+      <div class="card"><div class="num">{wrong}</div><div class="label">Failures</div></div>
       <div class="card"><div class="num">{no_answer}</div><div class="label">No answer</div></div>
       <div class="card"><div class="num">{median_latency:.0f}ms</div><div class="label">Median latency</div></div>
     </section>
 
+    <section class="method">
+      <div class="method-card">
+        <strong>Oracle values</strong>
+        <p>{esc(source_summary)}</p>
+      </div>
+      <div class="method-card">
+        <strong>Grading</strong>
+        <p>{esc(grading_summary)}</p>
+      </div>
+      <div class="method-card">
+        <strong>Source check</strong>
+        <p>Each citation URL is checked against the task's required source. Matching values from the wrong source are marked as source failures.</p>
+      </div>
+    </section>
+
     <section class="insight">
-      <strong>What it caught</strong>
+      <strong>Result</strong>
       <p>{esc(caught)}</p>
     </section>
 
@@ -183,6 +202,7 @@ def render_record(record: RunRecord) -> str:
 
 
 def render_catch(record: RunRecord) -> str:
+    cited = ", ".join(citation_domain(item.url) for item in record.citations[:2]) or "none"
     return (
         "<div class=\"catch\">"
         f"<div class=\"catch-title\"><code>{esc(record.task_id)}</code><span class=\"failure\">{esc(pretty_label(record.failure_mode or 'failed'))}</span></div>"
@@ -191,6 +211,7 @@ def render_catch(record: RunRecord) -> str:
         f"<div><div class=\"mini-label\">Oracle had</div><div class=\"truth\">{esc(record.ground_truth)}</div></div>"
         "</div>"
         f"<p class=\"muted\" style=\"margin-top:8px;font-size:12px\">Required source: {esc(record.required_source)}</p>"
+        f"<p class=\"muted\" style=\"margin-top:3px;font-size:12px\">Agent cited: {esc(cited)}</p>"
         "</div>"
     )
 
@@ -211,7 +232,49 @@ def short_summary(records: list[RunRecord]) -> str:
     if not parts:
         parts.append("failed assertions")
     examples = ", ".join(record.task_id for record in records[:2])
-    return f"Found {len(records)} issue{'s' if len(records) != 1 else ''}: {', '.join(parts)}. Example task{'s' if len(records[:2]) != 1 else ''}: {examples}."
+    return f"{len(records)} task{'s' if len(records) != 1 else ''} failed: {', '.join(parts)}. Examples: {examples}."
+
+
+def summarize_required_sources(records: list[RunRecord]) -> str:
+    task_ids = {record.task_id for record in records}
+    source_text = " ".join(record.required_source for record in records)
+    families = []
+    if any(task_id.startswith("github_") for task_id in task_ids):
+        families.append("GitHub REST API for repository counts and release tags")
+    if "npmjs.com/package" in source_text:
+        families.append("npm registry latest-package metadata for versions and licenses")
+    if "api.npmjs.org/downloads" in source_text:
+        families.append("npm downloads API for weekly download counts")
+    if any(task_id.startswith("bd_") for task_id in task_ids) or "linkedin.com" in source_text:
+        families.append("Bright Data structured extraction for web pages that need reliable extraction")
+    if families:
+        return "; ".join(families) + "."
+    domains = sorted({citation_domain(record.required_source) for record in records if record.required_source})
+    if not domains:
+        return "No oracle sources were recorded."
+    joined = ", ".join(domains[:4])
+    if len(domains) > 4:
+        joined += f", +{len(domains) - 4} more"
+    return f"Values came from task-pack oracle sources for {joined}; each task row lists the required source used for grading."
+
+
+def summarize_grading(records: list[RunRecord]) -> str:
+    numeric = sum(1 for record in records if isinstance(record.normalized_truth, (int, float)))
+    text = len(records) - numeric
+    parts = []
+    if numeric:
+        parts.append(f"{numeric} numeric task{'s' if numeric != 1 else ''} parsed the claimed number and compared it to the oracle with the task tolerance")
+    if text:
+        parts.append(f"{text} text task{'s' if text != 1 else ''} normalized case and punctuation before comparison")
+    return "; ".join(parts) + "."
+
+
+def citation_domain(value: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    parsed = urlparse(text if "://" in text else f"https://{text}")
+    return parsed.netloc.lower().removeprefix("www.") or text.lower()
 
 
 def pretty_label(value: object) -> str:
