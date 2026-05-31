@@ -17,7 +17,9 @@ It is built for one uncomfortable failure mode:
 
 V1 proved the problem across 1,152 scored attempts. V2 turns that proof into a developer workflow: choose a task pack, connect your stack, run the eval, and get a report showing exact accuracy, failure modes, citations, latency, and cost.
 
-![Agent Royale report preview](docs/assets/report-preview.png)
+![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
+
+The preview above is generated from a real run of `examples/dev_research_agent.py` against the GitHub and npm task packs. The example agent calls public APIs, gets several tasks right, and makes realistic retrieval mistakes that Agent Royale catches.
 
 Agent Royale is not trying to be a generic eval framework. It is a focused runner for exact live-web retrieval:
 

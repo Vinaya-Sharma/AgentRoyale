@@ -131,6 +131,18 @@ The command exits with status `2` when exact accuracy is below the threshold.
 - `task-packs/npm/example.yaml`: package versions, license metadata, and recent downloads.
 - `task-packs/subscription-pricing/example.yaml`: official pricing-page examples with explicit parser notes.
 
+## Realistic Dev-Agent Demo
+
+`examples/dev_research_agent.py` calls public GitHub and npm APIs. It intentionally has a few realistic retrieval bugs, such as using npm package metadata when the task asks for a GitHub release.
+
+```bash
+python -m agent_royale run task-packs/github/example.yaml task-packs/npm/example.yaml \
+  --target examples/dev_research_agent.py:answer \
+  --report reports/dev-agent.html
+```
+
+The README report preview is generated from this kind of real run.
+
 ## More Docs
 
 - [Task spec](task-spec.md)
