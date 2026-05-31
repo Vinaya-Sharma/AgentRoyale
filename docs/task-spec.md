@@ -79,6 +79,28 @@ ground_truth:
 
 Regex tasks should be treated as maintained source-specific parsers. If the page changes, update or quarantine the task.
 
+### bright_data
+
+Use the existing Agent Royale Bright Data client as the independent oracle. Requires `BRIGHT_DATA_API_KEY`.
+
+```yaml
+ground_truth:
+  method: bright_data
+  tool: web_data_linkedin_company_profile
+  url: "https://www.linkedin.com/company/openai/"
+  field: "0.employees_in_linkedin"
+```
+
+Or with page extraction:
+
+```yaml
+ground_truth:
+  method: bright_data
+  tool: scrape_as_markdown
+  url: "https://example.com/pricing"
+  regex: "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+```
+
 ## What Makes A Good Task
 
 - One required source.

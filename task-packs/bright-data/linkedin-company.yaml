@@ -1,0 +1,45 @@
+# Optional Bright Data task pack.
+#
+# Requires:
+#   BRIGHT_DATA_API_KEY=...
+#   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+#
+# These tasks use the existing V1 Bright Data client as the independent oracle.
+name: bright-data-linkedin-company
+description: LinkedIn company metric tasks backed by Bright Data structured company profile ground truth.
+tasks:
+  - id: bd_linkedin_openai_employees
+    question: "Using OpenAI's LinkedIn company profile, how many people does LinkedIn currently show as employees?"
+    required_source: "linkedin.com/company/openai"
+    answer_type: number
+    tolerance: 100
+    labels:
+      - bright_data
+      - requires_api_key
+      - linkedin
+      - company_intelligence
+    notes: "Ground truth uses Bright Data's LinkedIn company profile path and reads employees_in_linkedin. Reject company-size ranges and follower counts."
+    ground_truth:
+      method: bright_data
+      tool: web_data_linkedin_company_profile
+      url: "https://www.linkedin.com/company/openai/"
+      field: "0.employees_in_linkedin"
+      source_url: "linkedin.com/company/openai"
+
+  - id: bd_linkedin_anthropic_followers
+    question: "Using Anthropic's LinkedIn company profile, how many followers does LinkedIn currently show?"
+    required_source: "linkedin.com/company/anthropicresearch"
+    answer_type: number
+    tolerance: 50000
+    labels:
+      - bright_data
+      - requires_api_key
+      - linkedin
+      - company_intelligence
+    notes: "Ground truth uses Bright Data's LinkedIn company profile path and reads followers. Reject employee count and website estimates."
+    ground_truth:
+      method: bright_data
+      tool: web_data_linkedin_company_profile
+      url: "https://www.linkedin.com/company/anthropicresearch/"
+      field: "0.followers"
+      source_url: "linkedin.com/company/anthropicresearch"

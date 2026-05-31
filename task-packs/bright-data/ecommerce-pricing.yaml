@@ -1,0 +1,29 @@
+# Optional Bright Data task pack.
+#
+# Requires:
+#   BRIGHT_DATA_API_KEY=...
+#   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+#
+# These tasks demonstrate messy-page ground truth where public APIs are not the
+# normal path. They use Bright Data to fetch the source and a source-specific
+# regex to extract the exact value.
+name: bright-data-ecommerce-pricing
+description: Ecommerce price retrieval tasks backed by Bright Data page extraction.
+tasks:
+  - id: bd_bestbuy_airpods_pro_price
+    question: "Using Best Buy's product page, what is the current price of Apple AirPods Pro 2 in USD?"
+    required_source: "bestbuy.com"
+    answer_type: currency
+    tolerance: 0
+    labels:
+      - bright_data
+      - requires_api_key
+      - ecommerce
+      - pricing
+    notes: "Ground truth uses Bright Data page extraction plus a conservative price regex. Product-page markup can drift; update or quarantine if the parser stops matching."
+    ground_truth:
+      method: bright_data
+      tool: scrape_as_markdown
+      url: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
+      regex: "\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      source_url: "bestbuy.com"

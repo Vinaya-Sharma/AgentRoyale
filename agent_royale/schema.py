@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 
 
 AnswerType = Literal["string", "number", "currency", "percentage", "date", "enum"]
-GroundTruthMethod = Literal["static", "http_json", "http_regex"]
+GroundTruthMethod = Literal["static", "http_json", "http_regex", "bright_data"]
 
 
 class Citation(BaseModel):
@@ -35,6 +35,7 @@ class GroundTruthSpec(BaseModel):
     value: str | float | int | None = None
     source_url: str | None = None
     url: str | None = None
+    tool: str | None = None
     field: str | None = None
     regex: str | None = None
     headers: dict[str, str] = Field(default_factory=dict)
@@ -47,6 +48,11 @@ class GroundTruthSpec(BaseModel):
             raise ValueError("ground_truth.url and ground_truth.field are required for method=http_json")
         if self.method == "http_regex" and (not self.url or not self.regex):
             raise ValueError("ground_truth.url and ground_truth.regex are required for method=http_regex")
+        if self.method == "bright_data":
+            if not self.url or not self.tool:
+                raise ValueError("ground_truth.url and ground_truth.tool are required for method=bright_data")
+            if not self.field and not self.regex:
+                raise ValueError("ground_truth.field or ground_truth.regex is required for method=bright_data")
         return self
 
 

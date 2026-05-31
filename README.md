@@ -109,6 +109,8 @@ Outputs:
 - `task-packs/github/example.yaml`
 - `task-packs/npm/example.yaml`
 - `task-packs/subscription-pricing/example.yaml`
+- `task-packs/bright-data/linkedin-company.yaml` requires `BRIGHT_DATA_API_KEY`
+- `task-packs/bright-data/ecommerce-pricing.yaml` requires `BRIGHT_DATA_API_KEY`
 
 Validate all packs:
 
@@ -129,6 +131,21 @@ See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpo
 
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 
+## Optional: Bright Data Ground Truth
+
+Agent Royale works without Bright Data for public API task packs. Add `BRIGHT_DATA_API_KEY` when you want harder messy-web ground truth for ecommerce pages, LinkedIn/company profiles, app stores, social pages, travel, or dynamic pricing pages.
+
+```bash
+BRIGHT_DATA_API_KEY=...
+BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+
+python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/bright-data-linkedin.html
+```
+
+See [docs/bright-data.md](docs/bright-data.md).
+
 ## Why Not Promptfoo Or LangSmith?
 
 Agent Royale is narrower on purpose. Promptfoo, LangSmith, Braintrust, and Ragas are useful broad eval and observability systems. Agent Royale focuses on one specific wedge: exact, source-specific live-web retrieval with deterministic ground truth, citation support checks, failure labels, and shareable reports. It can complement those tools rather than replace them.
@@ -139,6 +156,7 @@ Contributor docs:
 - [ROADMAP.md](ROADMAP.md)
 - [Task spec](docs/task-spec.md)
 - [Adapter contract](docs/adapter-contract.md)
+- [Bright Data ground truth](docs/bright-data.md)
 - [Good first issues](docs/good-first-issues.md)
 - [Launch post draft](docs/launch-post.md)
 

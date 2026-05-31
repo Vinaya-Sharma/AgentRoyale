@@ -36,7 +36,10 @@ async def run_tasks(
         with output.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record.model_dump(), ensure_ascii=True) + "\n")
         status = "PASS" if record.passed else "FAIL"
-        print(f"{status} {record.task_id} {record.failure_mode or 'correct'}")
+        detail = record.failure_mode or "correct"
+        if record.error:
+            detail = f"{detail}: {record.error}"
+        print(f"{status} {record.task_id} {detail}")
     return records
 
 

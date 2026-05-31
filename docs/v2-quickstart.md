@@ -105,6 +105,7 @@ Supported ground-truth methods in this V2 slice:
 - `static`: fixed value for smoke tests or manual snapshots.
 - `http_json`: fetch JSON and read a dotted field path.
 - `http_regex`: fetch text/HTML and capture a value with a regex.
+- `bright_data`: optional Bright Data oracle for messy live-web sources.
 
 Supported answer types:
 
@@ -147,4 +148,5 @@ The README report preview is generated from this kind of real run.
 
 - [Task spec](task-spec.md)
 - [Adapter contract](adapter-contract.md)
+- [Bright Data ground truth](bright-data.md)
 - [GitHub Actions](github-actions.md)
