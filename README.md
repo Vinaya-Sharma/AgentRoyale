@@ -137,6 +137,7 @@ python -m agent_royale run task-packs/github/example.yaml \
 See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpoint contract.
 
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
+See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 
 ## Bright Data Ground Truth
 
@@ -161,6 +162,7 @@ Contributor docs:
 
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [ROADMAP.md](ROADMAP.md)
+- [Integrations](docs/integrations.md)
 - [Task spec](docs/task-spec.md)
 - [Adapter contract](docs/adapter-contract.md)
 - [Bright Data ground truth](docs/bright-data.md)
@@ -174,6 +176,23 @@ uvicorn examples.local_agent:app --host 127.0.0.1 --port 3000
 python -m agent_royale run task-packs/static-smoke.yaml \
   --target http://localhost:3000/api/agent \
   --report reports/local-agent.html
+```
+
+OpenAI Agents SDK example:
+
+```bash
+cd examples/openai-agent
+pip install -r requirements.txt
+export OPENAI_API_KEY=...
+uvicorn app:app --host 127.0.0.1 --port 3000
+```
+
+Then, from the repo root:
+
+```bash
+python -m agent_royale run task-packs/github/example.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/openai-agent-github.html
 ```
 
 ## GitHub Actions

@@ -23,6 +23,8 @@ Status: in progress.
 - more polished report screenshots
 - task-pack contribution guide
 - first wave of community task packs
+- OpenAI Agents SDK example
+- Bright Data-backed CI workflow docs
 
 ## v0.3: Stronger Failure Taxonomy
 
@@ -40,6 +42,8 @@ Status: in progress.
 - provider adapters for common model/search stacks
 - custom ground-truth scripts
 - browser-agent examples
+- LangGraph example
+- Vercel AI SDK example
 - MCP/tool-server examples
 - import/export compatibility with existing eval tools where it helps
 

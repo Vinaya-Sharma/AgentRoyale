@@ -24,6 +24,10 @@
 !task-packs/**/*.md
 !examples/
 !examples/*.py
+!examples/**/
+!examples/**/*.py
+!examples/**/*.md
+!examples/**/requirements.txt
 !docs/
 !docs/*.md
 !docs/assets/

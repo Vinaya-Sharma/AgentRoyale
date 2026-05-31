@@ -148,6 +148,58 @@ jobs:
           path: reports/npm-openrouter.html
 ```
 
+## Test A Bright Data Task Pack
+
+Use this when your task pack needs reliable web extraction. Store `BRIGHT_DATA_API_KEY` as a GitHub Actions secret.
+
+```yaml
+name: Agent Royale Bright Data Eval
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bright-data-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Start local agent
+        run: uvicorn examples.local_agent:app --host 127.0.0.1 --port 3000 &
+
+      - name: Wait for local agent
+        run: |
+          for i in {1..30}; do
+            curl -fsS http://localhost:3000/health && exit 0
+            sleep 2
+          done
+          exit 1
+
+      - name: Run Bright Data-backed eval
+        env:
+          BRIGHT_DATA_API_KEY: ${{ secrets.BRIGHT_DATA_API_KEY }}
+          BRIGHT_DATA_MCP_URL: https://mcp.brightdata.com/mcp
+        run: |
+          python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
+            --target http://localhost:3000/api/agent \
+            --report reports/bright-data-linkedin.html \
+            --fail-under-exact 0.7
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-royale-bright-data-report
+          path: reports/bright-data-linkedin.html
+```
+
 ## Thresholds
 
 `--fail-under-exact` exits with status `2` when exact accuracy is below the threshold.

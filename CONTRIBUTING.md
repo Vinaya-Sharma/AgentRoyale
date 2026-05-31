@@ -10,6 +10,7 @@ The easiest way to contribute is to add task packs, adapters, graders, and repor
 - Improve a flaky subscription-pricing parser.
 - Add a ground-truth adapter for a stable public API.
 - Add a provider or endpoint adapter.
+- Add a LangGraph, OpenAI Agents SDK, or Vercel AI SDK example.
 - Improve the HTML report.
 - Add a failure classifier for wrong field, stale value, wrong region, or wrong variant.
 - Add docs for a real stack integration.
