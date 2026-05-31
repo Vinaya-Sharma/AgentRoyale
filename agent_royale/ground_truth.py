@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import re
 from typing import Any
 
@@ -41,7 +40,9 @@ async def fetch_ground_truth(task: Task, timeout_seconds: float = 30) -> tuple[s
 
 async def fetch_bright_data_ground_truth(task: Task) -> str:
     spec = task.ground_truth
-    if not os.getenv("BRIGHT_DATA_API_KEY"):
+    from backend.config import get_settings
+
+    if not get_settings().bright_data_api_key:
         raise RuntimeError(
             "BRIGHT_DATA_API_KEY is required for ground_truth.method=bright_data. "
             "Use public API task packs to run Agent Royale without Bright Data."

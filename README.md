@@ -119,6 +119,8 @@ Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers 
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
+Want to contribute? The best first PR is a task pack for a source your agent depends on.
+
 Validate all packs:
 
 ```bash
@@ -154,6 +156,7 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
 ```
 
 See [docs/bright-data.md](docs/bright-data.md).
+See [docs/bright-data-run.md](docs/bright-data-run.md) for a real Bright Data-backed OpenRouter run.
 
 ## Why Not Promptfoo Or LangSmith?
 
@@ -168,8 +171,10 @@ Contributor docs:
 - [Task spec](docs/task-spec.md)
 - [Adapter contract](docs/adapter-contract.md)
 - [Bright Data ground truth](docs/bright-data.md)
+- [Real Bright Data run](docs/bright-data-run.md)
 - [Good first issues](docs/good-first-issues.md)
 - [Launch post draft](docs/launch-post.md)
+- [Launch checklist](docs/launch-checklist.md)
 
 Local endpoint example:
 

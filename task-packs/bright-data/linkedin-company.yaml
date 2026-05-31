@@ -23,7 +23,7 @@ tasks:
       method: bright_data
       tool: web_data_linkedin_company_profile
       url: "https://www.linkedin.com/company/openai/"
-      field: "0.employees_in_linkedin"
+      field: "employees_in_linkedin"
       source_url: "linkedin.com/company/openai"
 
   - id: bd_linkedin_anthropic_followers
@@ -41,5 +41,5 @@ tasks:
       method: bright_data
       tool: web_data_linkedin_company_profile
       url: "https://www.linkedin.com/company/anthropicresearch/"
-      field: "0.followers"
+      field: "followers"
       source_url: "linkedin.com/company/anthropicresearch"
