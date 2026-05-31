@@ -138,6 +138,7 @@ See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpo
 
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
+See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
 
 ## Bright Data Ground Truth
 
@@ -163,6 +164,7 @@ Contributor docs:
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [ROADMAP.md](ROADMAP.md)
 - [Integrations](docs/integrations.md)
+- [OpenRouter example](docs/openrouter.md)
 - [Task spec](docs/task-spec.md)
 - [Adapter contract](docs/adapter-contract.md)
 - [Bright Data ground truth](docs/bright-data.md)

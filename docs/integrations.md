@@ -49,6 +49,21 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
 
 See [Bright Data ground truth](bright-data.md).
 
+## OpenRouter
+
+Use OpenRouter as the model/search stack under test:
+
+```bash
+OPENROUTER_API_KEY=...
+python -m agent_royale run task-packs/github/example.yaml task-packs/npm/example.yaml \
+  --target openrouter:openai/gpt-4o-mini \
+  --report reports/openrouter-gpt4o-mini-devtools.html
+```
+
+Agent Royale still grades against independent task-pack ground truth.
+
+See [OpenRouter model stack eval](openrouter.md).
+
 ## Coming Next
 
 These are good contribution areas:

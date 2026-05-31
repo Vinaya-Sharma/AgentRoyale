@@ -48,6 +48,10 @@ def grade(task: Task, truth: str | float, answer: str) -> tuple[bool, str, str |
             float(normalized_truth),
             abs_tol=tolerance,
         ), claim, normalized_claim, normalized_truth
+    if normalized_truth and task.answer_type in {"string", "enum", "date"}:
+        normalized_answer = normalize_string(answer)
+        if str(normalized_truth) in normalized_answer:
+            return True, str(truth), normalized_truth, normalized_truth
     return normalized_claim == normalized_truth, claim, normalized_claim, normalized_truth
 
 
