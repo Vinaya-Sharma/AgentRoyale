@@ -106,11 +106,18 @@ Outputs:
 
 ## Example Task Packs
 
-- `task-packs/github/example.yaml`
-- `task-packs/npm/example.yaml`
-- `task-packs/subscription-pricing/example.yaml`
-- `task-packs/bright-data/linkedin-company.yaml` requires `BRIGHT_DATA_API_KEY`
-- `task-packs/bright-data/ecommerce-pricing.yaml` requires `BRIGHT_DATA_API_KEY`
+Current packs:
+
+- `task-packs/static-smoke.yaml`: offline smoke tests for the target contract.
+- `task-packs/github/example.yaml`: GitHub repository stars, forks, open issues, and latest releases.
+- `task-packs/npm/example.yaml`: npm versions, licenses, and download counts.
+- `task-packs/subscription-pricing/example.yaml`: official pricing-page examples.
+- `task-packs/bright-data/linkedin-company.yaml`: LinkedIn company metrics.
+- `task-packs/bright-data/ecommerce-pricing.yaml`: ecommerce product pricing.
+
+Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, app store, and dynamic pricing task packs.
+
+More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
 Validate all packs:
 
@@ -131,9 +138,9 @@ See [docs/v2-quickstart.md](docs/v2-quickstart.md) for the task schema and endpo
 
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 
-## Optional: Bright Data Ground Truth
+## Bright Data Ground Truth
 
-Agent Royale works without Bright Data for public API task packs. Add `BRIGHT_DATA_API_KEY` when you want harder messy-web ground truth for ecommerce pages, LinkedIn/company profiles, app stores, social pages, travel, or dynamic pricing pages.
+Some task packs require `BRIGHT_DATA_API_KEY` for web extraction:
 
 ```bash
 BRIGHT_DATA_API_KEY=...

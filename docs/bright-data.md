@@ -1,8 +1,6 @@
 # Bright Data Ground Truth
 
-Agent Royale runs out of the box without Bright Data using static, GitHub, and npm task packs.
-
-Bright Data is optional. Add it when you want independent ground truth for messier public-web sources such as ecommerce pages, LinkedIn/company profiles, app stores, social pages, travel, local business data, and dynamic pricing pages.
+Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, app store, and dynamic pricing task packs.
 
 ## Setup
 

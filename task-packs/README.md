@@ -4,10 +4,16 @@ These packs are intentionally small, readable, and source-specific. They are exa
 
 ## Packs
 
+- `static-smoke.yaml`: offline target-contract smoke tests.
 - `github/example.yaml`: GitHub repository metadata backed by the GitHub REST API.
 - `npm/example.yaml`: npm package metadata backed by npm registry and downloads APIs.
 - `subscription-pricing/example.yaml`: official pricing-page examples backed by regex page extractors.
-- `static-smoke.yaml`: offline target-contract smoke tests.
+- `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data extraction.
+- `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data extraction.
+
+Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, app store, and dynamic pricing task packs.
+
+More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
 ## Run One
 
