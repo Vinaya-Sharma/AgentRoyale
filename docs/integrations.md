@@ -76,6 +76,10 @@ See the [Firecrawl target example](../examples/firecrawl-agent/README.md) for a 
 
 See the [Jina Reader target example](../examples/jina-reader-agent/README.md) for a free URL-to-markdown baseline adapter.
 
+See the [Tavily target example](../examples/tavily-agent/README.md) for a local adapter that can evaluate Tavily extraction or search as an Agent Royale target.
+
+See the [Stagehand target example](../examples/stagehand-agent/README.md) and [Browser Use target example](../examples/browser-use-agent/README.md) for browser-agent adapters.
+
 ## Coming Next
 
 These are good contribution areas:
