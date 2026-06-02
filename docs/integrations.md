@@ -74,6 +74,8 @@ See the [Tabstack target example](../examples/tabstack-agent/README.md) for a lo
 
 See the [Firecrawl target example](../examples/firecrawl-agent/README.md) for a local adapter that can evaluate Firecrawl `/v2/scrape` JSON-mode extraction as an Agent Royale target.
 
+See the [Jina Reader target example](../examples/jina-reader-agent/README.md) for a free URL-to-markdown baseline adapter.
+
 ## Coming Next
 
 These are good contribution areas:

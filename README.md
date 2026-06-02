@@ -93,6 +93,7 @@ See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integ
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
 See [examples/tabstack-agent](examples/tabstack-agent) for a Tabstack target adapter example.
 See [examples/firecrawl-agent](examples/firecrawl-agent) for a Firecrawl target adapter example.
+See [examples/jina-reader-agent](examples/jina-reader-agent) for a free Jina Reader target adapter example.
 
 ## Task Packs
 
