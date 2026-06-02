@@ -4,12 +4,30 @@
 #   BRIGHT_DATA_API_KEY=...
 #   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 #
-# These tasks use scrape_as_markdown, which Bright Data documents as part of
-# the Rapid free MCP mode. They are meant to demonstrate messy-page or
-# docs-page oracles without requiring Pro structured-data tools.
+# These tasks use search_engine and scrape_as_markdown, which Bright Data
+# documents as part of the Rapid free MCP mode. They demonstrate search-result
+# and docs-page oracles without requiring Pro structured-data tools.
 name: bright-data-rapid-web
-description: Free-tier-friendly Bright Data MCP tasks backed by scrape-as-Markdown page extraction.
+description: Free-tier-friendly Bright Data MCP tasks backed by search results and scrape-as-Markdown page extraction.
 tasks:
+  - id: bd_rapid_docs_search_top_result
+    question: "Using Google search results, what is the URL of the first organic result for the query `site:docs.brightdata.com/ai/mcp-server/tools search_engine scrape_as_markdown`?"
+    required_source: "google search results"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - bright_data
+      - rapid_mode
+      - search_engine
+      - source_discovery
+    notes: "Ground truth uses Bright Data Rapid-mode search_engine and extracts the first organic result URL from the returned SERP JSON."
+    ground_truth:
+      method: bright_data
+      tool: search_engine
+      url: "site:docs.brightdata.com/ai/mcp-server/tools search_engine scrape_as_markdown"
+      regex: "\"link\"\\s*:\\s*\"([^\"]+)\""
+      source_url: "google search results"
+
   - id: bd_rapid_mcp_free_requests
     question: "Using Bright Data's MCP Server docs, how many free MCP requests per month are listed?"
     required_source: "docs.brightdata.com/ai/mcp-server/overview"

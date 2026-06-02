@@ -42,6 +42,8 @@ def _block_to_dict(block: Any) -> dict[str, Any]:
 
 
 def args_for_tool(endpoint: str, url: str) -> dict[str, Any]:
+    if endpoint == "search_engine":
+        return {"query": url, "engine": "google"}
     if endpoint == "bright_data_linkedin_company_dataset":
         return {"url": url}
     if endpoint == "bright_data_crunchbase_company_dataset":

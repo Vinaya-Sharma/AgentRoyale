@@ -161,7 +161,7 @@ The command exits with status `2` when exact accuracy is below the threshold.
 - `task-packs/finance/yahoo-quotes.yaml`: Yahoo Finance regular-market quote fields.
 - `task-packs/mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields.
 - `task-packs/subscription-pricing/example.yaml`: official pricing-page examples with explicit parser notes.
-- `task-packs/bright-data/rapid-web.yaml`: Bright Data Rapid-mode docs and release checks with `scrape_as_markdown`.
+- `task-packs/bright-data/rapid-web.yaml`: Bright Data Rapid-mode search, docs, and release checks with `search_engine` and `scrape_as_markdown`.
 
 ## Realistic Dev-Agent Demo
 

@@ -17,7 +17,7 @@ Do not commit `.env`.
 
 ## Run A Rapid-Mode Pack
 
-Rapid-mode packs use `scrape_as_markdown`, so they are the best Bright Data first run for developers using the MCP free tier.
+Rapid-mode packs use `search_engine` and `scrape_as_markdown`, so they are the best Bright Data first run for developers using the MCP free tier.
 
 ```bash
 python -m agent_royale doctor task-packs/bright-data/rapid-web.yaml --check-ground-truth
@@ -71,7 +71,7 @@ ground_truth:
   regex: "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
 ```
 
-This is the free-tier-friendly shape when used with `scrape_as_markdown`.
+This is the free-tier-friendly shape when used with `search_engine` or `scrape_as_markdown`.
 
 ## What Gets Reused From The Experiment
 
@@ -96,6 +96,6 @@ That split is intentional:
 
 ```text
 No key required: static smoke, GitHub, npm
-Bright Data Rapid mode: docs pages, public pages, simple dynamic pages via scrape_as_markdown
+Bright Data Rapid mode: search results, docs pages, public pages, simple dynamic pages via search_engine and scrape_as_markdown
 Bright Data Pro/groups: ecommerce, LinkedIn, app stores, social, travel, browser automation, structured data
 ```

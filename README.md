@@ -17,7 +17,7 @@ That made the next step obvious: turn the experiment into something other develo
 
 Agent Royale is that runner. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
 
-The repo includes 40 reusable tasks, including the 32-task experiment set plus developer-focused GitHub, npm, and Bright Data Rapid-mode checks.
+The repo includes 41 reusable tasks, including the 32-task experiment set plus developer-focused GitHub, npm, and Bright Data Rapid-mode checks.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -102,12 +102,12 @@ task-packs/npm/example.yaml               versions, licenses, downloads, reposit
 task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fields
 task-packs/mobile-apps/apple-app-store.yaml   Apple App Store rating and version fields
 task-packs/subscription-pricing/example.yaml   official pricing-page examples
-task-packs/bright-data/rapid-web.yaml      Bright Data Rapid-mode docs/release checks
+task-packs/bright-data/rapid-web.yaml      Bright Data Rapid-mode search/docs/release checks
 task-packs/bright-data/linkedin-company.yaml   LinkedIn company metrics
 task-packs/bright-data/ecommerce-pricing.yaml  ecommerce product pricing
 ```
 
-GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `scrape_as_markdown`, which is the best fit for Bright Data's MCP free tier. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
+GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `search_engine` and `scrape_as_markdown`, which are the best fit for Bright Data's MCP free tier. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 
