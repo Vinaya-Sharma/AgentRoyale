@@ -92,51 +92,51 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
 
 <section id="home" class="page on">
   <div class="landing-hero">
-    <div class="landing-eyebrow"><span class="dot"></span>A Web retrieval benchmark</div>
-    <h1>Evaluating AI Stacks in Live-Web Environments</h1>
-    <p class="landing-sub">I tested 12 model stacks on 32 live-web retrieval tasks. The models often cited legitimate sources, but their answers were still wrong. The tested stacks were right only 54% of the time, and even the best model got roughly 1 in 5 answers incorrect.</p>
+    <div class="landing-eyebrow"><span class="dot"></span>Web retrieval evals</div>
+    <h1>Unit Tests for AI Agents That Browse the Web</h1>
+    <p class="landing-sub">Agent Royale turns source-specific web questions into deterministic evals. Write a task pack, connect your agent or retrieval layer, and see which answers are exact, stale, wrong-source, or unsupported.</p>
     <div class="landing-actions">
       <button class="btn dark" data-go="leaderboard">View leaderboard</button>
       <button class="btn" data-go="modelsPage">Compare models</button>
     </div>
     <div class="landing-stats">
-      <div class="landing-stat"><b>12</b><span>model stacks</span></div>
+      <div class="landing-stat"><b>48</b><span>reusable tasks</span></div>
       <div class="landing-div"></div>
-      <div class="landing-stat"><b>32</b><span>live-web tasks</span></div>
+      <div class="landing-stat"><b>9</b><span>target examples</span></div>
       <div class="landing-div"></div>
-      <div class="landing-stat"><b>54%</b><span>avg exact accuracy</span></div>
+      <div class="landing-stat"><b>1,152</b><span>scored runs</span></div>
       <div class="landing-div"></div>
-      <div class="landing-stat"><b>78%</b><span>top stack accuracy</span></div>
+      <div class="landing-stat"><b>54%</b><span>original avg accuracy</span></div>
     </div>
   </div>
 
   <div class="landing-section">
     <div class="examples-head" style="margin-bottom:20px">
-      <div class="section-eyebrow">Project Motivation</div>
-      <h2>I wanted to explore the upper limit of easily available search intelligence.</h2>
-      <p>This experiment revealed that there is a significant reliability gap in autonomous real-time data extraction.</p>
+      <div class="section-eyebrow">Why Agent Royale</div>
+      <h2>Browsing is not the same thing as returning the exact value your workflow needs.</h2>
+      <p>Agent Royale makes live-web retrieval errors visible, repeatable, and easy to compare across providers.</p>
     </div>
     <div class="landing-grid">
       <div class="landing-card">
         <div class="landing-icon">01</div>
-        <h3>Why I Ran It</h3>
-        <p>I’ve been using AI more and more to find real data quickly: prices, counts, rates, facts, and sources I do not want to manually dig through.</p>
+        <h3>Define the Task</h3>
+        <p>Create YAML task packs for the source-specific questions your agent must answer correctly: versions, counts, prices, licenses, releases, or other exact fields.</p>
         <hr>
-        <p>I wanted to know which model was actually best at this. When I ran the experiment, the answer was, sadly, none of them without verification.</p>
+        <p>Each task declares the required source, ground-truth oracle, grader, and tolerance so the same pack can be reused across stacks.</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">02</div>
-        <h3>How I Ran It</h3>
-        <p>I designed 32 tasks that require exact, current, source-specific values. I ran 12 model stacks on each task three times.</p>
+        <h3>Connect a Target</h3>
+        <p>Run the same task pack against a local endpoint, Python function, model web search stack, browser automation layer, or web data API adapter.</p>
         <hr>
-        <p>Then I compared every answer to ground truth fetched independently from the required source and logged the result.</p>
+        <p>The repo includes target examples for HTTP agents, OpenRouter, Firecrawl, Tabstack, Tavily, Jina Reader, Stagehand, and Browser Use.</p>
       </div>
       <div class="landing-card">
         <div class="landing-icon">03</div>
-        <h3>What I Found</h3>
-        <p>Across 1,152 scored attempts, the models were right 54% of the time, wrong 33% of the time, and returned no usable answer 13% of the time.</p>
+        <h3>Inspect Failures</h3>
+        <p>Agent Royale reports exact accuracy, wrong values, wrong sources, unsupported citations, latency, cost, and task-level failure details.</p>
         <hr>
-        <p>The uncomfortable part is that 33% of the time, I was returned false information that looked normal and cited.</p>
+        <p>The original 32-task experiment produced 1,152 scored runs and showed a 54% average exact-accuracy rate across tested stacks.</p>
       </div>
     </div>
   </div>
@@ -236,8 +236,8 @@ table{width:100%;border-collapse:collapse;background:var(--white);border-radius:
   <div class="finding">
     <div class="finding-inner">
       <div class="finding-left">
-        <div class="finding-kicker">My greatest takeaway is that</div>
-        <div class="finding-heading">AI is getting better at lying.</div>
+        <div class="finding-kicker">The practical takeaway</div>
+        <div class="finding-heading">Plausible answers still need deterministic checks.</div>
         <div class="finding-sub">This experiment shows that even frontier LLM stacks failed to return exact ground-truth values for live web facts almost half the time in this v1 run. The worst part is that models often delivered confident incorrect data due to stale search caches, layout parsing issues, source-field confusion, and nearby wrong values. A model citing a real URL does not guarantee accuracy. Live data precision is still a hard retrieval problem, not just a text generation problem.</div>
       </div>
       <div class="finding-right">

@@ -9,17 +9,42 @@ Unit tests for AI agents and retrieval layers that browse the web.
 
 **Live site:** https://agentroyale.onrender.com/
 
-I started relying on AI more and more to look things up quickly: prices, package versions, follower counts, finance fields, company sizes. Things I didn't want to dig for manually. The answers would come back looking right, with citations and everything, and yet they'd be off. Not wrong in some obvious way you'd catch immediately, just quietly wrong: a stale price, a field from the wrong column, an employee range when I asked for a headcount. The citations were real. The sources existed. But the returned value was still wrong.
+Agent Royale tests whether an AI agent or retrieval layer returns the exact live-web values your product depends on.
 
-So I ran an experiment. I wrote 32 tasks, each asking for a specific value from a specific public source, and ran 12 model/retrieval stacks against each one three times. That's 1,152 scored attempts. The average exact accuracy across all stacks was 54%. The best stack, Grok 4, hit 78%, meaning it still got roughly one in five wrong. Most failures weren't refusals or hallucinated sources. They were wrong values that looked completely fine.
+Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, wrong values, wrong sources, unsupported citations, latency, and cost. You can use the same task pack across model web search, a local HTTP agent, a web data API, a browser automation stack, or a source-specific scraper.
 
-That made the next step obvious: turn the experiment into something other developers could run on their own agents.
+The goal is simple: do not ask only whether your agent can browse. Ask whether it returns the exact value your workflow asked for, from the source you required.
 
-Agent Royale is that runner. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
+## Realistic Example
 
-You can use it to test the retrieval layer your agent depends on: model web search, a local HTTP agent, a web data API, a browser automation stack, or a source-specific scraper. The same task pack and independent ground truth can be reused across each target.
+The dependency-research pack models a real developer assistant that checks package versions, license metadata, GitHub release tags, repository file fields, npm download windows, and GitHub project status.
 
-The repo includes 41 reusable tasks, including the 32-task experiment set plus developer-focused GitHub, npm, and Bright Data Rapid-mode checks.
+```bash
+python -m agent_royale run task-packs/devtools/dependency-research.yaml \
+  --target examples/dev_research_agent.py:answer \
+  --report reports/dependency-research.html
+```
+
+The included demo agent calls public GitHub and npm APIs, but it has a few realistic retrieval bugs. Agent Royale catches them:
+
+```text
+Exact accuracy: 57.1% (4/7)
+
+Correct:
+- npm_react_latest
+- npm_vite_latest
+- npm_typescript_license
+- github_vue_package_version
+
+Caught:
+- npm_next_weekly_downloads: wrong source/window
+- github_playwright_latest_release: wrong source
+- github_vscode_open_issues: wrong value/field semantics
+```
+
+The point is not whether one repository count is off by a small amount. The point is that the source can be real and the answer can still be wrong for the workflow. Agent Royale turns that into a repeatable test.
+
+The repo includes 48 reusable tasks, including a realistic dependency-research pack, source-specific GitHub/npm/finance/mobile/pricing packs, Bright Data-backed packs, and the original 32-task experiment set.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -28,6 +53,12 @@ The preview above is from a real run of `examples/dev_research_agent.py` against
 Here is a second real run, using `openrouter:openai/gpt-4o-mini` as the target and Bright Data as the ground-truth extractor for LinkedIn company fields:
 
 ![Agent Royale Bright Data OpenRouter report preview](docs/assets/bright-data-openrouter-preview.png)
+
+## Original Experiment
+
+Agent Royale came from an experiment with 32 live-web tasks, 12 model/retrieval stacks, and 1,152 scored attempts. The tested stacks averaged 54% exact accuracy. The best stack in that run reached 78%, which still meant roughly one in five answers was wrong.
+
+Most failures were not refusals or hallucinated sources. They were plausible values from real sources that did not match the independently fetched ground truth.
 
 ## What It Tests
 
@@ -184,7 +215,7 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
 
 See [docs/bright-data.md](docs/bright-data.md) for setup details.
 
-## Experiment Results
+## Original Experiment Results
 
 | Metric | Value |
 |---|---|
