@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.3
+
+- Polished the public launch page with clearer product positioning and final UI copy fixes.
+- Added launch-ready screenshots for the homepage, task explorer, leaderboard, and dependency-research report.
+
 ## v0.1.2
 
 - Added a realistic dependency-research eval pack and walkthrough.
