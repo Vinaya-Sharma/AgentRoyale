@@ -1,6 +1,6 @@
 # Agent Royale
 
-Unit tests for AI agents that browse the web.
+Unit tests for AI agents and retrieval layers that browse the web.
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -16,6 +16,8 @@ So I ran an experiment. I wrote 32 tasks, each asking for a specific value from 
 That made the next step obvious: turn the experiment into something other developers could run on their own agents.
 
 Agent Royale is that runner. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
+
+You can use it to test the retrieval layer your agent depends on: model web search, a local HTTP agent, a web data API, a browser automation stack, or a source-specific scraper. The same task pack and independent ground truth can be reused across each target.
 
 The repo includes 41 reusable tasks, including the 32-task experiment set plus developer-focused GitHub, npm, and Bright Data Rapid-mode checks.
 
@@ -34,13 +36,27 @@ The tasks that expose this problem are ones where there's a single correct curre
 ## What You Get
 
 - Task packs: YAML files defining source-specific questions with ground truth
-- Target support: HTTP endpoint, Python function, or OpenRouter adapter if configured
+- Target support: HTTP endpoint, Python function, OpenRouter adapter, and examples for retrieval/search/browser layers
 - Ground truth adapters: static values, JSON APIs, page regex extractors, Bright Data extraction
 - Graders: exact string, number, currency, percentage, date, enum
 - Failure labels: wrong value, wrong source, unsupported citation, no answer, tool failure
 - Reports: terminal summary, JSONL run log, HTML report
 - CI gates: nonzero exit when `--fail-under-exact` threshold is missed
 - Preflight checks: environment, task-pack requirements, optional oracle and target probes
+
+## Target Examples
+
+| Target | Type | Key required | Best for |
+|---|---|---:|---|
+| Local HTTP endpoint | agent adapter | no | testing your own app or staging agent |
+| Python function | local function | no | fast local smoke tests |
+| OpenRouter | model web search | yes | model/search stack evals |
+| Jina Reader | URL-to-markdown | optional | free source-reading baseline |
+| Firecrawl | web scrape JSON | yes | schema extraction from required source URLs |
+| Tabstack | web research/extraction | yes | web execution API evals |
+| Tavily | search/extract API | yes | search and source extraction evals |
+| Stagehand | browser automation | yes | browser-agent extraction |
+| Browser Use | browser agent | yes | full browser-agent workflows |
 
 ## Quickstart
 
@@ -91,11 +107,7 @@ See [docs/quickstart.md](docs/quickstart.md) for the task schema and endpoint co
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
-See [examples/tabstack-agent](examples/tabstack-agent) for a Tabstack target adapter example.
-See [examples/firecrawl-agent](examples/firecrawl-agent) for a Firecrawl target adapter example.
-See [examples/jina-reader-agent](examples/jina-reader-agent) for a free Jina Reader target adapter example.
-See [examples/tavily-agent](examples/tavily-agent) for a Tavily target adapter example.
-See [examples/stagehand-agent](examples/stagehand-agent) and [examples/browser-use-agent](examples/browser-use-agent) for browser-agent target examples.
+See the `examples/` directory for target adapters including OpenAI Agents SDK, OpenRouter, Tabstack, Firecrawl, Jina Reader, Tavily, Stagehand, and Browser Use.
 
 ## Task Packs
 

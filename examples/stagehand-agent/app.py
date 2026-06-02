@@ -40,7 +40,11 @@ def run_stagehand(question: str, task: dict[str, Any]) -> dict[str, Any]:
 
     source_url = source_to_url(task.get("required_source", ""))
     model_name = os.getenv("STAGEHAND_MODEL", "google/gemini-3-flash-preview")
-    client = Stagehand()
+    client = Stagehand(
+        browserbase_api_key=os.getenv("BROWSERBASE_API_KEY") or None,
+        browserbase_project_id=os.getenv("BROWSERBASE_PROJECT_ID") or None,
+        model_api_key=os.getenv("STAGEHAND_MODEL_API_KEY") or None,
+    )
     session_id = ""
     try:
         response = client.sessions.start(model_name=model_name)
@@ -53,6 +57,17 @@ def run_stagehand(question: str, task: dict[str, Any]) -> dict[str, Any]:
                 "Use only the current page. Do not abbreviate numbers. "
                 f"Task: {question}"
             ),
+            schema={
+                "type": "object",
+                "properties": {
+                    "answer": {
+                        "type": "string",
+                        "description": "The single exact value requested by the task.",
+                    }
+                },
+                "required": ["answer"],
+                "additionalProperties": False,
+            },
         )
         answer_value = extract_answer(result)
         return {

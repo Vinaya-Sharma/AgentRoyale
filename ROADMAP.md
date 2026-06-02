@@ -1,10 +1,10 @@
 # Roadmap
 
-Agent Royale should stay narrow enough to be trusted and useful: unit tests for AI agents that browse the web.
+Agent Royale should stay narrow enough to be trusted and useful: unit tests for AI agents and retrieval layers that browse the web.
 
 ## v0.1: Local Runner
 
-Status: in progress.
+Status: shipped.
 
 - CLI commands: `init`, `validate`, `run`, `report`
 - YAML/JSON task packs
@@ -13,6 +13,18 @@ Status: in progress.
 - JSONL run logs
 - local HTML reports
 - starter task packs for GitHub, npm, subscription pricing, and offline smoke tests
+
+## v0.1.1: Retrieval-Layer Adapter Examples
+
+Status: shipped.
+
+- Tabstack target adapter example
+- Firecrawl target adapter example
+- Jina Reader free baseline adapter example
+- Tavily search/extract adapter example
+- Stagehand browser-agent adapter example
+- Browser Use browser-agent adapter example
+- README target matrix for retrieval-layer evals
 
 ## v0.2: CI And Contributor Loop
 
