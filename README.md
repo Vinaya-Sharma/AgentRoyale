@@ -101,6 +101,14 @@ GitHub, npm, finance, and Apple App Store packs use public APIs. The current Bri
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 
+Create a starter pack:
+
+```bash
+python -m agent_royale init task-pack cloud-pricing
+```
+
+See [TASK_PACK_IDEAS.md](TASK_PACK_IDEAS.md) for contribution ideas and task-design guidance.
+
 Validate all packs:
 
 ```bash
@@ -468,6 +476,7 @@ Python, FastAPI, Uvicorn, Pydantic. Model calls via OpenRouter. Ground truth via
 The best first PR is a task pack for a source your own agent depends on.
 
 - [CONTRIBUTING.md](CONTRIBUTING.md)
+- [TASK_PACK_IDEAS.md](TASK_PACK_IDEAS.md)
 - [ROADMAP.md](ROADMAP.md)
 - [Task spec](docs/task-spec.md)
 - [Adapter contract](docs/adapter-contract.md)

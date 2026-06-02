@@ -1,4 +1,4 @@
-# Ignore everything by default, then allowlist the final Agent Arena app files.
+# Ignore everything by default, then allowlist public Agent Royale files.
 *
 
 # Project metadata / setup
@@ -9,6 +9,7 @@
 !pyproject.toml
 !LICENSE
 !CONTRIBUTING.md
+!TASK_PACK_IDEAS.md
 !ROADMAP.md
 !.github/
 !.github/ISSUE_TEMPLATE/

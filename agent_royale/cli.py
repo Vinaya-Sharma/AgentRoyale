@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -15,7 +16,7 @@ from agent_royale.schema import flatten_tasks, load_task_packs, validation_error
 
 EXAMPLE_TASK_PACK = {
     "name": "agent-royale-example",
-    "description": "Tiny static task pack for testing the Agent Royale V2 runner.",
+    "description": "Tiny static task pack for testing the Agent Royale runner.",
     "tasks": [
         {
             "id": "example_static_price",
@@ -32,6 +33,33 @@ EXAMPLE_TASK_PACK = {
         }
     ],
 }
+
+
+def task_pack_template(slug: str) -> dict:
+    return {
+        "name": slug,
+        "description": f"Starter task pack for {slug.replace('-', ' ')} retrieval tests.",
+        "tasks": [
+            {
+                "id": f"{slug.replace('-', '_')}_example_value",
+                "question": "Using the example source, what is the current Pro plan price in USD?",
+                "required_source": "example.com/pricing",
+                "answer_type": "currency",
+                "tolerance": 0,
+                "labels": [slug, "example", "pricing"],
+                "notes": (
+                    "Replace this static smoke task with a source-specific oracle. "
+                    "Good task packs use public APIs when they expose the exact field, "
+                    "and maintained page extraction when the source is only available on the web."
+                ),
+                "ground_truth": {
+                    "method": "static",
+                    "value": "$19.00",
+                    "source_url": "example.com/pricing",
+                },
+            }
+        ],
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -55,7 +83,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command")
 
     init = sub.add_parser("init", help="Create a starter task pack.")
-    init.add_argument("path", nargs="?", default="agent-royale-tasks.yaml")
+    init.add_argument(
+        "target",
+        nargs="?",
+        default="agent-royale-tasks.yaml",
+        help="Output YAML path, or 'task-pack' to create task-packs/<name>/example.yaml.",
+    )
+    init.add_argument("name", nargs="?", default="", help="Task-pack name when using 'init task-pack <name>'.")
+    init.add_argument("--root", default=".", help="Repo root for 'init task-pack <name>'.")
 
     validate = sub.add_parser("validate", help="Validate one or more task packs.")
     validate.add_argument("paths", nargs="+")
@@ -77,15 +112,32 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def cmd_init(args: argparse.Namespace) -> int:
-    path = Path(args.path)
+    if args.target == "task-pack":
+        if not args.name:
+            print("Usage: agent-royale init task-pack <domain-name>")
+            return 1
+        slug = slugify(args.name)
+        path = Path(args.root) / "task-packs" / slug / "example.yaml"
+        task_pack = task_pack_template(slug)
+    else:
+        if args.name:
+            print("Usage: agent-royale init [path] or agent-royale init task-pack <domain-name>")
+            return 1
+        path = Path(args.target)
+        task_pack = EXAMPLE_TASK_PACK
     if path.exists():
         print(f"Refusing to overwrite existing file: {path}")
         return 1
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(yaml.safe_dump(EXAMPLE_TASK_PACK, sort_keys=False), encoding="utf-8")
+    path.write_text(yaml.safe_dump(task_pack, sort_keys=False), encoding="utf-8")
     print(f"Created {path}")
     print("Next: agent-royale validate", path)
     return 0
+
+
+def slugify(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+    return slug or "custom"
 
 
 def cmd_validate(args: argparse.Namespace) -> int:

@@ -17,6 +17,14 @@ The included packs now contain 32 tasks. GitHub, npm, finance, and Apple App Sto
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
+Create a starter pack:
+
+```bash
+python -m agent_royale init task-pack cloud-pricing
+```
+
+See [../TASK_PACK_IDEAS.md](../TASK_PACK_IDEAS.md) for task-pack ideas and quality guidance.
+
 ## Run One
 
 ```bash

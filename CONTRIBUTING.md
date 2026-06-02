@@ -18,6 +18,11 @@ The easiest way to contribute is to add task packs, adapters, graders, and repor
 ## Add A Task Pack
 
 1. Create a YAML file under `task-packs/<domain>/example.yaml`.
+
+```bash
+python -m agent_royale init task-pack cloud-pricing
+```
+
 2. Keep each task source-specific and exact.
 3. Include clear `notes` explaining the oracle and common failure modes.
 4. Validate locally:
@@ -27,6 +32,8 @@ python -m agent_royale validate task-packs
 ```
 
 5. If the pack can run without secrets, include a sample command in your PR.
+
+See [TASK_PACK_IDEAS.md](TASK_PACK_IDEAS.md) for domains that would be useful to add.
 
 ## Good Tasks
 
@@ -59,6 +66,15 @@ The oracle must be stricter than the model under test.
 - Store source URLs and task notes.
 - If an oracle drifts, update or quarantine the task instead of loosening the grader silently.
 - Do not use an LLM judge for exact retrieval tasks unless the task clearly labels that scoring mode.
+
+## Task Pack Quality Checklist
+
+- The question names the source the agent should use.
+- The required source matches the oracle source.
+- The ground-truth method fetches the value independently from the target agent.
+- The task is not account-specific or dependent on a personalized page.
+- The tolerance is as strict as the source allows.
+- The `notes` field explains what values should be rejected.
 
 ## Pull Request Checklist
 

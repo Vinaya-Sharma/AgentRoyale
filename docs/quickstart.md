@@ -116,6 +116,12 @@ Supported answer types:
 - `date`
 - `enum`
 
+Create a starter task pack:
+
+```bash
+python -m agent_royale init task-pack cloud-pricing
+```
+
 ## CI Thresholds
 
 ```bash
@@ -152,3 +158,4 @@ The README report preview is generated from this kind of real run.
 - [Adapter contract](adapter-contract.md)
 - [Bright Data ground truth](bright-data.md)
 - [GitHub Actions](github-actions.md)
+- [Task pack ideas](../TASK_PACK_IDEAS.md)
