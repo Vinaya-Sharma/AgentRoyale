@@ -168,12 +168,14 @@ The command exits with status `2` when exact accuracy is below the threshold.
 `examples/dev_research_agent.py` calls public GitHub and npm APIs. It intentionally has a few realistic retrieval bugs, such as using npm package metadata when the task asks for a GitHub release.
 
 ```bash
-python -m agent_royale run task-packs/github/example.yaml task-packs/npm/example.yaml \
+python -m agent_royale run task-packs/devtools/dependency-research.yaml \
   --target examples/dev_research_agent.py:answer \
   --report reports/dev-agent.html
 ```
 
 The README report preview is generated from this kind of real run.
+
+See [Realistic dev-agent eval](realistic-dev-eval.md) for the full walkthrough.
 
 ## More Docs
 

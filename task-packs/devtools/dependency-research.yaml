@@ -1,0 +1,97 @@
+# Agent Royale task pack: dependency research assistant.
+#
+# This is a compact realistic eval for agents that help developers research
+# package upgrades, dependency metadata, and open-source project status.
+name: dependency-research
+description: Exact retrieval tasks for a developer dependency-research assistant.
+tasks:
+  - id: npm_react_latest
+    question: "Using npm, what is the latest published version of the react package?"
+    required_source: "npmjs.com/package/react"
+    answer_type: string
+    tolerance: 0
+    labels: [npm, package_metadata, package_version, dependency_research]
+    notes: "Checks whether the agent uses current npm package metadata instead of memory."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/react/latest"
+      field: "version"
+      source_url: "npmjs.com/package/react"
+
+  - id: npm_vite_latest
+    question: "Using npm, what is the latest published version of the vite package?"
+    required_source: "npmjs.com/package/vite"
+    answer_type: string
+    tolerance: 0
+    labels: [npm, package_metadata, package_version, dependency_research]
+    notes: "Fast-moving package versions are a common stale-answer failure mode."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/vite/latest"
+      field: "version"
+      source_url: "npmjs.com/package/vite"
+
+  - id: npm_typescript_license
+    question: "Using npm, what license does the latest typescript package version list?"
+    required_source: "npmjs.com/package/typescript"
+    answer_type: string
+    tolerance: 0
+    labels: [npm, package_metadata, license, dependency_research]
+    notes: "License metadata is a realistic dependency-review field with an exact answer."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/typescript/latest"
+      field: "license"
+      source_url: "npmjs.com/package/typescript"
+
+  - id: github_playwright_latest_release
+    question: "Using GitHub Releases, what is the latest release tag for microsoft/playwright?"
+    required_source: "github.com/microsoft/playwright/releases"
+    answer_type: string
+    tolerance: 0
+    labels: [github, releases, package_version, dependency_research]
+    notes: "Catches agents that answer with npm package metadata when the task asks for GitHub Releases."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/microsoft/playwright/releases/latest"
+      field: "tag_name"
+      source_url: "github.com/microsoft/playwright/releases/latest"
+
+  - id: github_vue_package_version
+    question: "Using Vue's package.json file on GitHub, what is the current top-level version value?"
+    required_source: "github.com/vuejs/core/blob/main/packages/vue/package.json"
+    answer_type: string
+    tolerance: 0
+    labels: [github, repository_file, package_version, dependency_research]
+    notes: "Checks whether the agent reads the exact repository file instead of npm or docs."
+    ground_truth:
+      method: http_json
+      url: "https://raw.githubusercontent.com/vuejs/core/main/packages/vue/package.json"
+      field: "version"
+      source_url: "github.com/vuejs/core/blob/main/packages/vue/package.json"
+
+  - id: npm_next_weekly_downloads
+    question: "Using npm's download stats, how many downloads did the next package have in the last week?"
+    required_source: "api.npmjs.org/downloads/point/last-week/next"
+    answer_type: number
+    tolerance: 0
+    labels: [npm, package_metadata, dynamic_count, downloads, dependency_research]
+    notes: "Catches agents that use last-month, lifetime, or package-page popularity numbers."
+    ground_truth:
+      method: http_json
+      url: "https://api.npmjs.org/downloads/point/last-week/next"
+      field: "downloads"
+      source_url: "api.npmjs.org/downloads/point/last-week/next"
+
+  - id: github_vscode_open_issues
+    question: "Using GitHub, how many open issues does the microsoft/vscode repository currently show?"
+    required_source: "github.com/microsoft/vscode"
+    answer_type: number
+    tolerance: 0
+    labels: [github, repository_metadata, dynamic_count, issues, dependency_research]
+    notes: "Catches confusion between GitHub repository open_issues_count and issue-search counts."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/microsoft/vscode"
+      field: "open_issues_count"
+      source_url: "github.com/microsoft/vscode"

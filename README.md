@@ -104,6 +104,7 @@ Targets accept:
 - `examples/echo_agent.py:answer` for a local Python function
 
 See [docs/quickstart.md](docs/quickstart.md) for the task schema and endpoint contract.
+See [docs/realistic-dev-eval.md](docs/realistic-dev-eval.md) for a realistic dependency-research eval example.
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
@@ -113,6 +114,7 @@ See the `examples/` directory for target adapters including OpenAI Agents SDK, O
 
 ```
 task-packs/static-smoke.yaml              offline smoke tests for the target contract
+task-packs/devtools/dependency-research.yaml  realistic dependency-research assistant eval
 task-packs/github/example.yaml            repo counts, releases, files, branches, licenses
 task-packs/npm/example.yaml               versions, licenses, downloads, repository URLs, package size, engines
 task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fields
