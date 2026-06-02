@@ -21,6 +21,11 @@ jobs:
       - name: Validate task packs
         run: python -m agent_royale validate task-packs
 
+      - name: Doctor smoke target
+        run: |
+          python -m agent_royale doctor task-packs/static-smoke.yaml \
+            --target examples/echo_agent.py:answer
+
       - name: Run smoke eval
         run: |
           python -m agent_royale run task-packs/static-smoke.yaml \

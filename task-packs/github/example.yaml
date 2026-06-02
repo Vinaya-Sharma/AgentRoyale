@@ -4,7 +4,7 @@
 # the tested stack to answer from GitHub-facing sources. This is a good starter
 # pack because the facts are dynamic but the oracle is clean and deterministic.
 name: github-metadata
-description: Exact retrieval tasks for GitHub repository stars, forks, issues, and latest releases.
+description: Exact retrieval tasks for GitHub repository counts, releases, files, branches, and licenses.
 tasks:
   - id: github_nextjs_stars
     question: "Using GitHub, how many stars does the vercel/next.js repository currently have?"
@@ -89,3 +89,51 @@ tasks:
       url: "https://raw.githubusercontent.com/vuejs/core/main/packages/vue/package.json"
       field: "version"
       source_url: "github.com/vuejs/core/blob/main/packages/vue/package.json"
+
+  - id: github_react_default_branch
+    question: "Using GitHub, what default branch does the facebook/react repository currently list?"
+    required_source: "github.com/facebook/react"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - github
+      - repository_metadata
+      - default_branch
+    notes: "Catches agents that assume every active repository still uses master or answer from old snippets."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/facebook/react"
+      field: "default_branch"
+      source_url: "github.com/facebook/react"
+
+  - id: github_rust_license_spdx
+    question: "Using GitHub, what SPDX license identifier does the rust-lang/rust repository currently list?"
+    required_source: "github.com/rust-lang/rust"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - github
+      - repository_metadata
+      - license
+    notes: "Tests whether the stack reads GitHub's repository metadata instead of summarizing project licensing from memory."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/rust-lang/rust"
+      field: "license.spdx_id"
+      source_url: "github.com/rust-lang/rust"
+
+  - id: github_nextjs_package_manager
+    question: "Using the Next.js package.json file on GitHub, what packageManager value is currently listed?"
+    required_source: "github.com/vercel/next.js/blob/canary/package.json"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - github
+      - repository_file
+      - package_manager
+    notes: "A raw repository-file task that catches answers from npm package metadata, docs pages, or older lockfile assumptions."
+    ground_truth:
+      method: http_json
+      url: "https://raw.githubusercontent.com/vercel/next.js/canary/package.json"
+      field: "packageManager"
+      source_url: "github.com/vercel/next.js/blob/canary/package.json"

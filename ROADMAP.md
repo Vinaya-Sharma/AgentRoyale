@@ -25,6 +25,7 @@ Status: in progress.
 - first wave of community task packs
 - OpenAI Agents SDK example
 - Bright Data-backed CI workflow docs
+- web research API adapter example
 
 ## v0.3: Stronger Failure Taxonomy
 
@@ -34,6 +35,7 @@ Status: in progress.
 - wrong variant
 - unit mismatch
 - unsupported citation
+- citation support checks beyond URL overlap
 - provider failure vs tool failure
 - before/after report comparison
 
@@ -42,10 +44,12 @@ Status: in progress.
 - provider adapters for common model/search stacks
 - custom ground-truth scripts
 - browser-agent examples
+- web data and browser automation API examples
 - LangGraph example
 - Vercel AI SDK example
 - MCP/tool-server examples
 - import/export compatibility with existing eval tools where it helps
+- schema-first target response validation
 
 ## v0.5: Community Gallery
 
@@ -62,3 +66,5 @@ Status: in progress.
 - Universal model leaderboard claims
 
 Agent Royale should complement those systems by owning the exact live-web retrieval wedge.
+
+See [Adjacent Tools](docs/adjacent-tools.md) for how Agent Royale fits alongside web execution and research APIs.

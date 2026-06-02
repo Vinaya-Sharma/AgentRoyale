@@ -3,15 +3,20 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import re
+from collections import Counter
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 import yaml
 
 from agent_royale import __version__
+from agent_royale.ground_truth import fetch_ground_truth
 from agent_royale.report import load_records, write_html_report
 from agent_royale.runner import run_tasks
 from agent_royale.schema import flatten_tasks, load_task_packs, validation_errors
+from agent_royale.targets import call_target
 
 
 EXAMPLE_TASK_PACK = {
@@ -69,6 +74,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_init(args)
     if args.command == "validate":
         return cmd_validate(args)
+    if args.command == "doctor":
+        return asyncio.run(cmd_doctor(args))
     if args.command == "run":
         return asyncio.run(cmd_run(args))
     if args.command == "report":
@@ -94,6 +101,16 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate = sub.add_parser("validate", help="Validate one or more task packs.")
     validate.add_argument("paths", nargs="+")
+
+    doctor = sub.add_parser("doctor", help="Check environment, task-pack readiness, and target contract.")
+    doctor.add_argument("paths", nargs="*", help="Optional task YAML/JSON files or directories.")
+    doctor.add_argument("--target", default="", help="Optional target to probe with the first loaded task.")
+    doctor.add_argument(
+        "--check-ground-truth",
+        action="store_true",
+        help="Fetch each loaded task oracle to catch parser/API failures before a full run.",
+    )
+    doctor.add_argument("--timeout", type=float, default=30)
 
     run = sub.add_parser("run", help="Run tasks against a target stack.")
     run.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
@@ -142,12 +159,61 @@ def slugify(value: str) -> str:
 
 def cmd_validate(args: argparse.Namespace) -> int:
     ok = True
-    for raw in args.paths:
+    for item in expand_task_files(args.paths):
+        errors = validation_errors(item)
+        if errors:
+            ok = False
+            print(f"FAIL {item}")
+            for error in errors:
+                print(f"  - {error}")
+        else:
+            pack = load_task_packs([item])[0]
+            print(f"OK {item} ({len(pack.tasks)} task{'s' if len(pack.tasks) != 1 else ''})")
+    return 0 if ok else 1
+
+
+def expand_task_files(raw_paths: list[str]) -> list[Path]:
+    paths: list[Path] = []
+    for raw in raw_paths:
         path = Path(raw)
-        paths = [path]
         if path.is_dir():
-            paths = sorted(item for item in path.rglob("*") if item.suffix.lower() in {".yaml", ".yml", ".json"})
-        for item in paths:
+            paths.extend(
+                sorted(item for item in path.rglob("*") if item.suffix.lower() in {".yaml", ".yml", ".json"})
+            )
+        else:
+            paths.append(path)
+    return paths
+
+
+async def cmd_doctor(args: argparse.Namespace) -> int:
+    ok = True
+    print(f"Agent Royale {__version__}")
+
+    try:
+        from backend.config import get_settings
+
+        settings = get_settings()
+        openrouter_key = bool(settings.openrouter_api_key)
+        bright_data_key = bool(settings.bright_data_api_key)
+        openrouter_base_url = settings.openrouter_base_url
+        bright_data_url = settings.bright_data_mcp_url
+    except Exception:
+        openrouter_key = bool(os.getenv("OPENROUTER_API_KEY"))
+        bright_data_key = bool(os.getenv("BRIGHT_DATA_API_KEY"))
+        openrouter_base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+        bright_data_url = os.getenv("BRIGHT_DATA_MCP_URL", "https://mcp.brightdata.com/mcp")
+
+    print("\nEnvironment")
+    print(check_line("OPENROUTER_API_KEY", openrouter_key, "set", "missing"))
+    print(f"  OpenRouter base URL: {redact_url(openrouter_base_url)}")
+    print(check_line("BRIGHT_DATA_API_KEY", bright_data_key, "set", "missing"))
+    print(f"  Bright Data MCP URL: {redact_url(bright_data_url)}")
+
+    tasks = []
+    if args.paths:
+        print("\nTask packs")
+        task_files = expand_task_files(args.paths)
+        for item in task_files:
             errors = validation_errors(item)
             if errors:
                 ok = False
@@ -157,7 +223,80 @@ def cmd_validate(args: argparse.Namespace) -> int:
             else:
                 pack = load_task_packs([item])[0]
                 print(f"OK {item} ({len(pack.tasks)} task{'s' if len(pack.tasks) != 1 else ''})")
+        if ok:
+            packs = load_task_packs(task_files)
+            tasks = flatten_tasks(packs)
+            print_task_summary(tasks)
+            if any(task.ground_truth.method == "bright_data" for task in tasks) and not bright_data_key:
+                ok = False
+                print("FAIL Bright Data task packs require BRIGHT_DATA_API_KEY.")
+    else:
+        print("\nTask packs")
+        print("No task packs supplied. Pass paths to check pack readiness.")
+
+    if args.target:
+        print("\nTarget")
+        if args.target.startswith("openrouter:") and not openrouter_key:
+            ok = False
+            print("FAIL OpenRouter targets require OPENROUTER_API_KEY.")
+        elif not tasks:
+            print("SKIP target probe; pass a task pack path so doctor has a representative task.")
+        else:
+            try:
+                response, latency_ms = await call_target(args.target, tasks[0], timeout_seconds=args.timeout)
+                if response.answer.strip():
+                    citation_count = len(response.citations)
+                    print(
+                        f"OK target returned an answer for {tasks[0].id} "
+                        f"({latency_ms:.0f} ms, {citation_count} citation{'s' if citation_count != 1 else ''})"
+                    )
+                else:
+                    ok = False
+                    print(f"FAIL target returned an empty answer for {tasks[0].id}.")
+            except Exception as exc:
+                ok = False
+                print(f"FAIL target probe failed: {exc}")
+
+    if args.check_ground_truth and tasks:
+        print("\nGround truth")
+        for task in tasks:
+            try:
+                value, source = await fetch_ground_truth(task, timeout_seconds=args.timeout)
+                print(f"OK {task.id}: {value!r} from {source}")
+            except Exception as exc:
+                ok = False
+                print(f"FAIL {task.id}: {exc}")
+    elif args.check_ground_truth:
+        print("\nGround truth")
+        print("SKIP ground-truth checks; pass at least one task pack path.")
+
+    print(f"\n{'OK' if ok else 'FAIL'} doctor checks complete.")
     return 0 if ok else 1
+
+
+def check_line(name: str, ok: bool, ok_text: str, missing_text: str) -> str:
+    return f"{'OK' if ok else 'WARN'} {name}: {ok_text if ok else missing_text}"
+
+
+def redact_url(value: str) -> str:
+    parsed = urlparse(value)
+    if not parsed.query:
+        return value
+    redacted = []
+    for key, raw_value in parse_qsl(parsed.query, keep_blank_values=True):
+        if key.lower() in {"token", "api_key", "apikey", "key"}:
+            redacted.append((key, "redacted"))
+        else:
+            redacted.append((key, raw_value))
+    return urlunparse(parsed._replace(query=urlencode(redacted, safe=",")))
+
+
+def print_task_summary(tasks: list) -> None:
+    method_counts = Counter(task.ground_truth.method for task in tasks)
+    answer_counts = Counter(task.answer_type for task in tasks)
+    print(f"Tasks: {len(tasks)}")
+    print("Ground truth: " + ", ".join(f"{name}={count}" for name, count in sorted(method_counts.items())))
+    print("Answer types: " + ", ".join(f"{name}={count}" for name, count in sorted(answer_counts.items())))
 
 
 async def cmd_run(args: argparse.Namespace) -> int:

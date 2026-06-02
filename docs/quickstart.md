@@ -24,6 +24,13 @@ python -m agent_royale run task-packs/static-smoke.yaml \
   --report reports/smoke.html
 ```
 
+Run a preflight check before a full eval:
+
+```bash
+python -m agent_royale doctor task-packs/static-smoke.yaml \
+  --target examples/echo_agent.py:answer
+```
+
 Run an intentionally failing demo:
 
 ```bash
@@ -122,6 +129,21 @@ Create a starter task pack:
 python -m agent_royale init task-pack cloud-pricing
 ```
 
+## Preflight Checks
+
+`doctor` validates task packs, summarizes ground-truth methods and answer types, checks whether optional integration keys are present, and can probe a target with the first loaded task.
+
+```bash
+python -m agent_royale doctor task-packs/github/example.yaml \
+  --target http://localhost:3000/api/agent
+```
+
+By default, `doctor` does not fetch live oracles. Add `--check-ground-truth` when you want to verify the source parser or API calls before a benchmark run:
+
+```bash
+python -m agent_royale doctor task-packs/github/example.yaml --check-ground-truth
+```
+
 ## CI Thresholds
 
 ```bash
@@ -134,8 +156,8 @@ The command exits with status `2` when exact accuracy is below the threshold.
 
 ## Example Packs
 
-- `task-packs/github/example.yaml`: repository stars, forks, issues, and latest releases.
-- `task-packs/npm/example.yaml`: package versions, license metadata, and recent downloads.
+- `task-packs/github/example.yaml`: repository counts, releases, raw file fields, default branches, and licenses.
+- `task-packs/npm/example.yaml`: package versions, license metadata, downloads, repository URLs, package size, and engine constraints.
 - `task-packs/finance/yahoo-quotes.yaml`: Yahoo Finance regular-market quote fields.
 - `task-packs/mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields.
 - `task-packs/subscription-pricing/example.yaml`: official pricing-page examples with explicit parser notes.

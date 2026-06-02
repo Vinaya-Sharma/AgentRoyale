@@ -17,7 +17,7 @@ That made the next step obvious: turn the experiment into something other develo
 
 Agent Royale is that runner. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
 
-The repo includes 32 example tasks adapted from the original experiment and cleaned up into reusable task packs.
+The repo includes 38 reusable tasks, including the 32-task experiment set plus developer-focused GitHub and npm checks.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -40,12 +40,20 @@ The tasks that expose this problem are ones where there's a single correct curre
 - Failure labels: wrong value, wrong source, unsupported citation, no answer, tool failure
 - Reports: terminal summary, JSONL run log, HTML report
 - CI gates: nonzero exit when `--fail-under-exact` threshold is missed
+- Preflight checks: environment, task-pack requirements, optional oracle and target probes
 
 ## Quickstart
 
 ```bash
 pip install -e .
 agent-royale --version
+```
+
+Check the local setup before running a full eval:
+
+```bash
+python -m agent_royale doctor task-packs/static-smoke.yaml \
+  --target examples/echo_agent.py:answer
 ```
 
 Run the smoke pack against the included demo target:
@@ -83,13 +91,14 @@ See [docs/quickstart.md](docs/quickstart.md) for the task schema and endpoint co
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
+See [docs/adjacent-tools.md](docs/adjacent-tools.md) for how Agent Royale fits alongside web data and browser automation APIs.
 
 ## Task Packs
 
 ```
 task-packs/static-smoke.yaml              offline smoke tests for the target contract
-task-packs/github/example.yaml            repo stars, forks, open issues, latest releases
-task-packs/npm/example.yaml               versions, licenses, download counts
+task-packs/github/example.yaml            repo counts, releases, files, branches, licenses
+task-packs/npm/example.yaml               versions, licenses, downloads, repository URLs, package size, engines
 task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fields
 task-packs/mobile-apps/apple-app-store.yaml   Apple App Store rating and version fields
 task-packs/subscription-pricing/example.yaml   official pricing-page examples
@@ -114,6 +123,14 @@ Validate all packs:
 ```bash
 python -m agent_royale validate task-packs
 ```
+
+Check pack requirements without running a full eval:
+
+```bash
+python -m agent_royale doctor task-packs/github task-packs/npm
+```
+
+Add `--check-ground-truth` when you want to fetch each oracle and catch parser or API failures before a benchmark run.
 
 Run a pack:
 

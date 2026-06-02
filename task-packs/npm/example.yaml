@@ -3,7 +3,7 @@
 # These tasks use npm's public registry and download APIs. They are designed to
 # catch stale package versions, wrong packages, and confused download windows.
 name: npm-packages
-description: Exact retrieval tasks for npm latest versions, licenses, and recent download counts.
+description: Exact retrieval tasks for npm versions, licenses, download counts, repository metadata, package size, and engine constraints.
 tasks:
   - id: npm_react_latest
     question: "Using npm, what is the latest published version of the react package?"
@@ -105,3 +105,51 @@ tasks:
       url: "https://api.npmjs.org/downloads/point/last-week/react"
       field: "downloads"
       source_url: "api.npmjs.org/downloads/point/last-week/react"
+
+  - id: npm_zod_repository_url
+    question: "Using npm package metadata, what repository URL does the latest zod package version list?"
+    required_source: "npmjs.com/package/zod"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - repository_url
+    notes: "Tests whether the stack reads registry metadata exactly instead of returning a nearby GitHub project URL."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/zod/latest"
+      field: "repository.url"
+      source_url: "npmjs.com/package/zod"
+
+  - id: npm_prettier_unpacked_size
+    question: "Using npm package metadata, what unpacked size in bytes does the latest prettier package version list?"
+    required_source: "npmjs.com/package/prettier"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - package_size
+    notes: "A precise nested metadata field that catches agents that answer with package tarball size, bundle size, or old package-page snippets."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/prettier/latest"
+      field: "dist.unpackedSize"
+      source_url: "npmjs.com/package/prettier"
+
+  - id: npm_eslint_node_engine
+    question: "Using npm package metadata, what node engine requirement does the latest eslint package version list?"
+    required_source: "npmjs.com/package/eslint"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - npm
+      - package_metadata
+      - engine_constraint
+    notes: "Tests exact retrieval of a dependency constraint, where summaries often drop alternatives or minimum versions."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/eslint/latest"
+      field: "engines.node"
+      source_url: "npmjs.com/package/eslint"

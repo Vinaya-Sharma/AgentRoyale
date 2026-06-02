@@ -5,15 +5,15 @@ These packs are intentionally small, readable, and source-specific. Developers s
 ## Packs
 
 - `static-smoke.yaml`: offline target-contract smoke tests.
-- `github/example.yaml`: GitHub repository metadata backed by the GitHub REST API.
-- `npm/example.yaml`: npm package metadata backed by npm registry and downloads APIs.
+- `github/example.yaml`: GitHub counts, releases, raw file fields, branches, and licenses backed by public GitHub endpoints.
+- `npm/example.yaml`: npm versions, licenses, downloads, repository URLs, package size, and engine constraints backed by npm APIs.
 - `finance/yahoo-quotes.yaml`: Yahoo Finance quote fields backed by Yahoo's chart JSON endpoint.
 - `mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields backed by Apple's lookup API.
 - `subscription-pricing/example.yaml`: official pricing-page examples backed by regex page extractors.
 - `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data extraction.
 - `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data extraction.
 
-The included packs now contain 32 tasks. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, and future dynamic web packs.
+The included packs now contain 38 tasks. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, and future dynamic web packs.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
