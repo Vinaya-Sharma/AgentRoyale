@@ -70,13 +70,14 @@ Production agents may rely on web data, browser automation, or research APIs rat
 
 For example, a target endpoint can wrap a web research API, forward the Agent Royale question, and return the API's answer text, citations, latency, and cost metadata. Agent Royale then grades the claimed value against independent task-pack ground truth.
 
+See the [Tabstack target example](../examples/tabstack-agent/README.md) for a local adapter that can evaluate Tabstack research or schema-first extraction as an Agent Royale target.
+
 ## Coming Next
 
 These are good contribution areas:
 
 - LangGraph example
 - Vercel AI SDK example
-- Web research API adapter example
 - Promptfoo import/export
 - Supabase run storage
 - JUnit XML output
