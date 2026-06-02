@@ -70,8 +70,6 @@ Production agents may rely on web data, browser automation, or research APIs rat
 
 For example, a target endpoint can wrap a web research API, forward the Agent Royale question, and return the API's answer text, citations, latency, and cost metadata. Agent Royale then grades the claimed value against independent task-pack ground truth.
 
-See [Adjacent tools](adjacent-tools.md) for a public positioning note on how Agent Royale fits alongside products such as Tabstack.
-
 ## Coming Next
 
 These are good contribution areas:

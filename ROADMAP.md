@@ -66,5 +66,3 @@ Status: in progress.
 - Universal model leaderboard claims
 
 Agent Royale should complement those systems by owning the exact live-web retrieval wedge.
-
-See [Adjacent Tools](docs/adjacent-tools.md) for how Agent Royale fits alongside web execution and research APIs.

@@ -91,7 +91,6 @@ See [docs/quickstart.md](docs/quickstart.md) for the task schema and endpoint co
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
-See [docs/adjacent-tools.md](docs/adjacent-tools.md) for how Agent Royale fits alongside web data and browser automation APIs.
 
 ## Task Packs
 
