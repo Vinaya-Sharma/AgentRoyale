@@ -92,6 +92,7 @@ See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
 See [docs/openrouter.md](docs/openrouter.md) for a real OpenRouter model-stack eval example.
 See [examples/tabstack-agent](examples/tabstack-agent) for a Tabstack target adapter example.
+See [examples/firecrawl-agent](examples/firecrawl-agent) for a Firecrawl target adapter example.
 
 ## Task Packs
 

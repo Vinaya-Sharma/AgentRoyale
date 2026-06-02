@@ -72,6 +72,8 @@ For example, a target endpoint can wrap a web research API, forward the Agent Ro
 
 See the [Tabstack target example](../examples/tabstack-agent/README.md) for a local adapter that can evaluate Tabstack research or schema-first extraction as an Agent Royale target.
 
+See the [Firecrawl target example](../examples/firecrawl-agent/README.md) for a local adapter that can evaluate Firecrawl `/v2/scrape` JSON-mode extraction as an Agent Royale target.
+
 ## Coming Next
 
 These are good contribution areas:
