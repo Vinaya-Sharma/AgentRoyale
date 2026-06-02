@@ -1,0 +1,47 @@
+# Optional Bright Data Rapid-mode task pack.
+#
+# Requires:
+#   BRIGHT_DATA_API_KEY=...
+#   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+#
+# These tasks use scrape_as_markdown, which Bright Data documents as part of
+# the Rapid free MCP mode. They are meant to demonstrate messy-page or
+# docs-page oracles without requiring Pro structured-data tools.
+name: bright-data-rapid-web
+description: Free-tier-friendly Bright Data MCP tasks backed by scrape-as-Markdown page extraction.
+tasks:
+  - id: bd_rapid_mcp_free_requests
+    question: "Using Bright Data's MCP Server docs, how many free MCP requests per month are listed?"
+    required_source: "docs.brightdata.com/ai/mcp-server/overview"
+    answer_type: number
+    tolerance: 0
+    labels:
+      - bright_data
+      - rapid_mode
+      - free_tier
+      - docs
+    notes: "Ground truth uses Bright Data Rapid-mode scrape_as_markdown and extracts the documented monthly free request count."
+    ground_truth:
+      method: bright_data
+      tool: scrape_as_markdown
+      url: "https://docs.brightdata.com/ai/mcp-server/overview"
+      regex: "([0-9,]+)\\s+(?:free\\s+)?requests per month"
+      source_url: "docs.brightdata.com/ai/mcp-server/overview"
+
+  - id: bd_rapid_python_latest_release
+    question: "Using python.org downloads, what is the latest Python 3 release version currently listed?"
+    required_source: "python.org/downloads"
+    answer_type: string
+    tolerance: 0
+    labels:
+      - bright_data
+      - rapid_mode
+      - developer_docs
+      - release_version
+    notes: "A docs-page freshness task that catches stale release answers while staying inside Rapid-mode page extraction."
+    ground_truth:
+      method: bright_data
+      tool: scrape_as_markdown
+      url: "https://www.python.org/downloads/"
+      regex: "Download Python\\s+([0-9]+(?:\\.[0-9]+)+)"
+      source_url: "python.org/downloads"

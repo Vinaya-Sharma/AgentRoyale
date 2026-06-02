@@ -17,7 +17,7 @@ That made the next step obvious: turn the experiment into something other develo
 
 Agent Royale is that runner. Write a task pack, connect your endpoint, run the eval, and get a report showing exact accuracy, failure mode breakdown, citation checks, latency, and cost.
 
-The repo includes 38 reusable tasks, including the 32-task experiment set plus developer-focused GitHub and npm checks.
+The repo includes 40 reusable tasks, including the 32-task experiment set plus developer-focused GitHub, npm, and Bright Data Rapid-mode checks.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -102,11 +102,12 @@ task-packs/npm/example.yaml               versions, licenses, downloads, reposit
 task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fields
 task-packs/mobile-apps/apple-app-store.yaml   Apple App Store rating and version fields
 task-packs/subscription-pricing/example.yaml   official pricing-page examples
+task-packs/bright-data/rapid-web.yaml      Bright Data Rapid-mode docs/release checks
 task-packs/bright-data/linkedin-company.yaml   LinkedIn company metrics
 task-packs/bright-data/ecommerce-pricing.yaml  ecommerce product pricing
 ```
 
-GitHub, npm, finance, and Apple App Store packs use public APIs. The current Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
+GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `scrape_as_markdown`, which is the best fit for Bright Data's MCP free tier. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 
@@ -143,7 +144,7 @@ python -m agent_royale run task-packs/github/example.yaml \
 
 ## Bright Data Ground Truth
 
-Some task packs require `BRIGHT_DATA_API_KEY` for web extraction:
+Some task packs require `BRIGHT_DATA_API_KEY` for web extraction. Agent Royale defaults to Bright Data MCP Rapid mode, which is free-tier friendly and supports `scrape_as_markdown`:
 
 ```
 BRIGHT_DATA_API_KEY=...
@@ -151,6 +152,13 @@ BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 ```
 
 ```bash
+python -m agent_royale doctor task-packs/bright-data/rapid-web.yaml --check-ground-truth
+```
+
+Structured tools such as LinkedIn company extraction require Pro mode or explicit tool/group configuration:
+
+```bash
+BRIGHT_DATA_MCP_PRO_MODE=1
 python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
   --target http://localhost:3000/api/agent \
   --report reports/bright-data-linkedin.html

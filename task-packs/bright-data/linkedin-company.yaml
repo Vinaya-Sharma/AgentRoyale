@@ -3,8 +3,11 @@
 # Requires:
 #   BRIGHT_DATA_API_KEY=...
 #   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
+#   BRIGHT_DATA_MCP_PRO_MODE=1
 #
-# These tasks use the Bright Data client from the original experiment as the independent oracle.
+# These tasks use structured Bright Data tools from the original experiment as
+# the independent oracle. Structured web_data_* tools require Pro mode or an
+# explicit MCP tools/groups configuration.
 name: bright-data-linkedin-company
 description: LinkedIn company metric tasks backed by Bright Data structured company profile ground truth.
 tasks:

@@ -38,7 +38,7 @@ The example uses the OpenAI Agents SDK runtime plus `WebSearchTool`. Agent Royal
 
 ## Bright Data
 
-Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, app store, and dynamic pricing task packs.
+Agent Royale uses public APIs for GitHub and npm task packs. Bright Data Rapid mode powers free-tier-friendly `scrape_as_markdown` task packs, while Bright Data Pro/groups support structured LinkedIn, ecommerce, app store, and dynamic pricing task packs.
 
 ```bash
 BRIGHT_DATA_API_KEY=...

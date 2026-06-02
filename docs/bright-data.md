@@ -1,6 +1,8 @@
 # Bright Data Ground Truth
 
-Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, app store, and dynamic pricing task packs.
+Agent Royale uses public APIs for GitHub and npm task packs. Bright Data powers reliable web extraction for docs pages, ecommerce, LinkedIn, app store, and dynamic pricing task packs.
+
+Bright Data documents a free MCP tier with 5,000 requests per month. Rapid mode is enabled by default and supports search plus `scrape_as_markdown`; Pro mode adds structured data tools, browser automation, and domain-specific tool groups.
 
 ## Setup
 
@@ -13,7 +15,30 @@ BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 
 Do not commit `.env`.
 
-## Run A Bright Data Pack
+## Run A Rapid-Mode Pack
+
+Rapid-mode packs use `scrape_as_markdown`, so they are the best Bright Data first run for developers using the MCP free tier.
+
+```bash
+python -m agent_royale doctor task-packs/bright-data/rapid-web.yaml --check-ground-truth
+python -m agent_royale run task-packs/bright-data/rapid-web.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/bright-data-rapid.html
+```
+
+## Run A Pro/Structured Pack
+
+Structured Bright Data tools such as `web_data_linkedin_company_profile` require Pro mode or explicit tool/group configuration:
+
+```bash
+BRIGHT_DATA_MCP_PRO_MODE=1
+```
+
+or:
+
+```bash
+BRIGHT_DATA_MCP_GROUPS=social,ecommerce
+```
 
 ```bash
 python -m agent_royale validate task-packs/bright-data
@@ -46,6 +71,8 @@ ground_truth:
   regex: "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
 ```
 
+This is the free-tier-friendly shape when used with `scrape_as_markdown`.
+
 ## What Gets Reused From The Experiment
 
 The local runner reuses the Bright Data client built for the original experiment:
@@ -69,5 +96,6 @@ That split is intentional:
 
 ```text
 No key required: static smoke, GitHub, npm
-Bright Data optional: ecommerce, LinkedIn, app stores, social, travel, dynamic pages
+Bright Data Rapid mode: docs pages, public pages, simple dynamic pages via scrape_as_markdown
+Bright Data Pro/groups: ecommerce, LinkedIn, app stores, social, travel, browser automation, structured data
 ```

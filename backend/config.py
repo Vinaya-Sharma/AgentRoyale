@@ -23,6 +23,13 @@ def _normalize_bright_data_url(raw_url: str) -> str:
     return urlunparse(parsed)
 
 
+def _env_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str
@@ -33,6 +40,9 @@ class Settings:
     openrouter_timeout_seconds: float
     bright_data_api_key: str
     bright_data_mcp_url: str
+    bright_data_mcp_pro_mode: bool
+    bright_data_mcp_groups: str
+    bright_data_mcp_tools: str
     bright_data_timeout_seconds: float
     bright_data_retries: int
     search_engine: str
@@ -50,13 +60,12 @@ class Settings:
         query = dict(parse_qsl(parsed.query, keep_blank_values=True))
         if "token" not in query and self.bright_data_api_key:
             query["token"] = self.bright_data_api_key
-        if "pro" not in query and self.bright_data_api_key:
+        if self.bright_data_mcp_tools and "tools" not in query:
+            query["tools"] = self.bright_data_mcp_tools
+        elif self.bright_data_mcp_groups and "groups" not in query:
+            query["groups"] = self.bright_data_mcp_groups
+        elif self.bright_data_mcp_pro_mode and "pro" not in query:
             query["pro"] = "1"
-        if "groups" not in query:
-            query["groups"] = (
-                "advanced_scraping,ecommerce,social,browser,finance,"
-                "business,research,app_stores,travel,code"
-            )
         return urlunparse(parsed._replace(query=urlencode(query, safe=",")))
 
 
@@ -96,6 +105,9 @@ def get_settings() -> Settings:
         bright_data_mcp_url=_normalize_bright_data_url(
             os.getenv("BRIGHT_DATA_MCP_URL", "https://mcp.brightdata.com/mcp")
         ),
+        bright_data_mcp_pro_mode=_env_bool("BRIGHT_DATA_MCP_PRO_MODE", False),
+        bright_data_mcp_groups=os.getenv("BRIGHT_DATA_MCP_GROUPS", "").strip(),
+        bright_data_mcp_tools=os.getenv("BRIGHT_DATA_MCP_TOOLS", "").strip(),
         bright_data_timeout_seconds=float(
             os.getenv("BRIGHT_DATA_REQUEST_TIMEOUT_SECONDS", "25")
         ),

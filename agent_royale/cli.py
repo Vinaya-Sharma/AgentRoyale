@@ -196,18 +196,21 @@ async def cmd_doctor(args: argparse.Namespace) -> int:
         openrouter_key = bool(settings.openrouter_api_key)
         bright_data_key = bool(settings.bright_data_api_key)
         openrouter_base_url = settings.openrouter_base_url
-        bright_data_url = settings.bright_data_mcp_url
+        bright_data_url = settings.bright_data_mcp_url_with_token
+        bright_data_mode = bright_data_mode_label(bright_data_url)
     except Exception:
         openrouter_key = bool(os.getenv("OPENROUTER_API_KEY"))
         bright_data_key = bool(os.getenv("BRIGHT_DATA_API_KEY"))
         openrouter_base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
         bright_data_url = os.getenv("BRIGHT_DATA_MCP_URL", "https://mcp.brightdata.com/mcp")
+        bright_data_mode = bright_data_mode_label(bright_data_url)
 
     print("\nEnvironment")
     print(check_line("OPENROUTER_API_KEY", openrouter_key, "set", "missing"))
     print(f"  OpenRouter base URL: {redact_url(openrouter_base_url)}")
     print(check_line("BRIGHT_DATA_API_KEY", bright_data_key, "set", "missing"))
     print(f"  Bright Data MCP URL: {redact_url(bright_data_url)}")
+    print(f"  Bright Data MCP mode: {bright_data_mode}")
 
     tasks = []
     if args.paths:
@@ -230,6 +233,14 @@ async def cmd_doctor(args: argparse.Namespace) -> int:
             if any(task.ground_truth.method == "bright_data" for task in tasks) and not bright_data_key:
                 ok = False
                 print("FAIL Bright Data task packs require BRIGHT_DATA_API_KEY.")
+            pro_tools = [
+                task.ground_truth.tool
+                for task in tasks
+                if task.ground_truth.tool and task.ground_truth.tool.startswith("web_data_")
+            ]
+            if pro_tools and bright_data_mode.startswith("Rapid"):
+                ok = False
+                print("FAIL Structured Bright Data tools require Pro mode or explicit tool/group configuration.")
     else:
         print("\nTask packs")
         print("No task packs supplied. Pass paths to check pack readiness.")
@@ -276,6 +287,17 @@ async def cmd_doctor(args: argparse.Namespace) -> int:
 
 def check_line(name: str, ok: bool, ok_text: str, missing_text: str) -> str:
     return f"{'OK' if ok else 'WARN'} {name}: {ok_text if ok else missing_text}"
+
+
+def bright_data_mode_label(url: str) -> str:
+    query = dict(parse_qsl(urlparse(url).query, keep_blank_values=True))
+    if query.get("tools"):
+        return f"tools={query['tools']}"
+    if query.get("groups"):
+        return f"groups={query['groups']}"
+    if query.get("pro") in {"1", "true"}:
+        return "Pro"
+    return "Rapid (free-tier friendly)"
 
 
 def redact_url(value: str) -> str:

@@ -10,10 +10,11 @@ These packs are intentionally small, readable, and source-specific. Developers s
 - `finance/yahoo-quotes.yaml`: Yahoo Finance quote fields backed by Yahoo's chart JSON endpoint.
 - `mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields backed by Apple's lookup API.
 - `subscription-pricing/example.yaml`: official pricing-page examples backed by regex page extractors.
-- `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data extraction.
-- `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data extraction.
+- `bright-data/rapid-web.yaml`: Bright Data Rapid-mode docs and release checks backed by `scrape_as_markdown`.
+- `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data structured extraction.
+- `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data page extraction.
 
-The included packs now contain 38 tasks. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data powers reliable web extraction for LinkedIn, ecommerce, and future dynamic web packs.
+The included packs now contain 40 tasks. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data Rapid mode powers free-tier-friendly page extraction, while Bright Data Pro/groups support structured LinkedIn, ecommerce, and future dynamic web packs.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
