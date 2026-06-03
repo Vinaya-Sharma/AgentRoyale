@@ -1,0 +1,162 @@
+# Agent Royale flagship experiment: dependency research v1.
+#
+# These tasks model developer-assistant workflows where an agent must retrieve
+# exact current package and repository metadata from required sources.
+name: dependency-research-v1
+description: Flagship v1 dependency metadata tasks for package and repository research.
+tasks:
+  - id: devv1_npm_react_latest
+    question: "Using npm, what is the latest published version of the react package?"
+    required_source: "npmjs.com/package/react"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, npm, package_version]
+    notes: "Fast package-version freshness check."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/react/latest"
+      field: "version"
+      source_url: "npmjs.com/package/react"
+
+  - id: devv1_npm_vite_latest
+    question: "Using npm, what is the latest published version of the vite package?"
+    required_source: "npmjs.com/package/vite"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, npm, package_version]
+    notes: "Fast-moving package version where stale answers are common."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/vite/latest"
+      field: "version"
+      source_url: "npmjs.com/package/vite"
+
+  - id: devv1_npm_typescript_license
+    question: "Using npm, what license does the latest typescript package version list?"
+    required_source: "npmjs.com/package/typescript"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, npm, license]
+    notes: "Exact license metadata task."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/typescript/latest"
+      field: "license"
+      source_url: "npmjs.com/package/typescript"
+
+  - id: devv1_npm_zod_repository_url
+    question: "Using npm package metadata, what repository URL does the latest zod package version list?"
+    required_source: "npmjs.com/package/zod"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, npm, repository_url]
+    notes: "Catches nearby GitHub URLs that do not match npm registry metadata."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/zod/latest"
+      field: "repository.url"
+      source_url: "npmjs.com/package/zod"
+
+  - id: devv1_npm_prettier_unpacked_size
+    question: "Using npm package metadata, what unpacked size in bytes does the latest prettier package version list?"
+    required_source: "npmjs.com/package/prettier"
+    answer_type: number
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, npm, package_size]
+    notes: "Exact nested metadata field; tarball size and unpacked size are different."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/prettier/latest"
+      field: "dist.unpackedSize"
+      source_url: "npmjs.com/package/prettier"
+
+  - id: devv1_npm_eslint_node_engine
+    question: "Using npm package metadata, what node engine requirement does the latest eslint package version list?"
+    required_source: "npmjs.com/package/eslint"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, npm, engine_constraint]
+    notes: "Exact dependency-constraint task."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/eslint/latest"
+      field: "engines.node"
+      source_url: "npmjs.com/package/eslint"
+
+  - id: devv1_pypi_requests_latest
+    question: "Using PyPI, what is the latest published version of the requests package?"
+    required_source: "pypi.org/project/requests"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, pypi, package_version]
+    notes: "Python package version freshness check."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/requests/json"
+      field: "info.version"
+      source_url: "pypi.org/project/requests"
+
+  - id: devv1_pypi_requests_license
+    question: "Using PyPI, what license does the latest requests package metadata list?"
+    required_source: "pypi.org/project/requests"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, pypi, license]
+    notes: "Exact PyPI license field."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/requests/json"
+      field: "info.license"
+      source_url: "pypi.org/project/requests"
+
+  - id: devv1_pypi_fastapi_latest
+    question: "Using PyPI, what is the latest published version of the fastapi package?"
+    required_source: "pypi.org/project/fastapi"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, pypi, package_version]
+    notes: "Python package version check."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/fastapi/json"
+      field: "info.version"
+      source_url: "pypi.org/project/fastapi"
+
+  - id: devv1_pypi_fastapi_requires_python
+    question: "Using PyPI, what Python version requirement does the latest fastapi package metadata list?"
+    required_source: "pypi.org/project/fastapi"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, pypi, python_requirement]
+    notes: "Exact requires_python metadata task."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/fastapi/json"
+      field: "info.requires_python"
+      source_url: "pypi.org/project/fastapi"
+
+  - id: devv1_github_openai_python_latest_release
+    question: "Using GitHub Releases, what is the latest release tag for openai/openai-python?"
+    required_source: "github.com/openai/openai-python/releases"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, github, release]
+    notes: "Catches confusion between PyPI package version and GitHub release tag formatting."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/openai/openai-python/releases/latest"
+      field: "tag_name"
+      source_url: "github.com/openai/openai-python/releases/latest"
+
+  - id: devv1_github_mcp_python_sdk_license
+    question: "Using GitHub, what SPDX license identifier does the modelcontextprotocol/python-sdk repository list?"
+    required_source: "github.com/modelcontextprotocol/python-sdk"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, dependency_research, github, license]
+    notes: "Exact repository metadata task."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/modelcontextprotocol/python-sdk"
+      field: "license.spdx_id"
+      source_url: "github.com/modelcontextprotocol/python-sdk"

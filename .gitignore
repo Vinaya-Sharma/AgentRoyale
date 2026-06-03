@@ -32,8 +32,12 @@
 !examples/**/requirements.txt
 !docs/
 !docs/*.md
+!docs/**/
+!docs/**/*.md
 !docs/assets/
 !docs/assets/*.png
+!docs/assets/**/
+!docs/assets/**/*.png
 
 # Entrypoints
 !run_benchmark.py
@@ -71,4 +75,7 @@ storage/*
 !storage/runs.jsonl
 !storage/ground_truth.jsonl
 !storage/v1_ground_truth_audit.csv
-reports/
+reports/*
+!reports/
+!reports/dev-web-retrieval-v1/
+!reports/dev-web-retrieval-v1/*.html

@@ -15,6 +15,34 @@ Write a task pack, connect your endpoint, run the eval, and get a report showing
 
 The goal is simple: do not ask only whether your agent can browse. Ask whether it returns the exact value your workflow asked for, from the source you required.
 
+## Flagship Eval
+
+**Dev Web Retrieval Eval v1** tests practical developer and business research workflows: package metadata, SDK docs, release indexes, repository files, and pricing pages.
+
+The eval includes 28 source-specific tasks across three packs:
+
+- `task-packs/devtools/dependency-research-v1.yaml`
+- `task-packs/devtools/docs-freshness-v1.yaml`
+- `task-packs/business/saas-pricing-v1.yaml`
+
+Two launch runs show the kind of failures Agent Royale is built to expose:
+
+| Target | Tasks | Exact accuracy | What it caught |
+|---|---:|---:|---|
+| `examples/flagship_dev_web_agent.py:answer` | 28 | 75.0% | wrong source, wrong field, wrong billing interval |
+| `openrouter:openai/gpt-4o-mini` | 28 | 67.9% | stale versions, wrong prices, unsupported citations |
+
+```bash
+python -m agent_royale run \
+  task-packs/devtools/dependency-research-v1.yaml \
+  task-packs/devtools/docs-freshness-v1.yaml \
+  task-packs/business/saas-pricing-v1.yaml \
+  --target examples/flagship_dev_web_agent.py:answer \
+  --report reports/dev-web-retrieval-v1/flagship-demo.html
+```
+
+See [docs/experiments/dev-web-retrieval-v1.md](docs/experiments/dev-web-retrieval-v1.md) for the task design, run results, and reproduction commands.
+
 ## Realistic Example
 
 The dependency-research pack models a real developer assistant that checks package versions, license metadata, GitHub release tags, repository file fields, npm download windows, and GitHub project status.
@@ -44,7 +72,7 @@ Caught:
 
 The point is not whether one repository count is off by a small amount. The point is that the source can be real and the answer can still be wrong for the workflow. Agent Royale turns that into a repeatable test.
 
-The repo includes 48 reusable tasks, including a realistic dependency-research pack, source-specific GitHub/npm/finance/mobile/pricing packs, Bright Data-backed packs, and the original 32-task experiment set.
+The repo includes 76 reusable tasks, including the Dev Web Retrieval Eval v1 packs, a compact dependency-research demo pack, source-specific GitHub/npm/finance/mobile/pricing packs, Bright Data-backed packs, and the original 32-task experiment set.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -135,6 +163,7 @@ Targets accept:
 - `examples/echo_agent.py:answer` for a local Python function
 
 See [docs/quickstart.md](docs/quickstart.md) for the task schema and endpoint contract.
+See [docs/experiments/dev-web-retrieval-v1.md](docs/experiments/dev-web-retrieval-v1.md) for the flagship Dev Web Retrieval Eval v1.
 See [docs/realistic-dev-eval.md](docs/realistic-dev-eval.md) for a realistic dependency-research eval example.
 See [docs/github-actions.md](docs/github-actions.md) for CI examples.
 See [docs/integrations.md](docs/integrations.md) for OpenAI Agents SDK and integration examples.
@@ -145,6 +174,9 @@ See the `examples/` directory for target adapters including OpenAI Agents SDK, O
 
 ```
 task-packs/static-smoke.yaml              offline smoke tests for the target contract
+task-packs/devtools/dependency-research-v1.yaml  flagship dependency metadata eval
+task-packs/devtools/docs-freshness-v1.yaml        flagship docs and release freshness eval
+task-packs/business/saas-pricing-v1.yaml          flagship SaaS pricing accuracy eval
 task-packs/devtools/dependency-research.yaml  realistic dependency-research assistant eval
 task-packs/github/example.yaml            repo counts, releases, files, branches, licenses
 task-packs/npm/example.yaml               versions, licenses, downloads, repository URLs, package size, engines

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.0
+
+- Added Dev Web Retrieval Eval v1 with 28 source-specific tasks across dependency metadata, docs freshness, and SaaS pricing.
+- Added a flagship demo target that uses real public sources and intentionally demonstrates wrong-source, wrong-field, and wrong-billing-interval failures.
+- Ran and documented launch experiments for the flagship demo target and `openrouter:openai/gpt-4o-mini`.
+- Added public experiment documentation and reproducible commands.
+
 ## v0.1.3
 
 - Polished the public launch page with clearer product positioning and final UI copy fixes.

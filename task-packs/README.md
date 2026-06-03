@@ -5,6 +5,9 @@ These packs are intentionally small, readable, and source-specific. Developers s
 ## Packs
 
 - `static-smoke.yaml`: offline target-contract smoke tests.
+- `devtools/dependency-research-v1.yaml`: flagship dependency metadata tasks for npm, PyPI, and GitHub.
+- `devtools/docs-freshness-v1.yaml`: flagship docs and release freshness tasks for SDK READMEs, release indexes, and repository files.
+- `business/saas-pricing-v1.yaml`: flagship pricing-page tasks for exact plan prices and billing intervals.
 - `devtools/dependency-research.yaml`: realistic dependency-research assistant eval.
 - `github/example.yaml`: GitHub counts, releases, raw file fields, branches, and licenses backed by public GitHub endpoints.
 - `npm/example.yaml`: npm versions, licenses, downloads, repository URLs, package size, and engine constraints backed by npm APIs.
@@ -15,7 +18,7 @@ These packs are intentionally small, readable, and source-specific. Developers s
 - `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data structured extraction.
 - `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data page extraction.
 
-The included packs now contain 48 tasks. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data Rapid mode powers free-tier-friendly search and page extraction, while Bright Data Pro/groups support structured LinkedIn, ecommerce, and future dynamic web packs.
+The included packs now contain 76 tasks. The flagship Dev Web Retrieval Eval v1 packs contain 28 tasks with public HTTP JSON and HTTP regex oracles. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data Rapid mode powers free-tier-friendly search and page extraction, while Bright Data Pro/groups support structured LinkedIn, ecommerce, and future dynamic web packs.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 

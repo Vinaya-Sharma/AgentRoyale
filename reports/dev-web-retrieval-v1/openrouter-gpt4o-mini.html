@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agent Royale Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink:#15181e; --muted:#667085; --line:#d9dee8; --soft:#f4f7fb;
+      --panel:#ffffff; --good:#087f5b; --bad:#c92a2a; --warn:#b76e00; --blue:#2563eb;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:linear-gradient(180deg,#f8fbff 0,#f5f7fb 260px,#ffffff 260px); }
+    .wrap { max-width:1200px; margin:0 auto; padding:34px 28px 56px; }
+    header { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:24px; align-items:start; }
+    h1 { margin:0 0 8px; font-size:38px; line-height:1.05; letter-spacing:0; }
+    h2 { margin:28px 0 12px; font-size:20px; letter-spacing:0; }
+    p { margin:0; color:var(--muted); line-height:1.5; }
+    code { font-family:"SFMono-Regular", Consolas, monospace; font-size:12px; }
+    .subhead { max-width:760px; font-size:16px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .pill { border:1px solid var(--line); background:rgba(255,255,255,.82); border-radius:999px; padding:7px 10px; color:#344054; font-size:12px; font-weight:700; }
+    .verdict { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:18px; box-shadow:0 12px 36px rgba(15,23,42,.06); }
+    .score { font-size:44px; line-height:1; font-weight:850; color:var(--warn); }
+    .verdict-label { margin-top:8px; font-size:13px; font-weight:800; color:var(--ink); }
+    .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:26px; }
+    .card { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:16px; box-shadow:0 8px 24px rgba(15,23,42,.04); }
+    .num { font-size:26px; line-height:1; font-weight:850; }
+    .label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-top:8px; font-weight:800; }
+    .insight { margin-top:16px; border:1px solid #c7d7fe; background:#eff6ff; border-radius:8px; padding:14px 16px; display:grid; grid-template-columns:128px minmax(0,1fr); gap:14px; align-items:start; }
+    .insight strong { color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+    .method { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px; }
+    .method-card { border:1px solid var(--line); background:#fff; border-radius:8px; padding:14px 16px; }
+    .method-card strong { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#344054; margin-bottom:6px; }
+    .split { display:grid; grid-template-columns:.82fr 1.18fr; gap:22px; align-items:start; }
+    table { width:100%; border-collapse:separate; border-spacing:0; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:0 8px 24px rgba(15,23,42,.04); }
+    th,td { text-align:left; padding:12px 14px; border-bottom:1px solid #e8ecf3; vertical-align:middle; font-size:14px; }
+    th { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#f7f9fc; font-weight:850; }
+    tr:last-child td { border-bottom:0; }
+    .pass,.fail { font-weight:850; }
+    .pass { color:var(--good); }
+    .fail { color:var(--bad); }
+    .muted { color:var(--muted); }
+    .answer { max-width:360px; white-space:pre-wrap; color:#344054; }
+    .claim { font-weight:750; }
+    .truth { font-weight:750; color:#175cd3; }
+    .failure { color:var(--bad); font-weight:750; }
+    .source { color:#475467; font-size:12px; max-width:260px; overflow-wrap:anywhere; }
+    .catch-list { display:grid; gap:10px; }
+    .catch { border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:8px; background:#fff; padding:13px 14px; }
+    .catch-title { display:flex; justify-content:space-between; gap:14px; align-items:center; margin-bottom:8px; }
+    .catch-title code { color:var(--bad); font-weight:800; }
+    .catch-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .mini-label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; font-weight:800; }
+    .status-dot { display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:8px; background:var(--muted); }
+    .status-dot.correct { background:var(--good); }
+    .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer { background:var(--bad); }
+    footer { margin-top:24px; color:var(--muted); font-size:12px; }
+    @media(max-width:860px) { header,.split,.method { grid-template-columns:1fr; } .grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } th:nth-child(6),td:nth-child(6) { display:none; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <h1>Agent Royale Eval Report</h1>
+        <p class="subhead">This run tested one agent target against 28 live-web tasks. Each row shows the agent's extracted claim, the oracle value, the required source, and the reason the task passed or failed.</p>
+        <div class="meta">
+          <span class="pill">target: openrouter:openai/gpt-4o-mini</span>
+          <span class="pill">runs: 28</span>
+          <span class="pill">generated: 2026-06-02</span>
+        </div>
+      </div>
+      <div class="verdict">
+        <div class="score">68%</div>
+        <div class="verdict-label">Needs attention</div>
+        <p>Exact pass rate across 28 runs</p>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card"><div class="num">19</div><div class="label">Correct</div></div>
+      <div class="card"><div class="num">11</div><div class="label">Failures</div></div>
+      <div class="card"><div class="num">0</div><div class="label">No answer</div></div>
+      <div class="card"><div class="num">4050ms</div><div class="label">Median latency</div></div>
+    </section>
+
+    <section class="method">
+      <div class="method-card">
+        <strong>Oracle values</strong>
+        <p>npm registry latest-package metadata for versions and licenses.</p>
+      </div>
+      <div class="method-card">
+        <strong>Grading</strong>
+        <p>7 numeric tasks parsed the claimed number and compared it to the oracle with the task tolerance; 21 text tasks normalized case and punctuation before comparison.</p>
+      </div>
+      <div class="method-card">
+        <strong>Source check</strong>
+        <p>Each citation URL is checked against the task's required source. Matching values from the wrong source are marked as source failures.</p>
+      </div>
+    </section>
+
+    <section class="insight">
+      <strong>Result</strong>
+      <p>9 tasks failed: stale or incorrect values, answers whose citations did not support the claim. Examples: pricev1_figma_organization_annual_monthly, docsv1_next_canary_package_version.</p>
+    </section>
+
+    <section class="split">
+      <div>
+        <h2>Failure Breakdown</h2>
+        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot correct"></span>correct</td><td>17</td><td>61%</td></tr>
+<tr><td><span class="status-dot wrong-value"></span>wrong value</td><td>7</td><td>25%</td></tr>
+<tr><td><span class="status-dot unsupported-citation"></span>unsupported citation</td><td>4</td><td>14%</td></tr></tbody></table>
+
+        <h2>Representative Catches</h2>
+        <div class="catch-list"><div class="catch"><div class="catch-title"><code>pricev1_figma_organization_annual_monthly</code><span class="failure">wrong value</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">$90</div></div><div><div class="mini-label">Oracle had</div><div class="truth">55</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: figma.com/pricing</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: figma.com, figma.com</p></div>
+<div class="catch"><div class="catch-title"><code>docsv1_next_canary_package_version</code><span class="failure">wrong value</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">The current top-level version value listed in the `package.json` file for Next.js on the GitHub `canary` branch is **16.3.0-canary.35**.</div></div><div><div class="mini-label">Oracle had</div><div class="truth">16.3.0-canary.38</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: github.com/vercel/next.js/blob/canary/packages/next/package.json</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: github.com</p></div>
+<div class="catch"><div class="catch-title"><code>devv1_npm_vite_latest</code><span class="failure">unsupported citation</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">The latest published version of the Vite package is **8.0.12**, which was published on May 11, 2026. You can find more information on the [npm package page for Vite](https://www.npmjs.com/package/vite).</div></div><div><div class="mini-label">Oracle had</div><div class="truth">8.0.16</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: npmjs.com/package/vite</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: npmjs.com, npmjs.com</p></div></div>
+      </div>
+
+      <div>
+        <h2>Task-Level Results</h2>
+        <table><thead><tr><th>Task</th><th>Passed</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>devv1_github_mcp_python_sdk_license</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_github_openai_python_latest_release</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_npm_eslint_node_engine</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>devv1_npm_prettier_unpacked_size</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>devv1_npm_react_latest</code></td><td>0/1</td><td>unsupported citation</td></tr>
+<tr><td><code>devv1_npm_typescript_license</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_npm_vite_latest</code></td><td>0/1</td><td>unsupported citation</td></tr>
+<tr><td><code>devv1_npm_zod_repository_url</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>devv1_pypi_fastapi_latest</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_pypi_fastapi_requires_python</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_pypi_requests_latest</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_pypi_requests_license</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_anthropic_python_client_class</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_anthropic_python_requires_python</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_langchain_pip_install</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_mcp_python_fastmcp_class</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_mcp_python_pip_install</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>docsv1_next_canary_package_version</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>docsv1_node_latest_release_npm</code></td><td>1/1</td><td>unsupported citation</td></tr>
+<tr><td><code>docsv1_node_latest_release_version</code></td><td>1/1</td><td>unsupported citation</td></tr>
+<tr><td><code>docsv1_openai_python_client_class</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_openai_python_requires_python</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_dropbox_plus_annual_monthly</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_figma_organization_annual_monthly</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>pricev1_figma_professional_annual_monthly</code></td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>pricev1_netflix_standard_with_ads_us</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_notion_business_annual_monthly</code></td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_notion_plus_annual_monthly</code></td><td>1/1</td><td>correct</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <h2>Run Details</h2>
+    <table>
+      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Failure</th><th>Required source</th><th>Answer</th></tr></thead>
+      <tbody><tr><td><span class="fail">FAIL</span></td><td><code>devv1_npm_eslint_node_engine</code></td><td class="claim">The latest ESLint package version requires Node.js versions `^20.19.0`, `^22.13.0`, or `&gt;=24` to be installed and built with SSL support.</td><td class="truth">^20.19.0 || ^22.13.0 || &gt;=24</td><td class="failure">wrong value</td><td class="source">npmjs.com/package/eslint</td><td class="answer">The latest ESLint package version requires Node.js versions `^20.19.0`, `^22.13.0`, or `&gt;=24` to be installed and built with SSL support. 
+
+For more details, you can visit the [ESLint npm page](https://www.npmjs.com/package/eslint).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>devv1_npm_prettier_unpacked_size</code></td><td class="claim">3.8</td><td class="truth">8604418</td><td class="failure">wrong value</td><td class="source">npmjs.com/package/prettier</td><td class="answer">The latest version of the Prettier package, which is v3.8.1, has an unpacked size of **8.2 MB**. 
+
+For the exact value in bytes, \(8.2 \, \text{MB} = 8,589,934.592 \, \text{bytes} \).
+
+You can find this information on the npm page for Prettier: [npmjs.com/package/prettier](https://www.npmjs.com/package/prettier)</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>devv1_npm_react_latest</code></td><td class="claim">The latest published version of the React package is **19.2.6**, which was published 25 days ago. You can find this information on the official NPM page for React: [React - NPM](https://www.npmjs.com/package/react).</td><td class="truth">19.2.7</td><td class="failure">unsupported citation</td><td class="source">npmjs.com/package/react</td><td class="answer">The latest published version of the React package is **19.2.6**, which was published 25 days ago. You can find this information on the official NPM page for React: [React - NPM](https://www.npmjs.com/package/react).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>devv1_npm_vite_latest</code></td><td class="claim">The latest published version of the Vite package is **8.0.12**, which was published on May 11, 2026. You can find more information on the [npm package page for Vite](https://www.npmjs.com/package/vite).</td><td class="truth">8.0.16</td><td class="failure">unsupported citation</td><td class="source">npmjs.com/package/vite</td><td class="answer">The latest published version of the Vite package is **8.0.12**, which was published on May 11, 2026. You can find more information on the [npm package page for Vite](https://www.npmjs.com/package/vite).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>devv1_npm_zod_repository_url</code></td><td class="claim">The latest version of the Zod package (version 4.4.3) lists its repository URL as [https://github.com/colinhacks/zod](https://github.com/colinhacks/zod).</td><td class="truth">git+https://github.com/colinhacks/zod.git</td><td class="failure">wrong value</td><td class="source">npmjs.com/package/zod</td><td class="answer">The latest version of the Zod package (version 4.4.3) lists its repository URL as [https://github.com/colinhacks/zod](https://github.com/colinhacks/zod).
+
+You can verify this information on the npm page for Zod: [npmjs.com/package/zod](https://www.npmjs.com/package/zod).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>docsv1_mcp_python_pip_install</code></td><td class="claim">The first `pip install ...` command shown in the MCP Python SDK README is:</td><td class="truth">&quot;mcp[cli]&quot;</td><td class="failure">wrong value</td><td class="source">github.com/modelcontextprotocol/python-sdk</td><td class="answer">The first `pip install ...` command shown in the MCP Python SDK README is:
+
+```bash
+pip install modelcontextprotocol
+```
+
+For further details, you can refer to the full README on GitHub: [MCP Python SDK README](https://github.com/modelcontextprotocol/python-sdk/blob/main/README.v2.md).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>docsv1_next_canary_package_version</code></td><td class="claim">The current top-level version value listed in the `package.json` file for Next.js on the GitHub `canary` branch is **16.3.0-canary.35**.</td><td class="truth">16.3.0-canary.38</td><td class="failure">wrong value</td><td class="source">github.com/vercel/next.js/blob/canary/packages/next/package.json</td><td class="answer">The current top-level version value listed in the `package.json` file for Next.js on the GitHub `canary` branch is **16.3.0-canary.35**. 
+
+You can verify this information at the following source: [GitHub - vercel/next.js package.json](https://github.com/vercel/next.js/blob/canary/packages/next/package.json).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>pricev1_figma_organization_annual_monthly</code></td><td class="claim">$90</td><td class="truth">55</td><td class="failure">wrong value</td><td class="source">figma.com/pricing</td><td class="answer">The monthly price for the Organization plan when billed annually is **$90**. 
+
+You can find this information on Figma&#x27;s official pricing page here: [Figma Pricing](https://www.figma.com/pricing/).</td></tr>
+<tr><td><span class="fail">FAIL</span></td><td><code>pricev1_figma_professional_annual_monthly</code></td><td class="claim">$55</td><td class="truth">16</td><td class="failure">wrong value</td><td class="source">figma.com/pricing</td><td class="answer">The monthly price for the Professional plan when billed annually is **$55**. 
+
+Source: [Figma Pricing](https://www.figma.com/pricing)</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_github_mcp_python_sdk_license</code></td><td class="claim">MIT</td><td class="truth">MIT</td><td class="failure">correct</td><td class="source">github.com/modelcontextprotocol/python-sdk</td><td class="answer">The SPDX license identifier for the `modelcontextprotocol/python-sdk` repository is **MIT**. You can find this information in the LICENSE file of the repository, which is accessible [here](https://github.com/modelcontextprotocol/python-sdk/blob/main/LICENSE).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_github_openai_python_latest_release</code></td><td class="claim">v2.40.0</td><td class="truth">v2.40.0</td><td class="failure">correct</td><td class="source">github.com/openai/openai-python/releases/latest</td><td class="answer">The latest release tag for the `openai/openai-python` repository is **v2.40.0**. This was published on June 1, 2026. You can find more details on the [GitHub releases page](https://github.com/openai/openai-python/releases/tag/v2.40.0).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_npm_typescript_license</code></td><td class="claim">Apache-2.0</td><td class="truth">Apache-2.0</td><td class="failure">correct</td><td class="source">npmjs.com/package/typescript</td><td class="answer">The latest TypeScript package version lists its license as **Apache-2.0**. You can find this information on the official npm page for TypeScript: [npmjs.com/package/typescript](https://www.npmjs.com/package/typescript).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_pypi_fastapi_latest</code></td><td class="claim">0.136.3</td><td class="truth">0.136.3</td><td class="failure">correct</td><td class="source">pypi.org/project/fastapi</td><td class="answer">The latest published version of the FastAPI package is **0.136.3**. You can find more details on its [PyPI page](https://pypi.org/project/fastapi/).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_pypi_fastapi_requires_python</code></td><td class="claim">&gt;=3.10</td><td class="truth">&gt;=3.10</td><td class="failure">correct</td><td class="source">pypi.org/project/fastapi</td><td class="answer">The latest version of the FastAPI package (v0.136.3) requires Python version 3.10 or higher. 
+
+For details, you can visit the official FastAPI page on PyPI: [FastAPI on PyPI](https://pypi.org/project/fastapi/).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_pypi_requests_latest</code></td><td class="claim">2.34.2</td><td class="truth">2.34.2</td><td class="failure">correct</td><td class="source">pypi.org/project/requests</td><td class="answer">The latest published version of the `requests` package is **2.34.2**. You can find more details on the official PyPI page [here](https://pypi.org/project/requests).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>devv1_pypi_requests_license</code></td><td class="claim">Apache-2.0</td><td class="truth">Apache-2.0</td><td class="failure">correct</td><td class="source">pypi.org/project/requests</td><td class="answer">The latest requests package metadata lists the license as &quot;Apache-2.0.&quot; You can verify this information on the official PyPI page: [Requests - PyPI](https://pypi.org/project/requests/).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>docsv1_anthropic_python_client_class</code></td><td class="claim">Anthropic</td><td class="truth">Anthropic</td><td class="failure">correct</td><td class="source">github.com/anthropics/anthropic-sdk-python</td><td class="answer">The client class imported in the example `from anthropic import ...` is `Anthropic`. 
+
+You can find this information in the README on GitHub: [anthropic-sdk-python README](https://github.com/anthropics/anthropic-sdk-python?tab=readme-ov-file).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>docsv1_anthropic_python_requires_python</code></td><td class="claim">&gt;=3.9</td><td class="truth">&gt;=3.9</td><td class="failure">correct</td><td class="source">pypi.org/project/anthropic</td><td class="answer">The latest metadata for the `anthropic` package on PyPI specifies the Python version requirement as `&gt;=3.9`. 
+
+You can find this information directly on the [anthropic PyPI page](https://pypi.org/project/anthropic/).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>docsv1_langchain_pip_install</code></td><td class="claim">langchain</td><td class="truth">langchain</td><td class="failure">correct</td><td class="source">github.com/langchain-ai/langchain</td><td class="answer">The package name shown in the first `pip install ...` command in the LangChain README is `langchain`. You can find this information on the [LangChain GitHub repository](https://github.com/langchain-ai/langchain/blob/3e749369efb702ef806373fed3d1399fbc9118d1/README.md).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>docsv1_mcp_python_fastmcp_class</code></td><td class="claim">FastMCP</td><td class="truth">FastMCP</td><td class="failure">correct</td><td class="source">github.com/modelcontextprotocol/python-sdk</td><td class="answer">The class imported in the example `from mcp.server.fastmcp import ...` is `FastMCP`. You can find this in the [README.md of the MCP Python SDK on GitHub](https://github.com/modelcontextprotocol/python-sdk/blob/main/README.md).</td></tr>
+<tr><td><span class="fail">PASS</span></td><td><code>docsv1_node_latest_release_npm</code></td><td class="claim">11.16.0</td><td class="truth">11.16.0</td><td class="failure">unsupported citation</td><td class="source">nodejs.org/dist/index.json</td><td class="answer">The latest version of Node.js, as of now, is **26.3.0**, which bundles **npm version 11.16.0**. 
+
+You can check the release details at the following source: [Node.js 26.3.0 Release](https://nodejs.org/en/blog/release/v26.3.0).</td></tr>
+<tr><td><span class="fail">PASS</span></td><td><code>docsv1_node_latest_release_version</code></td><td class="claim">v26.3.0</td><td class="truth">v26.3.0</td><td class="failure">unsupported citation</td><td class="source">nodejs.org/dist/index.json</td><td class="answer">The latest release version of Node.js is **26.3.0**. You can find more information about this release on the official Node.js blog [here](https://nodejs.org/en/blog/release/v26.3.0).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>docsv1_openai_python_client_class</code></td><td class="claim">OpenAI</td><td class="truth">OpenAI</td><td class="failure">correct</td><td class="source">github.com/openai/openai-python</td><td class="answer">The client class imported in the example `from openai import ...` in the `openai-python` README is `openai`. This is inferred from the statement in the README which discusses the usage of the OpenAI Python library.
+
+You can view the README [here](https://github.com/openai/openai-python/blob/5e8f09c2/README.md) for more details.</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>docsv1_openai_python_requires_python</code></td><td class="claim">&gt;=3.9</td><td class="truth">&gt;=3.9</td><td class="failure">correct</td><td class="source">pypi.org/project/openai</td><td class="answer">The latest version of the OpenAI package listed on PyPI requires Python version **&gt;=3.9**. You can find more details on the [PyPI page for the OpenAI package](https://pypi.org/project/openai/).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>pricev1_dropbox_plus_annual_monthly</code></td><td class="claim">$9.99</td><td class="truth">9.99</td><td class="failure">correct</td><td class="source">dropbox.com/plans</td><td class="answer">The monthly price for the Dropbox Plus plan when billed yearly is **$9.99**. 
+
+You can find this information on the official Dropbox plans page [here](https://www.dropbox.com/plans).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>pricev1_netflix_standard_with_ads_us</code></td><td class="claim">$8.99</td><td class="truth">8.99</td><td class="failure">correct</td><td class="source">help.netflix.com/en/node/24926</td><td class="answer">The monthly price of the Standard with ads plan is $8.99 USD. You can find this information on Netflix&#x27;s official pricing help page [here](https://help.netflix.com/en/node/24926).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>pricev1_notion_business_annual_monthly</code></td><td class="claim">$20</td><td class="truth">20</td><td class="failure">correct</td><td class="source">notion.com/pricing</td><td class="answer">The monthly price for Notion&#x27;s Business plan when billed annually is **$20 per member/month**. 
+
+You can find more details on their official pricing page [here](https://www.notion.com/pricing).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>pricev1_notion_plus_annual_monthly</code></td><td class="claim">$10</td><td class="truth">10</td><td class="failure">correct</td><td class="source">notion.com/pricing</td><td class="answer">The monthly price for Notion&#x27;s Plus plan, when billed annually, is **$10 per member**. 
+
+You can find this information on Notion&#x27;s official pricing page: [Notion Pricing Plans](https://www.notion.com/pricing).</td></tr></tbody>
+    </table>
+    <footer>Generated from Agent Royale run data.</footer>
+  </main>
+</body>
+</html>

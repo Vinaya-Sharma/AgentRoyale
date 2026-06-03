@@ -1,0 +1,136 @@
+# Agent Royale flagship experiment: docs freshness v1.
+#
+# These tasks test whether an agent can read current official docs, release
+# indexes, and repository docs instead of relying on memory or stale snippets.
+name: docs-freshness-v1
+description: Flagship v1 tasks for current official docs, release indexes, and SDK metadata.
+tasks:
+  - id: docsv1_openai_python_client_class
+    question: "Using the openai-python README on GitHub, what client class is imported in the example `from openai import ...`?"
+    required_source: "github.com/openai/openai-python"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, github_readme, sdk_docs]
+    notes: "Checks current official SDK README usage."
+    ground_truth:
+      method: http_regex
+      url: "https://raw.githubusercontent.com/openai/openai-python/main/README.md"
+      regex: "from\\s+openai\\s+import\\s+([A-Za-z_][A-Za-z0-9_]*)"
+      source_url: "github.com/openai/openai-python"
+
+  - id: docsv1_anthropic_python_client_class
+    question: "Using the anthropic-sdk-python README on GitHub, what client class is imported in the example `from anthropic import ...`?"
+    required_source: "github.com/anthropics/anthropic-sdk-python"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, github_readme, sdk_docs]
+    notes: "Checks current official SDK README usage."
+    ground_truth:
+      method: http_regex
+      url: "https://raw.githubusercontent.com/anthropics/anthropic-sdk-python/main/README.md"
+      regex: "from\\s+anthropic\\s+import\\s+([A-Za-z_][A-Za-z0-9_]*)"
+      source_url: "github.com/anthropics/anthropic-sdk-python"
+
+  - id: docsv1_mcp_python_fastmcp_class
+    question: "Using the MCP Python SDK README on GitHub, what class is imported in the example `from mcp.server.fastmcp import ...`?"
+    required_source: "github.com/modelcontextprotocol/python-sdk"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, github_readme, mcp]
+    notes: "Exact docs import task for a fast-moving agent protocol SDK."
+    ground_truth:
+      method: http_regex
+      url: "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/main/README.md"
+      regex: "from\\s+mcp\\.server\\.fastmcp\\s+import\\s+([A-Za-z_][A-Za-z0-9_]*)"
+      source_url: "github.com/modelcontextprotocol/python-sdk"
+
+  - id: docsv1_mcp_python_pip_install
+    question: "Using the MCP Python SDK README on GitHub, what package spec is shown in the first `pip install ...` command?"
+    required_source: "github.com/modelcontextprotocol/python-sdk"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, github_readme, install_command]
+    notes: "Exact install-command task; extras and quotes matter."
+    ground_truth:
+      method: http_regex
+      url: "https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/main/README.md"
+      regex: "pip\\s+install\\s+([^\\n`]+)"
+      source_url: "github.com/modelcontextprotocol/python-sdk"
+
+  - id: docsv1_langchain_pip_install
+    question: "Using the LangChain README on GitHub, what package name is shown in the first `pip install ...` command?"
+    required_source: "github.com/langchain-ai/langchain"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, github_readme, install_command]
+    notes: "Exact install-command task."
+    ground_truth:
+      method: http_regex
+      url: "https://raw.githubusercontent.com/langchain-ai/langchain/master/README.md"
+      regex: "pip\\s+install\\s+([^\\n`]+)"
+      source_url: "github.com/langchain-ai/langchain"
+
+  - id: docsv1_node_latest_release_version
+    question: "Using Node.js's official release index, what is the latest release version listed?"
+    required_source: "nodejs.org/dist/index.json"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, release_index, nodejs]
+    notes: "Exact current release-index task."
+    ground_truth:
+      method: http_json
+      url: "https://nodejs.org/dist/index.json"
+      field: "0.version"
+      source_url: "nodejs.org/dist/index.json"
+
+  - id: docsv1_node_latest_release_npm
+    question: "Using Node.js's official release index, what npm version is bundled with the latest release listed?"
+    required_source: "nodejs.org/dist/index.json"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, release_index, nodejs, npm]
+    notes: "Exact nested release metadata task."
+    ground_truth:
+      method: http_json
+      url: "https://nodejs.org/dist/index.json"
+      field: "0.npm"
+      source_url: "nodejs.org/dist/index.json"
+
+  - id: docsv1_next_canary_package_version
+    question: "Using the Next.js package.json file on GitHub canary, what top-level version value is currently listed?"
+    required_source: "github.com/vercel/next.js/blob/canary/packages/next/package.json"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, github_file, package_version]
+    notes: "Exact repository-file task, not npm latest."
+    ground_truth:
+      method: http_json
+      url: "https://raw.githubusercontent.com/vercel/next.js/canary/packages/next/package.json"
+      field: "version"
+      source_url: "github.com/vercel/next.js/blob/canary/packages/next/package.json"
+
+  - id: docsv1_openai_python_requires_python
+    question: "Using PyPI, what Python version requirement does the latest openai package metadata list?"
+    required_source: "pypi.org/project/openai"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, pypi, python_requirement]
+    notes: "SDK compatibility metadata task."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/openai/json"
+      field: "info.requires_python"
+      source_url: "pypi.org/project/openai"
+
+  - id: docsv1_anthropic_python_requires_python
+    question: "Using PyPI, what Python version requirement does the latest anthropic package metadata list?"
+    required_source: "pypi.org/project/anthropic"
+    answer_type: string
+    tolerance: 0
+    labels: [dev_web_retrieval_v1, docs_freshness, pypi, python_requirement]
+    notes: "SDK compatibility metadata task."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/anthropic/json"
+      field: "info.requires_python"
+      source_url: "pypi.org/project/anthropic"
