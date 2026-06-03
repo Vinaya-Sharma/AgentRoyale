@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.3
+
+- Added a comprehensive Bright Data ecommerce accuracy pack covering product prices, ratings, review counts, availability, variant ambiguity, and trade-in/installment traps.
+- Added a Bright Data target adapter example for evaluating Bright Data-backed ecommerce retrieval as an Agent Royale target.
+
 ## v0.2.2
 
 - Added a Bright Data Rapid-mode starter template for `agent-royale init task-pack`.

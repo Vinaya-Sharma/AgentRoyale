@@ -49,6 +49,31 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
 
 If `BRIGHT_DATA_API_KEY` is missing, Agent Royale will fail the run with a clear message and suggest using the public API packs instead.
 
+## Run The Ecommerce Accuracy Pack
+
+The ecommerce accuracy pack is the most complete Bright Data domain example in the repo. It tests product-page extraction across current price, rating, review count, availability, variant ambiguity, seller ambiguity, installments, and trade-in language:
+
+```bash
+python -m agent_royale validate task-packs/bright-data/ecommerce-accuracy-v1.yaml
+python -m agent_royale run task-packs/bright-data/ecommerce-accuracy-v1.yaml \
+  --target http://localhost:3000/api/agent \
+  --report reports/bright-data-ecommerce-accuracy.html
+```
+
+You can also run it against the Bright Data target adapter:
+
+```bash
+cd examples/bright-data-agent
+pip install -r requirements.txt
+export BRIGHT_DATA_API_KEY=...
+uvicorn app:app --host 127.0.0.1 --port 3001
+
+cd ../..
+python -m agent_royale run task-packs/bright-data/ecommerce-accuracy-v1.yaml \
+  --target http://127.0.0.1:3001/api/agent \
+  --report reports/bright-data-ecommerce-agent.html
+```
+
 ## Task Shape
 
 Use `agent-royale init` when you want a starter pack with the Bright Data shape already wired:

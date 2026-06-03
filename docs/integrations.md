@@ -49,6 +49,25 @@ python -m agent_royale run task-packs/bright-data/linkedin-company.yaml \
 
 See [Bright Data ground truth](bright-data.md).
 
+Bright Data can also be evaluated as the target retrieval layer. The local adapter fetches the required source with Bright Data, applies deterministic ecommerce extraction heuristics, and returns the Agent Royale target response:
+
+```bash
+cd examples/bright-data-agent
+pip install -r requirements.txt
+export BRIGHT_DATA_API_KEY=...
+uvicorn app:app --host 127.0.0.1 --port 3001
+```
+
+Then run from the repo root:
+
+```bash
+python -m agent_royale run task-packs/bright-data/ecommerce-accuracy-v1.yaml \
+  --target http://127.0.0.1:3001/api/agent \
+  --report reports/bright-data-ecommerce-agent.html
+```
+
+See the [Bright Data target example](../examples/bright-data-agent/README.md).
+
 ## OpenRouter
 
 Use OpenRouter as the model/search stack under test:
@@ -73,6 +92,8 @@ For example, a target endpoint can wrap a web research API, forward the Agent Ro
 See the [Tabstack target example](../examples/tabstack-agent/README.md) for a local adapter that can evaluate Tabstack research or schema-first extraction as an Agent Royale target.
 
 See the [Firecrawl target example](../examples/firecrawl-agent/README.md) for a local adapter that can evaluate Firecrawl `/v2/scrape` JSON-mode extraction as an Agent Royale target.
+
+See the [Bright Data target example](../examples/bright-data-agent/README.md) for a local adapter tuned for ecommerce retrieval with Bright Data.
 
 See the [Jina Reader target example](../examples/jina-reader-agent/README.md) for a free URL-to-markdown baseline adapter.
 
