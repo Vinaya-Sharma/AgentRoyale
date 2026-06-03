@@ -40,7 +40,9 @@ EXAMPLE_TASK_PACK = {
 }
 
 
-def task_pack_template(slug: str) -> dict:
+def task_pack_template(slug: str, ground_truth: str = "static") -> dict:
+    if ground_truth == "bright-data-rapid":
+        return bright_data_rapid_task_pack_template(slug)
     return {
         "name": slug,
         "description": f"Starter task pack for {slug.replace('-', ' ')} retrieval tests.",
@@ -60,6 +62,37 @@ def task_pack_template(slug: str) -> dict:
                 "ground_truth": {
                     "method": "static",
                     "value": "$19.00",
+                    "source_url": "example.com/pricing",
+                },
+            }
+        ],
+    }
+
+
+def bright_data_rapid_task_pack_template(slug: str) -> dict:
+    return {
+        "name": slug,
+        "description": (
+            f"Starter Bright Data Rapid-mode task pack for {slug.replace('-', ' ')} retrieval tests."
+        ),
+        "tasks": [
+            {
+                "id": f"{slug.replace('-', '_')}_example_page_value",
+                "question": "Using the example pricing page, what is the current Pro plan price in USD?",
+                "required_source": "example.com/pricing",
+                "answer_type": "currency",
+                "tolerance": 0,
+                "labels": [slug, "bright_data", "rapid_mode", "pricing"],
+                "notes": (
+                    "Replace the URL and regex with a source-specific live page. "
+                    "Rapid-mode Bright Data tasks should use search_engine or scrape_as_markdown; "
+                    "use structured web_data_* tools only when your MCP configuration enables them."
+                ),
+                "ground_truth": {
+                    "method": "bright_data",
+                    "tool": "scrape_as_markdown",
+                    "url": "https://example.com/pricing",
+                    "regex": "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)",
                     "source_url": "example.com/pricing",
                 },
             }
@@ -98,6 +131,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     init.add_argument("name", nargs="?", default="", help="Task-pack name when using 'init task-pack <name>'.")
     init.add_argument("--root", default=".", help="Repo root for 'init task-pack <name>'.")
+    init.add_argument(
+        "--ground-truth",
+        choices=["static", "bright-data-rapid"],
+        default="static",
+        help="Starter oracle style for newly created task packs.",
+    )
 
     validate = sub.add_parser("validate", help="Validate one or more task packs.")
     validate.add_argument("paths", nargs="+")
@@ -135,7 +174,7 @@ def cmd_init(args: argparse.Namespace) -> int:
             return 1
         slug = slugify(args.name)
         path = Path(args.root) / "task-packs" / slug / "example.yaml"
-        task_pack = task_pack_template(slug)
+        task_pack = task_pack_template(slug, args.ground_truth)
     else:
         if args.name:
             print("Usage: agent-royale init [path] or agent-royale init task-pack <domain-name>")

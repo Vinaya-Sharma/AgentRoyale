@@ -206,6 +206,12 @@ Create a starter pack:
 python -m agent_royale init task-pack cloud-pricing
 ```
 
+Create a Bright Data Rapid-mode starter pack:
+
+```bash
+python -m agent_royale init task-pack product-pricing --ground-truth bright-data-rapid
+```
+
 See [TASK_PACK_IDEAS.md](TASK_PACK_IDEAS.md) for contribution ideas and task-design guidance.
 
 Validate all packs:
@@ -242,6 +248,13 @@ BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 
 ```bash
 python -m agent_royale doctor task-packs/bright-data/rapid-web.yaml --check-ground-truth
+```
+
+Create your own Rapid-mode Bright Data pack:
+
+```bash
+python -m agent_royale init task-pack product-pricing --ground-truth bright-data-rapid
+python -m agent_royale validate task-packs/product-pricing/example.yaml
 ```
 
 Structured tools such as LinkedIn company extraction require Pro mode or explicit tool/group configuration:

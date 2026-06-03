@@ -28,6 +28,12 @@ Create a starter pack:
 python -m agent_royale init task-pack cloud-pricing
 ```
 
+Create a Bright Data Rapid-mode starter pack:
+
+```bash
+python -m agent_royale init task-pack product-pricing --ground-truth bright-data-rapid
+```
+
 See [../TASK_PACK_IDEAS.md](../TASK_PACK_IDEAS.md) for task-pack ideas and quality guidance.
 
 ## Run One

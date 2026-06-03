@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.2
+
+- Added a Bright Data Rapid-mode starter template for `agent-royale init task-pack`.
+- Expanded Bright Data guidance with a tool-selection table for Rapid mode, structured tools, and public API alternatives.
+
 ## v0.2.1
 
 - Clarified report metrics by separating exact-value matches from source-supported matches.

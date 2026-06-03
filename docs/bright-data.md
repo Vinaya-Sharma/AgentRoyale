@@ -51,6 +51,15 @@ If `BRIGHT_DATA_API_KEY` is missing, Agent Royale will fail the run with a clear
 
 ## Task Shape
 
+Use `agent-royale init` when you want a starter pack with the Bright Data shape already wired:
+
+```bash
+python -m agent_royale init task-pack product-pricing --ground-truth bright-data-rapid
+python -m agent_royale validate task-packs/product-pricing/example.yaml
+```
+
+Then replace the example URL and regex with the exact source and field your agent depends on.
+
 Structured Bright Data tool:
 
 ```yaml
@@ -99,3 +108,16 @@ No key required: static smoke, GitHub, npm
 Bright Data Rapid mode: search results, docs pages, public pages, simple dynamic pages via search_engine and scrape_as_markdown
 Bright Data Pro/groups: ecommerce, LinkedIn, app stores, social, travel, browser automation, structured data
 ```
+
+## Choosing A Bright Data Path
+
+| Source type | Recommended oracle | Why |
+|---|---|---|
+| Search-result ordering or source discovery | `search_engine` | Keeps the task close to what a search-backed agent sees. |
+| Public docs, release pages, pricing pages | `scrape_as_markdown` with a narrow regex | Works in Rapid mode and keeps the parser auditable. |
+| Pages where markdown misses the needed field | `scrape_as_html` fallback | Preserves more page structure for source-specific regexes. |
+| LinkedIn company fields | `web_data_linkedin_company_profile` or the dataset fallback | Avoids confusing followers, employee ranges, and rendered page noise. |
+| Ecommerce product pages | Structured `web_data_*` tools when available; otherwise markdown plus a conservative regex | Product pages often mix sale price, list price, installments, and trade-in values. |
+| Public APIs with exact fields | `http_json` instead of Bright Data | Cheaper, faster, and easier to reproduce. |
+
+Good Bright Data tasks should name the exact source, exact field, expected region or variant, and common wrong nearby values. If the parser stops matching, update or quarantine the task instead of widening the regex until unrelated values pass.

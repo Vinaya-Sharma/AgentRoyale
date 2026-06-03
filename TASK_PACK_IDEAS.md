@@ -42,6 +42,16 @@ Use Bright Data or maintained page extraction when the source is only available 
 
 Avoid tasks where the correct answer depends on taste, synthesis, multiple sources, or hidden account-specific state. Agent Royale is strongest when the answer is either right or wrong.
 
+## Bright Data Starters
+
+Use the Bright Data starter when the exact field lives on a rendered public page rather than in a stable public API:
+
+```bash
+python -m agent_royale init task-pack product-pricing --ground-truth bright-data-rapid
+```
+
+Rapid-mode tasks should usually use `search_engine` for search-result checks or `scrape_as_markdown` with a narrow source-specific regex for page fields. Use structured `web_data_*` tools for LinkedIn, ecommerce, app stores, social, travel, and other dynamic domains only when the task pack documents the required Pro mode or MCP tool/group configuration.
+
 ## Create A Pack
 
 ```bash
