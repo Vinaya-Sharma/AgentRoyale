@@ -95,6 +95,11 @@ def source_url(task: dict[str, Any]) -> str:
 
 def extract_answer(text: str, question: str, answer_type: str) -> tuple[str, str]:
     question_lower = question.lower()
+    storage_match = re.search(r"\b([0-9]+)\s*gb\b", question_lower)
+    if storage_match and "storage" in question_lower and "price" in question_lower:
+        return extract_storage_price(text, storage_match.group(1))
+    if "color" in question_lower and "title" in question_lower:
+        return extract_title_color(text)
     if "availability" in question_lower or "in stock" in question_lower or "out of stock" in question_lower:
         return extract_availability(text)
     if "review" in question_lower and answer_type == "number":
@@ -106,6 +111,22 @@ def extract_answer(text: str, question: str, answer_type: str) -> tuple[str, str
     if answer_type in {"number", "percentage"}:
         return extract_number(text)
     return first_nonempty_line(text)
+
+
+def extract_storage_price(text: str, storage_gb: str) -> tuple[str, str]:
+    pattern = rf"\b{re.escape(storage_gb)}GB\s*\$\s*([0-9,]+(?:\.[0-9]{{2}})?)"
+    match = re.search(pattern, text, re.IGNORECASE)
+    if not match:
+        raise RuntimeError(f"Could not extract a {storage_gb}GB storage price from the Bright Data output.")
+    value = float(match.group(1).replace(",", ""))
+    return format_currency(value), compact_quote(context_for_match(text, match))
+
+
+def extract_title_color(text: str) -> tuple[str, str]:
+    match = re.search(r"Buy Galaxy S25 Ultra 256GB \| ([^|]+?) Smartphone", text)
+    if not match:
+        raise RuntimeError("Could not extract the page-title color from the Bright Data output.")
+    return match.group(1).strip(), compact_quote(context_for_match(text, match))
 
 
 def extract_price(text: str, question_lower: str) -> tuple[str, str]:

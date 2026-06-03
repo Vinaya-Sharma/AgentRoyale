@@ -80,7 +80,7 @@ Caught:
 
 The point is not whether one repository count is off by a small amount. The point is that the source can be real and the answer can still be wrong for the workflow. Agent Royale turns that into a repeatable test.
 
-The repo includes 86 reusable tasks, including the Dev Web Retrieval Eval v1 packs, a compact dependency-research demo pack, source-specific GitHub/npm/finance/mobile/pricing packs, Bright Data-backed packs, and the original 32-task experiment set.
+The repo includes 79 reusable tasks, including the Dev Web Retrieval Eval v1 packs, a compact dependency-research demo pack, source-specific GitHub/npm/finance/mobile/pricing packs, Bright Data-backed packs, and the original 32-task experiment set.
 
 ![Agent Royale report preview from a real GitHub and npm task-pack run](docs/assets/report-preview.png)
 
@@ -193,12 +193,12 @@ task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fie
 task-packs/mobile-apps/apple-app-store.yaml   Apple App Store rating and version fields
 task-packs/subscription-pricing/example.yaml   official pricing-page examples
 task-packs/bright-data/rapid-web.yaml      Bright Data Rapid-mode search/docs/release checks
-task-packs/bright-data/ecommerce-accuracy-v1.yaml  ecommerce price/rating/review/availability accuracy
+task-packs/bright-data/ecommerce-accuracy-v1.yaml  Samsung ecommerce price and variant accuracy
 task-packs/bright-data/linkedin-company.yaml   LinkedIn company metrics
 task-packs/bright-data/ecommerce-pricing.yaml  ecommerce product pricing
 ```
 
-GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `search_engine` and `scrape_as_markdown`, which are the best fit for Bright Data's MCP free tier. The Bright Data ecommerce accuracy pack is the main messy-page example: it tests price, rating, review-count, availability, variant, seller, installment, and trade-in ambiguity. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
+GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `search_engine` and `scrape_as_markdown`, which are the best fit for Bright Data's MCP free tier. The Bright Data ecommerce accuracy pack is the main messy-page example: it tests Samsung product price, storage-option price, and page-title color extraction from one dynamic product page. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 

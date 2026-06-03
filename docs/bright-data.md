@@ -51,7 +51,7 @@ If `BRIGHT_DATA_API_KEY` is missing, Agent Royale will fail the run with a clear
 
 ## Run The Ecommerce Accuracy Pack
 
-The ecommerce accuracy pack is the most complete Bright Data domain example in the repo. It tests product-page extraction across current price, rating, review count, availability, variant ambiguity, seller ambiguity, installments, and trade-in language:
+The ecommerce accuracy pack is the most complete Bright Data domain example in the repo. It keeps the first public ecommerce example focused on one dynamic Samsung product page and tests exact price, storage-option price, and page-title color extraction:
 
 ```bash
 python -m agent_royale validate task-packs/bright-data/ecommerce-accuracy-v1.yaml

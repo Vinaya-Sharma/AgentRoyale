@@ -15,11 +15,11 @@ These packs are intentionally small, readable, and source-specific. Developers s
 - `mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields backed by Apple's lookup API.
 - `subscription-pricing/example.yaml`: official pricing-page examples backed by regex page extractors.
 - `bright-data/rapid-web.yaml`: Bright Data Rapid-mode search, docs, and release checks backed by `search_engine` and `scrape_as_markdown`.
-- `bright-data/ecommerce-accuracy-v1.yaml`: ecommerce product-page accuracy tasks for prices, ratings, review counts, availability, variants, sellers, installments, and trade-in ambiguity.
+- `bright-data/ecommerce-accuracy-v1.yaml`: focused Samsung ecommerce tasks for product price, storage-option price, and page-title color extraction.
 - `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data structured extraction.
 - `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data page extraction.
 
-The included packs now contain 86 tasks. The flagship Dev Web Retrieval Eval v1 packs contain 28 tasks with public HTTP JSON and HTTP regex oracles. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data Rapid mode powers free-tier-friendly search and page extraction, while the ecommerce accuracy pack demonstrates where Bright Data helps with messy product pages. Bright Data Pro/groups support structured LinkedIn, ecommerce, and future dynamic web packs.
+The included packs now contain 79 tasks. The flagship Dev Web Retrieval Eval v1 packs contain 28 tasks with public HTTP JSON and HTTP regex oracles. GitHub, npm, finance, and Apple App Store packs use public APIs. Bright Data Rapid mode powers free-tier-friendly search and page extraction, while the ecommerce accuracy pack demonstrates where Bright Data helps with dynamic product pages and variant-sensitive fields. Bright Data Pro/groups support structured LinkedIn, ecommerce, and future dynamic web packs.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 

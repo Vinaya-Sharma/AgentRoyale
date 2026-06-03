@@ -4,93 +4,19 @@
 #   BRIGHT_DATA_API_KEY=...
 #   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 #
-# These tasks focus on ecommerce extraction mistakes that matter in production:
-# list price versus sale price, installment price versus one-time price,
-# trade-in credits, seller/variant ambiguity, availability, ratings, and review
-# counts. Product pages change often; update or quarantine individual tasks when
-# a source changes layout or the target item is no longer available.
+# This launch pack uses one dynamic ecommerce page and asks several exact
+# variant-sensitive questions from it. Keeping the first public ecommerce pack
+# narrow makes the live oracle easier to audit and maintain while still covering
+# common product-page mistakes: base model versus related model, selected storage
+# versus nearby storage options, and color/variant ambiguity.
 name: bright-data-ecommerce-accuracy-v1
-description: Ecommerce product-page tasks for exact price, availability, rating, and review-count extraction with Bright Data ground truth.
+description: Focused ecommerce product-page tasks for exact Samsung Galaxy S25 Ultra price and variant extraction with Bright Data ground truth.
 tasks:
-  - id: bd_ecom_v1_bestbuy_airpods_pro_price
-    question: "Using the Best Buy product page for Apple AirPods Pro 2 with USB-C case, what is the current price in USD?"
-    required_source: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
-    answer_type: currency
-    tolerance: 0
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - best_buy
-      - price
-    notes: "Extract the current product price, not the list price, financing amount, savings amount, protection-plan price, or price from another AirPods variant."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
-      regex: "\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
-      source_url: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
-
-  - id: bd_ecom_v1_bestbuy_airpods_pro_rating
-    question: "Using the Best Buy product page for Apple AirPods Pro 2 with USB-C case, what customer rating out of 5 is currently shown?"
-    required_source: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
-    answer_type: number
-    tolerance: 0.1
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - best_buy
-      - rating
-    notes: "Extract the visible customer rating out of 5. Reject review counts, star-distribution percentages, and ratings from similar AirPods products."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
-      regex: "([0-9](?:\\.[0-9])?)\\s*(?:out of|/)\\s*5"
-      source_url: "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p"
-
-  - id: bd_ecom_v1_apple_iphone_16_starting_price
-    question: "Using Apple's US buy page for iPhone 16, what is the lowest listed new-device price in USD before trade-in or carrier bill credits?"
-    required_source: "https://www.apple.com/shop/buy-iphone/iphone-16"
-    answer_type: currency
-    tolerance: 0
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - apple
-      - price
-      - variant_sensitive
-    notes: "Use Apple's lowest new-device price before trade-in or carrier bill credits. Reject monthly installment amounts, trade-in net prices, carrier offers, and prices for other iPhone families."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.apple.com/shop/buy-iphone/iphone-16"
-      regex: "(?:From|from)\\s*\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
-      source_url: "https://www.apple.com/shop/buy-iphone/iphone-16"
-
-  - id: bd_ecom_v1_apple_macbook_air_13_starting_price
-    question: "Using Apple's US buy page for the 13-inch MacBook Air, what is the starting price in USD before trade-in?"
-    required_source: "https://www.apple.com/shop/buy-mac/macbook-air/13-inch"
-    answer_type: currency
-    tolerance: 0
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - apple
-      - price
-      - variant_sensitive
-    notes: "Use the starting one-time purchase price for the 13-inch MacBook Air. Reject monthly installment amounts, trade-in net prices, education-store pricing, and 15-inch MacBook Air prices."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.apple.com/shop/buy-mac/macbook-air/13-inch"
-      regex: "(?:From|from)\\s*\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
-      source_url: "https://www.apple.com/shop/buy-mac/macbook-air/13-inch"
-
   - id: bd_ecom_v1_samsung_s25_ultra_256_unlocked_price
-    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra with 256GB storage, what is the current one-time purchase price in USD before trade-in?"
+    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra with 256GB storage in Titanium Black, what is the current listed device price in USD before trade-in?"
     required_source: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
     answer_type: currency
-    tolerance: 5
+    tolerance: 0
     labels:
       - bright_data
       - ecommerce_accuracy_v1
@@ -98,101 +24,47 @@ tasks:
       - price
       - variant_sensitive
       - trade_in_sensitive
-    notes: "Extract the one-time unlocked 256GB purchase price before trade-in. Reject monthly financing, trade-in net prices, carrier-locked variants, other storage sizes, and MSRP when a sale price is shown."
+    notes: "Extract the listed price for Galaxy S25 Ultra 256GB on Samsung's official US page. Reject prices for Galaxy S25 Edge, 512GB, 1TB, monthly financing, trade-in net prices, and carrier offers."
     ground_truth:
       method: bright_data
       tool: scrape_as_markdown
       url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
-      regex: "\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
+      regex: "Galaxy S25 Ultra\\s*\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
       source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
 
-  - id: bd_ecom_v1_homedepot_dewalt_drill_price
-    question: "Using The Home Depot product page for the DEWALT 20V MAX XR cordless brushless hammer drill/driver kit, what is the current price in USD?"
-    required_source: "https://www.homedepot.com/p/DEWALT-20V-MAX-XR-Cordless-Brushless-1-2-in-Hammer-Drill-Driver-Kit-with-5-0Ah-Battery-Charger-and-Bag-DCD996P2/206875950"
+  - id: bd_ecom_v1_samsung_s25_ultra_512_storage_price
+    question: "Using Samsung's official US page for Galaxy S25 Ultra, what listed price in USD is shown for the 512GB storage option?"
+    required_source: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
     answer_type: currency
     tolerance: 0
     labels:
       - bright_data
       - ecommerce_accuracy_v1
-      - home_depot
+      - samsung
       - price
-    notes: "Extract the current product price for the specified kit. Reject bulk pricing, nearby accessories, protection plans, open-box prices, and prices for bare-tool variants."
+      - storage_variant
+    notes: "Extract the 512GB storage-option price from the storage selector. Reject the selected 256GB price, 1TB price, related Galaxy S25 Edge price, monthly financing, and trade-in net prices."
     ground_truth:
       method: bright_data
       tool: scrape_as_markdown
-      url: "https://www.homedepot.com/p/DEWALT-20V-MAX-XR-Cordless-Brushless-1-2-in-Hammer-Drill-Driver-Kit-with-5-0Ah-Battery-Charger-and-Bag-DCD996P2/206875950"
-      regex: "\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
-      source_url: "https://www.homedepot.com/p/DEWALT-20V-MAX-XR-Cordless-Brushless-1-2-in-Hammer-Drill-Driver-Kit-with-5-0Ah-Battery-Charger-and-Bag-DCD996P2/206875950"
+      url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
+      regex: "512GB\\s*\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
+      source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
 
-  - id: bd_ecom_v1_homedepot_dewalt_drill_reviews
-    question: "Using The Home Depot product page for the DEWALT 20V MAX XR cordless brushless hammer drill/driver kit, how many customer reviews are currently shown?"
-    required_source: "https://www.homedepot.com/p/DEWALT-20V-MAX-XR-Cordless-Brushless-1-2-in-Hammer-Drill-Driver-Kit-with-5-0Ah-Battery-Charger-and-Bag-DCD996P2/206875950"
-    answer_type: number
-    tolerance: 20
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - home_depot
-      - reviews
-    notes: "Extract the visible customer review count. Reject star ratings, Q&A counts, and review counts from related DEWALT products."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.homedepot.com/p/DEWALT-20V-MAX-XR-Cordless-Brushless-1-2-in-Hammer-Drill-Driver-Kit-with-5-0Ah-Battery-Charger-and-Bag-DCD996P2/206875950"
-      regex: "([0-9][0-9,]*)\\s+(?:Customer\\s+)?Reviews"
-      source_url: "https://www.homedepot.com/p/DEWALT-20V-MAX-XR-Cordless-Brushless-1-2-in-Hammer-Drill-Driver-Kit-with-5-0Ah-Battery-Charger-and-Bag-DCD996P2/206875950"
-
-  - id: bd_ecom_v1_walmart_switch_oled_price
-    question: "Using Walmart's product page for the Nintendo Switch OLED Model with white Joy-Con, what is the current price in USD?"
-    required_source: "https://www.walmart.com/ip/Nintendo-Switch-OLED-Model-w-White-Joy-Con/910582061"
-    answer_type: currency
-    tolerance: 0
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - walmart
-      - price
-      - seller_sensitive
-    notes: "Extract the current product price from the Walmart product page. Reject marketplace seller variants, used/refurbished offers, shipping fees, and prices for non-OLED Switch models."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.walmart.com/ip/Nintendo-Switch-OLED-Model-w-White-Joy-Con/910582061"
-      regex: "\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
-      source_url: "https://www.walmart.com/ip/Nintendo-Switch-OLED-Model-w-White-Joy-Con/910582061"
-
-  - id: bd_ecom_v1_target_airtag_4_pack_price
-    question: "Using Target's product page for Apple AirTag 4 Pack, what is the current price in USD?"
-    required_source: "https://www.target.com/p/apple-airtag-4-pack/-/A-79673470"
-    answer_type: currency
-    tolerance: 0
-    labels:
-      - bright_data
-      - ecommerce_accuracy_v1
-      - target
-      - price
-    notes: "Extract the current 4-pack price. Reject single AirTag prices, shipping fees, Circle offers, and list prices when a sale price is shown."
-    ground_truth:
-      method: bright_data
-      tool: scrape_as_markdown
-      url: "https://www.target.com/p/apple-airtag-4-pack/-/A-79673470"
-      regex: "\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
-      source_url: "https://www.target.com/p/apple-airtag-4-pack/-/A-79673470"
-
-  - id: bd_ecom_v1_target_airtag_4_pack_availability
-    question: "Using Target's product page for Apple AirTag 4 Pack, what purchase availability status is currently shown?"
-    required_source: "https://www.target.com/p/apple-airtag-4-pack/-/A-79673470"
+  - id: bd_ecom_v1_samsung_s25_ultra_title_color
+    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what color is named in the page title?"
+    required_source: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
     answer_type: string
     tolerance: 0
     labels:
       - bright_data
       - ecommerce_accuracy_v1
-      - target
-      - availability
-    notes: "Extract the visible purchase availability status, such as in stock, out of stock, unavailable, or shipping availability. Reject pickup-only location noise unless it is the only availability status shown."
+      - samsung
+      - color_variant
+    notes: "Extract the color named in the page title. Reject nearby color swatches and online-exclusive colors that are listed but not the page-title SKU color."
     ground_truth:
       method: bright_data
       tool: scrape_as_markdown
-      url: "https://www.target.com/p/apple-airtag-4-pack/-/A-79673470"
-      regex: "(In stock|Out of stock|Sold out|Unavailable|Not available|Available to ship|Shipping not available)"
-      source_url: "https://www.target.com/p/apple-airtag-4-pack/-/A-79673470"
+      url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
+      regex: "Buy Galaxy S25 Ultra 256GB \\| ([^|]+?) Smartphone"
+      source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"

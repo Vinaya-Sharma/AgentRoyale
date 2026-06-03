@@ -2,7 +2,7 @@
 
 ## v0.2.3
 
-- Added a comprehensive Bright Data ecommerce accuracy pack covering product prices, ratings, review counts, availability, variant ambiguity, and trade-in/installment traps.
+- Added a focused Bright Data ecommerce accuracy pack covering Samsung product price, storage-option price, page-title color, and variant ambiguity.
 - Added a Bright Data target adapter example for evaluating Bright Data-backed ecommerce retrieval as an Agent Royale target.
 
 ## v0.2.2
