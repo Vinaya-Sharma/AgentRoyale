@@ -54,7 +54,7 @@
     .catch-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .mini-label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; font-weight:800; }
     .status-dot { display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:8px; background:var(--muted); }
-    .status-dot.correct { background:var(--good); }
+    .status-dot.correct,.status-dot.source-supported-correct { background:var(--good); }
     .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer { background:var(--bad); }
     footer { margin-top:24px; color:var(--muted); font-size:12px; }
     @media(max-width:860px) { header,.split,.method { grid-template-columns:1fr; } .grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } th:nth-child(6),td:nth-child(6) { display:none; } }
@@ -69,21 +69,21 @@
         <div class="meta">
           <span class="pill">target: examples/flagship_dev_web_agent.py:answer</span>
           <span class="pill">runs: 28</span>
-          <span class="pill">generated: 2026-06-02</span>
+          <span class="pill">generated: 2026-06-03</span>
         </div>
       </div>
       <div class="verdict">
         <div class="score">75%</div>
         <div class="verdict-label">Needs attention</div>
-        <p>Exact pass rate across 28 runs</p>
+        <p>Exact-value pass rate across 28 runs</p>
       </div>
     </header>
 
     <section class="grid">
-      <div class="card"><div class="num">21</div><div class="label">Correct</div></div>
-      <div class="card"><div class="num">7</div><div class="label">Failures</div></div>
+      <div class="card"><div class="num">21</div><div class="label">Exact values</div></div>
+      <div class="card"><div class="num">21</div><div class="label">Source-supported</div></div>
+      <div class="card"><div class="num">7</div><div class="label">Issues</div></div>
       <div class="card"><div class="num">0</div><div class="label">No answer</div></div>
-      <div class="card"><div class="num">63ms</div><div class="label">Median latency</div></div>
     </section>
 
     <section class="method">
@@ -103,58 +103,58 @@
 
     <section class="insight">
       <strong>Result</strong>
-      <p>7 tasks failed: source drift, stale or incorrect values. Examples: devv1_github_openai_python_latest_release, docsv1_node_latest_release_npm.</p>
+      <p>7 tasks had issues: source drift, stale or incorrect values. Examples: docsv1_node_latest_release_npm, pricev1_figma_organization_annual_monthly.</p>
     </section>
 
     <section class="split">
       <div>
-        <h2>Failure Breakdown</h2>
-        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot correct"></span>correct</td><td>21</td><td>75%</td></tr>
+        <h2>Outcome Breakdown</h2>
+        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot source-supported-correct"></span>correct with source support</td><td>21</td><td>75%</td></tr>
 <tr><td><span class="status-dot wrong-value"></span>wrong value</td><td>4</td><td>14%</td></tr>
 <tr><td><span class="status-dot wrong-source"></span>wrong source</td><td>3</td><td>11%</td></tr></tbody></table>
 
         <h2>Representative Catches</h2>
-        <div class="catch-list"><div class="catch"><div class="catch-title"><code>devv1_github_openai_python_latest_release</code><span class="failure">wrong source</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">2.40.0</div></div><div><div class="mini-label">Oracle had</div><div class="truth">v2.40.0</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: github.com/openai/openai-python/releases/latest</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: pypi.org</p></div>
-<div class="catch"><div class="catch-title"><code>docsv1_node_latest_release_npm</code><span class="failure">wrong value</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">11.13.0</div></div><div><div class="mini-label">Oracle had</div><div class="truth">11.16.0</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: nodejs.org/dist/index.json</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: nodejs.org</p></div>
-<div class="catch"><div class="catch-title"><code>pricev1_figma_organization_annual_monthly</code><span class="failure">wrong value</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">$16</div></div><div><div class="mini-label">Oracle had</div><div class="truth">55</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: figma.com/pricing</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: figma.com</p></div></div>
+        <div class="catch-list"><div class="catch"><div class="catch-title"><code>docsv1_node_latest_release_npm</code><span class="failure">wrong value</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">11.13.0</div></div><div><div class="mini-label">Oracle had</div><div class="truth">11.16.0</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: nodejs.org/dist/index.json</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: nodejs.org</p></div>
+<div class="catch"><div class="catch-title"><code>pricev1_figma_organization_annual_monthly</code><span class="failure">wrong value</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">$16</div></div><div><div class="mini-label">Oracle had</div><div class="truth">55</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: figma.com/pricing</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: figma.com</p></div>
+<div class="catch"><div class="catch-title"><code>devv1_github_openai_python_latest_release</code><span class="failure">wrong source</span></div><div class="catch-grid"><div><div class="mini-label">Agent said</div><div class="claim">2.40.0</div></div><div><div class="mini-label">Oracle had</div><div class="truth">v2.40.0</div></div></div><p class="muted" style="margin-top:8px;font-size:12px">Required source: github.com/openai/openai-python/releases/latest</p><p class="muted" style="margin-top:3px;font-size:12px">Agent cited: pypi.org</p></div></div>
       </div>
 
       <div>
         <h2>Task-Level Results</h2>
-        <table><thead><tr><th>Task</th><th>Passed</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>devv1_github_mcp_python_sdk_license</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_github_openai_python_latest_release</code></td><td>0/1</td><td>wrong source</td></tr>
-<tr><td><code>devv1_npm_eslint_node_engine</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_npm_prettier_unpacked_size</code></td><td>0/1</td><td>wrong value</td></tr>
-<tr><td><code>devv1_npm_react_latest</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_npm_typescript_license</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_npm_vite_latest</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_npm_zod_repository_url</code></td><td>0/1</td><td>wrong source</td></tr>
-<tr><td><code>devv1_pypi_fastapi_latest</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_pypi_fastapi_requires_python</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_pypi_requests_latest</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>devv1_pypi_requests_license</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_anthropic_python_client_class</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_anthropic_python_requires_python</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_langchain_pip_install</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_mcp_python_fastmcp_class</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_mcp_python_pip_install</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_next_canary_package_version</code></td><td>0/1</td><td>wrong source</td></tr>
-<tr><td><code>docsv1_node_latest_release_npm</code></td><td>0/1</td><td>wrong value</td></tr>
-<tr><td><code>docsv1_node_latest_release_version</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_openai_python_client_class</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>docsv1_openai_python_requires_python</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>pricev1_dropbox_plus_annual_monthly</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>pricev1_figma_organization_annual_monthly</code></td><td>0/1</td><td>wrong value</td></tr>
-<tr><td><code>pricev1_figma_professional_annual_monthly</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>pricev1_netflix_standard_with_ads_us</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>pricev1_notion_business_annual_monthly</code></td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>pricev1_notion_plus_annual_monthly</code></td><td>0/1</td><td>wrong value</td></tr></tbody></table>
+        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>devv1_github_mcp_python_sdk_license</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_github_openai_python_latest_release</code></td><td>0/1</td><td>0/1</td><td>wrong source</td></tr>
+<tr><td><code>devv1_npm_eslint_node_engine</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_npm_prettier_unpacked_size</code></td><td>0/1</td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>devv1_npm_react_latest</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_npm_typescript_license</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_npm_vite_latest</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_npm_zod_repository_url</code></td><td>0/1</td><td>0/1</td><td>wrong source</td></tr>
+<tr><td><code>devv1_pypi_fastapi_latest</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_pypi_fastapi_requires_python</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_pypi_requests_latest</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>devv1_pypi_requests_license</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_anthropic_python_client_class</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_anthropic_python_requires_python</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_langchain_pip_install</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_mcp_python_fastmcp_class</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_mcp_python_pip_install</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_next_canary_package_version</code></td><td>0/1</td><td>0/1</td><td>wrong source</td></tr>
+<tr><td><code>docsv1_node_latest_release_npm</code></td><td>0/1</td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>docsv1_node_latest_release_version</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_openai_python_client_class</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>docsv1_openai_python_requires_python</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_dropbox_plus_annual_monthly</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_figma_organization_annual_monthly</code></td><td>0/1</td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>pricev1_figma_professional_annual_monthly</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_netflix_standard_with_ads_us</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_notion_business_annual_monthly</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>pricev1_notion_plus_annual_monthly</code></td><td>0/1</td><td>0/1</td><td>wrong value</td></tr></tbody></table>
       </div>
     </section>
 
     <h2>Run Details</h2>
     <table>
-      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Failure</th><th>Required source</th><th>Answer</th></tr></thead>
+      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
       <tbody><tr><td><span class="fail">SOURCE FAIL</span></td><td><code>devv1_github_openai_python_latest_release</code></td><td class="claim">2.40.0</td><td class="truth">v2.40.0</td><td class="failure">wrong source</td><td class="source">github.com/openai/openai-python/releases/latest</td><td class="answer">2.40.0</td></tr>
 <tr><td><span class="fail">FAIL</span></td><td><code>devv1_npm_prettier_unpacked_size</code></td><td class="claim">56</td><td class="truth">8604418</td><td class="failure">wrong value</td><td class="source">npmjs.com/package/prettier</td><td class="answer">56</td></tr>
 <tr><td><span class="fail">SOURCE FAIL</span></td><td><code>devv1_npm_zod_repository_url</code></td><td class="claim">https://github.com/colinhacks/zod</td><td class="truth">git+https://github.com/colinhacks/zod.git</td><td class="failure">wrong source</td><td class="source">npmjs.com/package/zod</td><td class="answer">https://github.com/colinhacks/zod</td></tr>

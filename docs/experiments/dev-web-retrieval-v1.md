@@ -35,7 +35,7 @@ python -m agent_royale doctor \
 | Target | Type | Report | Exact accuracy | Notes |
 |---|---|---|---:|---|
 | `examples/flagship_dev_web_agent.py:answer` | local demo target | [`flagship-demo.html`](../../reports/dev-web-retrieval-v1/flagship-demo.html) | 75.0% | Uses real public APIs/pages with intentional realistic retrieval mistakes. |
-| `openrouter:openai/gpt-4o-mini` | model web-search stack | [`openrouter-gpt4o-mini.html`](../../reports/dev-web-retrieval-v1/openrouter-gpt4o-mini.html) | 67.9% | Real external model run through the OpenRouter target adapter. |
+| `openrouter:openai/gpt-4o-mini` | model web-search stack | [`openrouter-gpt4o-mini.html`](../../reports/dev-web-retrieval-v1/openrouter-gpt4o-mini.html) | 71.4% | Real external model run through the OpenRouter target adapter. |
 
 ![OpenRouter GPT-4o Mini report screenshot](../assets/experiments/dev-web-retrieval-v1/openrouter-gpt4o-mini-report.png)
 
@@ -54,16 +54,16 @@ The OpenRouter model-stack run showed similar real-world failure patterns:
 - stale npm package versions for React and Vite
 - wrong Figma plan prices
 - stale Next.js canary package version
-- package metadata formatting mismatch for npm repository URLs
 - install-command extraction failure for the MCP Python SDK README
+- exact dependency-constraint formatting failure for npm engine metadata
 - citation support issues even when the extracted value matched the oracle
 
 ## Result Summary
 
-| Target | Tasks | Exact correct | Exact accuracy | Wrong value | Wrong source | Citation issue |
-|---|---:|---:|---:|---:|---:|---:|
-| Flagship demo target | 28 | 21 | 75.0% | 4 | 3 | 0 |
-| OpenRouter GPT-4o Mini | 28 | 19 | 67.9% | 7 | 0 | 4 |
+| Target | Tasks | Exact correct | Source-supported correct | Exact accuracy | Wrong value | Wrong source | Citation issue |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Flagship demo target | 28 | 21 | 21 | 75.0% | 4 | 3 | 0 |
+| OpenRouter GPT-4o Mini | 28 | 20 | 18 | 71.4% | 8 | 0 | 2 |
 
 Citation issues are tracked separately from exact value matching. A target can extract the right value but still fail source support if its citation does not support the claim from the required source.
 

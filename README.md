@@ -15,6 +15,14 @@ Write a task pack, connect your endpoint, run the eval, and get a report showing
 
 The goal is simple: do not ask only whether your agent can browse. Ask whether it returns the exact value your workflow asked for, from the source you required.
 
+## How It Works
+
+```text
+task pack + target agent -> independent oracle check -> exact-value report
+```
+
+Use Agent Royale when your product depends on current web values that must be right: package versions, pricing fields, release metadata, licenses, finance quotes, app-store metadata, source-specific counts, or docs fields. The input is a YAML task pack and an agent target. The output is a JSONL run log and an HTML report showing exact matches, wrong values, wrong sources, unsupported citations, latency, and cost.
+
 ## Flagship Eval
 
 **Dev Web Retrieval Eval v1** tests practical developer and business research workflows: package metadata, SDK docs, release indexes, repository files, and pricing pages.
@@ -30,7 +38,7 @@ Two launch runs show the kind of failures Agent Royale is built to expose:
 | Target | Tasks | Exact accuracy | What it caught |
 |---|---:|---:|---|
 | `examples/flagship_dev_web_agent.py:answer` | 28 | 75.0% | wrong source, wrong field, wrong billing interval |
-| `openrouter:openai/gpt-4o-mini` | 28 | 67.9% | stale versions, wrong prices, unsupported citations |
+| `openrouter:openai/gpt-4o-mini` | 28 | 71.4% | stale versions, wrong prices, unsupported citations |
 
 ```bash
 python -m agent_royale run \

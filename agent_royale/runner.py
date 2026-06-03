@@ -35,7 +35,7 @@ async def run_tasks(
         records.append(record)
         with output.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record.model_dump(), ensure_ascii=True) + "\n")
-        status = "PASS" if record.passed else "FAIL"
+        status = "PASS" if record.passed and not record.failure_mode else ("ISSUE" if record.passed else "FAIL")
         detail = record.failure_mode or "correct"
         if record.error:
             detail = f"{detail}: {record.error}"
@@ -138,8 +138,6 @@ def classify_failure(
         return "no_answer"
     if citations and not any(normalize_url(required_source) in normalize_url(url) for url in citations):
         return "wrong_source"
-    if citations and not citation_supported:
-        return "unsupported_citation"
     return "wrong_value"
 
 

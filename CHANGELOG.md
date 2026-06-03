@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.1
+
+- Clarified report metrics by separating exact-value matches from source-supported matches.
+- Reserved unsupported-citation labels for exact answers whose citations do not support the required source.
+- Reworked the README explanation around the simplest product loop: task pack, target agent, oracle check, report.
+
 ## v0.2.0
 
 - Added Dev Web Retrieval Eval v1 with 28 source-specific tasks across dependency metadata, docs freshness, and SaaS pricing.

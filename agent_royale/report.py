@@ -21,12 +21,13 @@ def load_records(path: Path) -> list[RunRecord]:
 def write_html_report(records: list[RunRecord], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     total = len(records)
-    passed = sum(1 for item in records if item.passed)
-    accuracy = passed / total if total else 0
-    wrong = sum(1 for item in records if item.failure_mode in {"wrong_value", "wrong_source", "unsupported_citation"})
+    exact_correct = sum(1 for item in records if item.passed)
+    source_supported = sum(1 for item in records if item.passed and not item.failure_mode)
+    accuracy = exact_correct / total if total else 0
+    issue_count = sum(1 for item in records if item.failure_mode)
     no_answer = sum(1 for item in records if item.failure_mode == "no_answer")
     latencies = [item.latency_ms for item in records if item.latency_ms]
-    failures = Counter(item.failure_mode or "correct" for item in records)
+    failures = Counter(item.failure_mode or "source_supported_correct" for item in records)
     median_latency = median(latencies) if latencies else 0
     by_task = defaultdict(list)
     for record in records:
@@ -35,20 +36,21 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     created_at = records[0].created_at if records else ""
     source_summary = summarize_required_sources(records)
     grading_summary = summarize_grading(records)
-    rows = "\n".join(render_record(record) for record in sorted(records, key=lambda item: (item.passed, item.task_id)))
-    failing_records = [record for record in records if not record.passed]
-    catch_cards = "\n".join(render_catch(record) for record in failing_records[:3])
+    rows = "\n".join(render_record(record) for record in sorted(records, key=lambda item: (not bool(item.failure_mode), item.task_id)))
+    issue_records = [record for record in records if record.failure_mode]
+    catch_cards = "\n".join(render_catch(record) for record in issue_records[:3])
     failure_rows = "\n".join(
         f"<tr><td><span class=\"status-dot {status_class(name)}\"></span>{esc(pretty_label(name))}</td><td>{count}</td><td>{pct(count, total)}</td></tr>"
         for name, count in failures.most_common()
     )
     task_rows = "\n".join(
         f"<tr><td><code>{esc(task_id)}</code></td><td>{sum(1 for r in runs if r.passed)}/{len(runs)}</td>"
+        f"<td>{sum(1 for r in runs if r.passed and not r.failure_mode)}/{len(runs)}</td>"
         f"<td>{esc(', '.join(pretty_label(item) for item in sorted(set(r.failure_mode or 'correct' for r in runs))))}</td></tr>"
         for task_id, runs in sorted(by_task.items())
     )
     verdict = "Launch-safe" if accuracy >= 0.8 else "Needs attention" if accuracy >= 0.6 else "High risk"
-    caught = short_summary(failing_records)
+    caught = short_summary(issue_records)
     html_text = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -105,7 +107,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .catch-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }}
     .mini-label {{ color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; font-weight:800; }}
     .status-dot {{ display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:8px; background:var(--muted); }}
-    .status-dot.correct {{ background:var(--good); }}
+    .status-dot.correct,.status-dot.source-supported-correct {{ background:var(--good); }}
     .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer {{ background:var(--bad); }}
     footer {{ margin-top:24px; color:var(--muted); font-size:12px; }}
     @media(max-width:860px) {{ header,.split,.method {{ grid-template-columns:1fr; }} .grid {{ grid-template-columns:1fr 1fr; }} .insight {{ grid-template-columns:1fr; }} th:nth-child(6),td:nth-child(6) {{ display:none; }} }}
@@ -126,15 +128,15 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
       <div class="verdict">
         <div class="score">{accuracy:.0%}</div>
         <div class="verdict-label">{esc(verdict)}</div>
-        <p>Exact pass rate across {total} run{'s' if total != 1 else ''}</p>
+        <p>Exact-value pass rate across {total} run{'s' if total != 1 else ''}</p>
       </div>
     </header>
 
     <section class="grid">
-      <div class="card"><div class="num">{passed}</div><div class="label">Correct</div></div>
-      <div class="card"><div class="num">{wrong}</div><div class="label">Failures</div></div>
+      <div class="card"><div class="num">{exact_correct}</div><div class="label">Exact values</div></div>
+      <div class="card"><div class="num">{source_supported}</div><div class="label">Source-supported</div></div>
+      <div class="card"><div class="num">{issue_count}</div><div class="label">Issues</div></div>
       <div class="card"><div class="num">{no_answer}</div><div class="label">No answer</div></div>
-      <div class="card"><div class="num">{median_latency:.0f}ms</div><div class="label">Median latency</div></div>
     </section>
 
     <section class="method">
@@ -159,7 +161,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
     <section class="split">
       <div>
-        <h2>Failure Breakdown</h2>
+        <h2>Outcome Breakdown</h2>
         <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody>{failure_rows}</tbody></table>
 
         <h2>Representative Catches</h2>
@@ -168,13 +170,13 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
       <div>
         <h2>Task-Level Results</h2>
-        <table><thead><tr><th>Task</th><th>Passed</th><th>Observed outcomes</th></tr></thead><tbody>{task_rows}</tbody></table>
+        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody>{task_rows}</tbody></table>
       </div>
     </section>
 
     <h2>Run Details</h2>
     <table>
-      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Failure</th><th>Required source</th><th>Answer</th></tr></thead>
+      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
@@ -186,8 +188,16 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
 
 def render_record(record: RunRecord) -> str:
-    status_label = "SOURCE FAIL" if record.failure_mode == "wrong_source" else ("PASS" if record.passed else "FAIL")
+    if record.failure_mode == "wrong_source":
+        status_label = "SOURCE FAIL"
+    elif record.failure_mode == "unsupported_citation":
+        status_label = "SOURCE ISSUE"
+    elif record.passed:
+        status_label = "PASS"
+    else:
+        status_label = "FAIL"
     status = f'<span class="{"pass" if record.passed and not record.failure_mode else "fail"}">{status_label}</span>'
+    answer_text = compact_text(record.answer or record.error or "")
     return (
         "<tr>"
         f"<td>{status}</td>"
@@ -196,7 +206,7 @@ def render_record(record: RunRecord) -> str:
         f"<td class=\"truth\">{esc(record.ground_truth)}</td>"
         f"<td class=\"failure\">{esc(pretty_label(record.failure_mode or 'correct'))}</td>"
         f"<td class=\"source\">{esc(record.required_source)}</td>"
-        f"<td class=\"answer\">{esc(record.answer or record.error or '')}</td>"
+        f"<td class=\"answer\">{esc(answer_text)}</td>"
         "</tr>"
     )
 
@@ -218,7 +228,7 @@ def render_catch(record: RunRecord) -> str:
 
 def short_summary(records: list[RunRecord]) -> str:
     if not records:
-        return "Every answer matched the independent oracle for this run."
+        return "Every answer matched the independent oracle and source-support check for this run."
     modes = Counter(record.failure_mode or "failed" for record in records)
     parts = []
     if modes.get("wrong_source"):
@@ -232,7 +242,7 @@ def short_summary(records: list[RunRecord]) -> str:
     if not parts:
         parts.append("failed assertions")
     examples = ", ".join(record.task_id for record in records[:2])
-    return f"{len(records)} task{'s' if len(records) != 1 else ''} failed: {', '.join(parts)}. Examples: {examples}."
+    return f"{len(records)} task{'s' if len(records) != 1 else ''} had issues: {', '.join(parts)}. Examples: {examples}."
 
 
 def summarize_required_sources(records: list[RunRecord]) -> str:
@@ -278,7 +288,17 @@ def citation_domain(value: str) -> str:
 
 
 def pretty_label(value: object) -> str:
-    return str(value).replace("_", " ")
+    labels = {
+        "source_supported_correct": "correct with source support",
+        "unsupported_citation": "unsupported citation",
+        "wrong_source": "wrong source",
+        "wrong_value": "wrong value",
+        "no_answer": "no answer",
+        "tool_failure": "tool failure",
+        "correct": "correct",
+    }
+    text = str(value)
+    return labels.get(text, text.replace("_", " "))
 
 
 def status_class(value: object) -> str:
@@ -287,6 +307,10 @@ def status_class(value: object) -> str:
 
 def esc(value: object) -> str:
     return html.escape(str(value if value is not None else ""))
+
+
+def compact_text(value: object) -> str:
+    return " ".join(str(value if value is not None else "").split())
 
 
 def pct(count: int, total: int) -> str:
