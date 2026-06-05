@@ -23,7 +23,7 @@ tasks:
       field: "stargazers_count"
       source_url: "github.com/vercel/next.js"
 
-  - id: github_vscode_open_issues
+  - id: github_example_vscode_open_issues
     question: "Using GitHub, how many open issues does the microsoft/vscode repository currently show?"
     required_source: "github.com/microsoft/vscode"
     answer_type: number
@@ -57,7 +57,7 @@ tasks:
       field: "forks_count"
       source_url: "github.com/fastapi/fastapi"
 
-  - id: github_playwright_latest_release
+  - id: github_example_playwright_latest_release
     question: "Using GitHub Releases, what is the latest release tag for microsoft/playwright?"
     required_source: "github.com/microsoft/playwright/releases"
     answer_type: string
@@ -73,7 +73,7 @@ tasks:
       field: "tag_name"
       source_url: "github.com/microsoft/playwright/releases/latest"
 
-  - id: github_vue_package_version
+  - id: github_example_vue_package_version
     question: "Using Vue's package.json file on GitHub, what is the current top-level version value?"
     required_source: "github.com/vuejs/core/blob/main/packages/vue/package.json"
     answer_type: string

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.5
+
+- Added `agent-royale compare` for before/after run comparisons, including exact accuracy, source-supported accuracy, oracle skips, latency, task-level regressions, and optional Markdown output.
+- Added `agent-royale lint` for static task-pack checks that catch fragile live-web oracles, broad numeric regexes, volatile CI gates, missing provenance, and weak Bright Data search-result oracles.
+- Updated docs with a repeatable engineering workflow: lint task packs, audit oracle health, run only CI-safe packs in builds, and compare candidate runs against a baseline.
+
 ## v0.2.4
 
 - Added auditable ground-truth snapshots with oracle status, evidence snippets, parser metadata, and source provenance.

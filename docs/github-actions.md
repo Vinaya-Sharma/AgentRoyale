@@ -37,6 +37,9 @@ jobs:
       - name: Validate task packs
         run: python -m agent_royale validate task-packs
 
+      - name: Lint CI-safe task packs
+        run: python -m agent_royale lint task-packs/static-smoke.yaml
+
       - name: Run smoke eval
         run: |
           python -m agent_royale run task-packs/static-smoke.yaml \
@@ -211,3 +214,25 @@ Good starting points:
 - `0.6` for new exploratory live-web packs
 
 Keep thresholds honest. If a source gets flaky, update or quarantine the task instead of lowering the standard silently.
+
+## Regression Comparisons
+
+For pull requests, keep build-blocking evals focused on stable `ci_safe` packs. Use `compare` when you have a saved baseline and want a direct before/after summary:
+
+```yaml
+      - name: Run candidate eval
+        run: |
+          python -m agent_royale run task-packs/static-smoke.yaml \
+            --target examples/echo_agent.py:answer \
+            --output runs/candidate.jsonl \
+            --ci \
+            --fail-under-exact 1.0
+
+      - name: Compare against baseline
+        run: |
+          python -m agent_royale compare runs/baseline.jsonl runs/candidate.jsonl \
+            --markdown reports/comparison.md \
+            --fail-on-regression
+```
+
+For volatile live-web packs, prefer scheduled or manual reports over build-blocking gates. A changed page should create an investigation artifact, not a surprise red build.

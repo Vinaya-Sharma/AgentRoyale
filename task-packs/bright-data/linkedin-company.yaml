@@ -16,6 +16,8 @@ tasks:
     required_source: "linkedin.com/company/openai"
     answer_type: number
     tolerance: 100
+    stability: volatile
+    ci_safe: false
     labels:
       - bright_data
       - requires_api_key
@@ -34,6 +36,8 @@ tasks:
     required_source: "linkedin.com/company/anthropicresearch"
     answer_type: number
     tolerance: 50000
+    stability: volatile
+    ci_safe: false
     labels:
       - bright_data
       - requires_api_key
@@ -52,6 +56,8 @@ tasks:
     required_source: "linkedin.com/company/openai"
     answer_type: number
     tolerance: 5000
+    stability: volatile
+    ci_safe: false
     labels:
       - bright_data
       - requires_api_key
@@ -71,6 +77,8 @@ tasks:
     required_source: "linkedin.com/company/anthropicresearch"
     answer_type: number
     tolerance: 100
+    stability: volatile
+    ci_safe: false
     labels:
       - bright_data
       - requires_api_key
@@ -90,6 +98,8 @@ tasks:
     required_source: "linkedin.com/company/databricks"
     answer_type: number
     tolerance: 100
+    stability: volatile
+    ci_safe: false
     labels:
       - bright_data
       - requires_api_key
@@ -109,6 +119,8 @@ tasks:
     required_source: "linkedin.com/company/nvidia"
     answer_type: number
     tolerance: 10000
+    stability: volatile
+    ci_safe: false
     labels:
       - bright_data
       - requires_api_key

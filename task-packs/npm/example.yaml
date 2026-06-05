@@ -5,7 +5,7 @@
 name: npm-packages
 description: Exact retrieval tasks for npm versions, licenses, download counts, repository metadata, package size, and engine constraints.
 tasks:
-  - id: npm_react_latest
+  - id: npm_example_react_latest
     question: "Using npm, what is the latest published version of the react package?"
     required_source: "npmjs.com/package/react"
     answer_type: string
@@ -21,7 +21,7 @@ tasks:
       field: "version"
       source_url: "npmjs.com/package/react"
 
-  - id: npm_vite_latest
+  - id: npm_example_vite_latest
     question: "Using npm, what is the latest published version of the vite package?"
     required_source: "npmjs.com/package/vite"
     answer_type: string
@@ -37,7 +37,7 @@ tasks:
       field: "version"
       source_url: "npmjs.com/package/vite"
 
-  - id: npm_typescript_license
+  - id: npm_example_typescript_license
     question: "Using npm, what license does the latest typescript package version list?"
     required_source: "npmjs.com/package/typescript"
     answer_type: string
@@ -53,7 +53,7 @@ tasks:
       field: "license"
       source_url: "npmjs.com/package/typescript"
 
-  - id: npm_next_weekly_downloads
+  - id: npm_example_next_weekly_downloads
     question: "Using npm's download stats, how many downloads did the next package have in the last week?"
     required_source: "api.npmjs.org/downloads/point/last-week/next"
     answer_type: number

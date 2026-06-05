@@ -134,6 +134,16 @@ ground_truth:
 python -m agent_royale validate task-packs
 ```
 
+## Lint Task Quality
+
+Use `lint` to catch task-pack patterns that make evals noisy or hard to trust:
+
+```bash
+python -m agent_royale lint task-packs/devtools/dependency-research-v1.yaml
+```
+
+The linter flags broad numeric regexes without nearby context, volatile tasks marked as CI-safe, live-web oracles without provenance, search-result oracles used as exact ground truth, duplicate questions, and missing notes on maintained live-web parsers.
+
 ## Audit Oracle Health
 
 Use `audit` to fetch task-pack oracles before testing a target:
@@ -156,3 +166,15 @@ python -m agent_royale run task-packs \
 ```
 
 Volatile packs, such as ecommerce prices or social counts, should generally set `ci_safe: false` and be run as scheduled or on-demand reports.
+
+## Compare Runs
+
+Use `compare` when you want to know whether a retrieval change helped:
+
+```bash
+python -m agent_royale compare runs/baseline.jsonl runs/candidate.jsonl \
+  --markdown reports/comparison.md \
+  --fail-on-regression
+```
+
+The comparison separates exact accuracy from source-supported accuracy and lists task-level improvements, regressions, added tasks, removed tasks, oracle-skip changes, and latency movement.

@@ -12,12 +12,17 @@ tasks:
     required_source: "notion.com/pricing"
     answer_type: currency
     tolerance: 0
+    stability: volatile
+    ci_safe: false
     labels: [dev_web_retrieval_v1, saas_pricing, official_source, annual_monthly_equivalent]
     notes: "Plan name and billing interval matter."
     ground_truth:
       method: http_regex
       url: "https://www.notion.com/pricing"
       regex: "Plus[\\s\\S]{0,3000}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Plus"
+        - "annually"
       source_url: "notion.com/pricing"
 
   - id: pricev1_notion_business_annual_monthly
@@ -25,12 +30,17 @@ tasks:
     required_source: "notion.com/pricing"
     answer_type: currency
     tolerance: 0
+    stability: volatile
+    ci_safe: false
     labels: [dev_web_retrieval_v1, saas_pricing, official_source, annual_monthly_equivalent]
     notes: "Plan name and billing interval matter."
     ground_truth:
       method: http_regex
       url: "https://www.notion.com/pricing"
       regex: "Business[\\s\\S]{0,3000}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Business"
+        - "annually"
       source_url: "notion.com/pricing"
 
   - id: pricev1_figma_professional_annual_monthly
@@ -38,12 +48,17 @@ tasks:
     required_source: "figma.com/pricing"
     answer_type: currency
     tolerance: 0
+    stability: volatile
+    ci_safe: false
     labels: [dev_web_retrieval_v1, saas_pricing, official_source, annual_monthly_equivalent]
     notes: "Plan name and billing interval matter."
     ground_truth:
       method: http_regex
       url: "https://www.figma.com/pricing/"
       regex: "Professional[\\s\\S]{0,3000}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Professional"
+        - "annually"
       source_url: "figma.com/pricing"
 
   - id: pricev1_figma_organization_annual_monthly
@@ -51,12 +66,17 @@ tasks:
     required_source: "figma.com/pricing"
     answer_type: currency
     tolerance: 0
+    stability: volatile
+    ci_safe: false
     labels: [dev_web_retrieval_v1, saas_pricing, official_source, annual_monthly_equivalent]
     notes: "Plan name and billing interval matter."
     ground_truth:
       method: http_regex
       url: "https://www.figma.com/pricing/"
       regex: "Organization[\\s\\S]{0,3000}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Organization"
+        - "annually"
       source_url: "figma.com/pricing"
 
   - id: pricev1_netflix_standard_with_ads_us
@@ -64,12 +84,17 @@ tasks:
     required_source: "help.netflix.com/en/node/24926"
     answer_type: currency
     tolerance: 0
+    stability: volatile
+    ci_safe: false
     labels: [dev_web_retrieval_v1, saas_pricing, official_source, us_region]
     notes: "Region and plan wording matter."
     ground_truth:
       method: http_regex
       url: "https://help.netflix.com/en/node/24926"
       regex: "Standard\\s+with\\s+ads[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Standard with ads"
+        - "United States"
       source_url: "help.netflix.com/en/node/24926"
 
   - id: pricev1_dropbox_plus_annual_monthly
@@ -77,10 +102,15 @@ tasks:
     required_source: "dropbox.com/plans"
     answer_type: currency
     tolerance: 0
+    stability: volatile
+    ci_safe: false
     labels: [dev_web_retrieval_v1, saas_pricing, official_source, annual_monthly_equivalent]
     notes: "Plan name and billing interval matter."
     ground_truth:
       method: http_regex
       url: "https://www.dropbox.com/plans"
       regex: "Plus[\\s\\S]{0,3000}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Plus"
+        - "yearly"
       source_url: "dropbox.com/plans"

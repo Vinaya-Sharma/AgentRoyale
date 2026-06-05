@@ -12,7 +12,9 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 import yaml
 
 from agent_royale import __version__
+from agent_royale.compare import compare_run_files, render_markdown_report, render_terminal_summary
 from agent_royale.ground_truth import fetch_ground_truth, fetch_ground_truth_snapshot
+from agent_royale.lint import lint_task_paths, render_lint_findings
 from agent_royale.report import load_records, write_html_report
 from agent_royale.runner import run_tasks
 from agent_royale.schema import flatten_tasks, load_task_packs, validation_errors
@@ -111,8 +113,12 @@ def main(argv: list[str] | None = None) -> int:
         return asyncio.run(cmd_doctor(args))
     if args.command == "audit":
         return asyncio.run(cmd_audit(args))
+    if args.command == "lint":
+        return cmd_lint(args)
     if args.command == "run":
         return asyncio.run(cmd_run(args))
+    if args.command == "compare":
+        return cmd_compare(args)
     if args.command == "report":
         return cmd_report(args)
     parser.print_help()
@@ -158,6 +164,10 @@ def build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--timeout", type=float, default=30)
     audit.add_argument("--jsonl", default="", help="Optional JSONL output path for oracle snapshots.")
 
+    lint = sub.add_parser("lint", help="Check task packs for fragile oracle and CI patterns.")
+    lint.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
+    lint.add_argument("--strict", action="store_true", help="Treat warnings as failures.")
+
     run = sub.add_parser("run", help="Run tasks against a target stack.")
     run.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
     run.add_argument("--target", required=True, help="http(s) endpoint, openrouter:<model>, or path.py:function.")
@@ -172,6 +182,12 @@ def build_parser() -> argparse.ArgumentParser:
     report = sub.add_parser("report", help="Generate an HTML report from JSONL runs.")
     report.add_argument("input", help="Run JSONL file.")
     report.add_argument("--output", default="reports/agent-royale-report.html")
+
+    compare = sub.add_parser("compare", help="Compare two JSONL run logs.")
+    compare.add_argument("before", help="Baseline run JSONL file.")
+    compare.add_argument("after", help="Candidate run JSONL file.")
+    compare.add_argument("--markdown", default="", help="Optional Markdown output path.")
+    compare.add_argument("--fail-on-regression", action="store_true", help="Exit 2 if any common task regressed.")
     return parser
 
 
@@ -365,6 +381,17 @@ async def cmd_audit(args: argparse.Namespace) -> int:
     return 0 if verified == len(snapshots) else 1
 
 
+def cmd_lint(args: argparse.Namespace) -> int:
+    task_files = expand_task_files(args.paths)
+    findings = lint_task_paths(task_files)
+    print(render_lint_findings(findings))
+    has_errors = any(finding.severity == "error" for finding in findings)
+    has_warnings = any(finding.severity == "warning" for finding in findings)
+    if has_errors or (args.strict and has_warnings):
+        return 1
+    return 0
+
+
 def check_line(name: str, ok: bool, ok_text: str, missing_text: str) -> str:
     return f"{'OK' if ok else 'WARN'} {name}: {ok_text if ok else missing_text}"
 
@@ -444,4 +471,17 @@ def cmd_report(args: argparse.Namespace) -> int:
     output = Path(args.output)
     write_html_report(records, output)
     print(f"Report: {output}")
+    return 0
+
+
+def cmd_compare(args: argparse.Namespace) -> int:
+    comparison = compare_run_files(Path(args.before), Path(args.after))
+    print(render_terminal_summary(comparison))
+    if args.markdown:
+        output = Path(args.markdown)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(render_markdown_report(comparison), encoding="utf-8")
+        print(f"\nMarkdown: {output}")
+    if args.fail_on_regression and comparison.regressions:
+        return 2
     return 0

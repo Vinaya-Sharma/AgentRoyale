@@ -108,6 +108,8 @@ The tasks that expose this problem are ones where there's a single correct curre
 - Graders: exact string, number, currency, percentage, date, enum
 - Failure labels: wrong value, wrong source, unsupported citation, no answer, tool failure
 - Reports: terminal summary, JSONL run log, HTML report
+- Run comparison: before/after accuracy, source-supported accuracy, oracle skips, latency, cost, regressions, and Markdown output
+- Task-pack linting: static checks for fragile oracles, volatile CI gates, broad regexes, missing provenance, and weak search-result ground truth
 - CI gates: nonzero exit when `--fail-under-exact` threshold is missed
 - Preflight checks: environment, task-pack requirements, optional oracle and target probes
 
@@ -222,6 +224,12 @@ Validate all packs:
 python -m agent_royale validate task-packs
 ```
 
+Lint task packs for fragile oracle and CI patterns:
+
+```bash
+python -m agent_royale lint task-packs
+```
+
 Check pack requirements without running a full eval:
 
 ```bash
@@ -255,6 +263,16 @@ python -m agent_royale run task-packs \
 ```
 
 Volatile live-web packs, such as ecommerce prices or social counts, are better as scheduled or on-demand reports than build-blocking gates.
+
+Compare a baseline run with a candidate run:
+
+```bash
+python -m agent_royale compare runs/baseline.jsonl runs/candidate.jsonl \
+  --markdown reports/comparison.md \
+  --fail-on-regression
+```
+
+Use `compare` after prompt changes, retrieval changes, parser changes, model/provider swaps, or task-pack updates. It reports whether accuracy improved, which tasks regressed, whether oracle skips changed, and whether latency or cost moved.
 
 ## Bright Data Ground Truth
 
@@ -433,7 +451,6 @@ nvidia/nemotron-3-super-120b-a12b
 
 - Larger and more balanced task bank
 - More Bright Data-backed task packs for messy public web sources
-- Ground truth snapshot stored alongside every run
 - Cost logging from actual provider usage data
 - Citation verification at the passage level
 - Clearer failure labels: wrong source, wrong field, stale value, unit mismatch, unsupported claim, no answer, provider failure

@@ -10,6 +10,7 @@ tasks:
     required_source: "github.com/openai/openai-python"
     answer_type: string
     tolerance: 0
+    stability: stable
     labels: [dev_web_retrieval_v1, docs_freshness, github_readme, sdk_docs]
     notes: "Checks current official SDK README usage."
     ground_truth:
@@ -23,6 +24,7 @@ tasks:
     required_source: "github.com/anthropics/anthropic-sdk-python"
     answer_type: string
     tolerance: 0
+    stability: stable
     labels: [dev_web_retrieval_v1, docs_freshness, github_readme, sdk_docs]
     notes: "Checks current official SDK README usage."
     ground_truth:
@@ -36,6 +38,7 @@ tasks:
     required_source: "github.com/modelcontextprotocol/python-sdk"
     answer_type: string
     tolerance: 0
+    stability: stable
     labels: [dev_web_retrieval_v1, docs_freshness, github_readme, mcp]
     notes: "Exact docs import task for a fast-moving agent protocol SDK."
     ground_truth:
@@ -49,6 +52,7 @@ tasks:
     required_source: "github.com/modelcontextprotocol/python-sdk"
     answer_type: string
     tolerance: 0
+    stability: stable
     labels: [dev_web_retrieval_v1, docs_freshness, github_readme, install_command]
     notes: "Exact install-command task; extras and quotes matter."
     ground_truth:
@@ -62,6 +66,7 @@ tasks:
     required_source: "github.com/langchain-ai/langchain"
     answer_type: string
     tolerance: 0
+    stability: stable
     labels: [dev_web_retrieval_v1, docs_freshness, github_readme, install_command]
     notes: "Exact install-command task."
     ground_truth:
