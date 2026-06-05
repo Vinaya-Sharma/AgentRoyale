@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.6
+
+- Reworked the README around the repeatable product workflow: lint, audit, run, report, and compare.
+- Added a no-key golden-path walkthrough for the dependency-research eval.
+- Added a corrected dependency-research target so teams can see a concrete before/after comparison from 57.1% to 100.0% exact accuracy on the demo pack.
+
 ## v0.2.5
 
 - Added `agent-royale compare` for before/after run comparisons, including exact accuracy, source-supported accuracy, oracle skips, latency, task-level regressions, and optional Markdown output.

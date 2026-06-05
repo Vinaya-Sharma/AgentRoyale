@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-royale"
-version = "0.2.5"
+version = "0.2.6"
 description = "Unit tests for AI agents and retrieval layers that browse the web."
 readme = "README.md"
 requires-python = ">=3.10"
