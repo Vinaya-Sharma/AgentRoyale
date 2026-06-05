@@ -12,7 +12,7 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 import yaml
 
 from agent_royale import __version__
-from agent_royale.ground_truth import fetch_ground_truth
+from agent_royale.ground_truth import fetch_ground_truth, fetch_ground_truth_snapshot
 from agent_royale.report import load_records, write_html_report
 from agent_royale.runner import run_tasks
 from agent_royale.schema import flatten_tasks, load_task_packs, validation_errors
@@ -109,6 +109,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_validate(args)
     if args.command == "doctor":
         return asyncio.run(cmd_doctor(args))
+    if args.command == "audit":
+        return asyncio.run(cmd_audit(args))
     if args.command == "run":
         return asyncio.run(cmd_run(args))
     if args.command == "report":
@@ -151,6 +153,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     doctor.add_argument("--timeout", type=float, default=30)
 
+    audit = sub.add_parser("audit", help="Audit task-pack oracle health without running a target.")
+    audit.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
+    audit.add_argument("--timeout", type=float, default=30)
+    audit.add_argument("--jsonl", default="", help="Optional JSONL output path for oracle snapshots.")
+
     run = sub.add_parser("run", help="Run tasks against a target stack.")
     run.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
     run.add_argument("--target", required=True, help="http(s) endpoint, openrouter:<model>, or path.py:function.")
@@ -160,6 +167,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--concurrency", type=int, default=4)
     run.add_argument("--timeout", type=float, default=120)
     run.add_argument("--fail-under-exact", type=float, default=None)
+    run.add_argument("--ci", action="store_true", help="Run only tasks marked ci_safe=true.")
 
     report = sub.add_parser("report", help="Generate an HTML report from JSONL runs.")
     report.add_argument("input", help="Run JSONL file.")
@@ -311,8 +319,12 @@ async def cmd_doctor(args: argparse.Namespace) -> int:
         print("\nGround truth")
         for task in tasks:
             try:
-                value, source = await fetch_ground_truth(task, timeout_seconds=args.timeout)
-                print(f"OK {task.id}: {value!r} from {source}")
+                snapshot = await fetch_ground_truth_snapshot(task, timeout_seconds=args.timeout)
+                if snapshot.status == "verified":
+                    print(f"OK {task.id}: {snapshot.value!r} from {snapshot.source_url}")
+                else:
+                    ok = False
+                    print(f"FAIL {task.id}: {snapshot.status}: {snapshot.error}")
             except Exception as exc:
                 ok = False
                 print(f"FAIL {task.id}: {exc}")
@@ -322,6 +334,35 @@ async def cmd_doctor(args: argparse.Namespace) -> int:
 
     print(f"\n{'OK' if ok else 'FAIL'} doctor checks complete.")
     return 0 if ok else 1
+
+
+async def cmd_audit(args: argparse.Namespace) -> int:
+    packs = load_task_packs([Path(item) for item in args.paths])
+    tasks = flatten_tasks(packs)
+    snapshots = []
+    print(f"Auditing {len(tasks)} task oracle{'s' if len(tasks) != 1 else ''}")
+    for task in tasks:
+        snapshot = await fetch_ground_truth_snapshot(task, timeout_seconds=args.timeout)
+        snapshots.append(snapshot)
+        label = "OK" if snapshot.status == "verified" else "WARN"
+        detail = snapshot.value if snapshot.status == "verified" else snapshot.error
+        print(f"{label} {task.id}: {snapshot.status} {detail!r}")
+        if snapshot.status != "verified" and snapshot.ambiguity_flags:
+            print(f"  flags: {', '.join(snapshot.ambiguity_flags)}")
+    counts = Counter(snapshot.status for snapshot in snapshots)
+    print("\nOracle audit complete")
+    for status, count in sorted(counts.items()):
+        print(f"{status}: {count}")
+    verified = counts.get("verified", 0)
+    print(f"Scoreable: {verified}/{len(snapshots)}")
+    if args.jsonl:
+        output = Path(args.jsonl)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open("w", encoding="utf-8") as handle:
+            for snapshot in snapshots:
+                handle.write(json.dumps(snapshot.model_dump(), ensure_ascii=True) + "\n")
+        print(f"Snapshots: {output}")
+    return 0 if verified == len(snapshots) else 1
 
 
 def check_line(name: str, ok: bool, ok_text: str, missing_text: str) -> str:
@@ -366,6 +407,11 @@ async def cmd_run(args: argparse.Namespace) -> int:
         output.unlink()
     packs = load_task_packs([Path(item) for item in args.paths])
     tasks = flatten_tasks(packs)
+    if args.ci:
+        skipped = [task for task in tasks if not task.ci_safe]
+        tasks = [task for task in tasks if task.ci_safe]
+        if skipped:
+            print(f"Skipping {len(skipped)} non-CI-safe task{'s' if len(skipped) != 1 else ''}.")
     print(f"Running {len(tasks)} task(s) against {args.target}")
     records = await run_tasks(
         tasks,
@@ -375,9 +421,13 @@ async def cmd_run(args: argparse.Namespace) -> int:
         concurrency=args.concurrency,
         timeout_seconds=args.timeout,
     )
-    passed = sum(1 for item in records if item.passed)
-    accuracy = passed / len(records) if records else 0
-    print(f"\nExact accuracy: {accuracy:.1%} ({passed}/{len(records)})")
+    scoreable = [item for item in records if item.scoreable]
+    passed = sum(1 for item in scoreable if item.passed)
+    accuracy = passed / len(scoreable) if scoreable else 0
+    skipped = len(records) - len(scoreable)
+    print(f"\nExact accuracy: {accuracy:.1%} ({passed}/{len(scoreable)} scoreable)")
+    if skipped:
+        print(f"Skipped oracle issues: {skipped}")
     print(f"Runs: {output}")
     if args.report:
         report_path = Path(args.report)

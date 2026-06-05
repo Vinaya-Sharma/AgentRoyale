@@ -21,13 +21,17 @@ def load_records(path: Path) -> list[RunRecord]:
 def write_html_report(records: list[RunRecord], output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     total = len(records)
-    exact_correct = sum(1 for item in records if item.passed)
-    source_supported = sum(1 for item in records if item.passed and not item.failure_mode)
-    accuracy = exact_correct / total if total else 0
+    scoreable_records = [item for item in records if item.scoreable]
+    oracle_issue_records = [item for item in records if not item.scoreable]
+    scoreable_total = len(scoreable_records)
+    exact_correct = sum(1 for item in scoreable_records if item.passed)
+    source_supported = sum(1 for item in scoreable_records if item.passed and not item.failure_mode)
+    accuracy = exact_correct / scoreable_total if scoreable_total else 0
     issue_count = sum(1 for item in records if item.failure_mode)
     no_answer = sum(1 for item in records if item.failure_mode == "no_answer")
     latencies = [item.latency_ms for item in records if item.latency_ms]
     failures = Counter(item.failure_mode or "source_supported_correct" for item in records)
+    oracle_statuses = Counter(item.oracle_status or "unknown" for item in records)
     median_latency = median(latencies) if latencies else 0
     by_task = defaultdict(list)
     for record in records:
@@ -42,6 +46,10 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     failure_rows = "\n".join(
         f"<tr><td><span class=\"status-dot {status_class(name)}\"></span>{esc(pretty_label(name))}</td><td>{count}</td><td>{pct(count, total)}</td></tr>"
         for name, count in failures.most_common()
+    )
+    oracle_rows = "\n".join(
+        f"<tr><td><span class=\"status-dot {status_class(name)}\"></span>{esc(pretty_label(name))}</td><td>{count}</td><td>{pct(count, total)}</td></tr>"
+        for name, count in oracle_statuses.most_common()
     )
     task_rows = "\n".join(
         f"<tr><td><code>{esc(task_id)}</code></td><td>{sum(1 for r in runs if r.passed)}/{len(runs)}</td>"
@@ -128,7 +136,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
       <div class="verdict">
         <div class="score">{accuracy:.0%}</div>
         <div class="verdict-label">{esc(verdict)}</div>
-        <p>Exact-value pass rate across {total} run{'s' if total != 1 else ''}</p>
+        <p>Exact-value pass rate across {scoreable_total} scoreable run{'s' if scoreable_total != 1 else ''}</p>
       </div>
     </header>
 
@@ -137,6 +145,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
       <div class="card"><div class="num">{source_supported}</div><div class="label">Source-supported</div></div>
       <div class="card"><div class="num">{issue_count}</div><div class="label">Issues</div></div>
       <div class="card"><div class="num">{no_answer}</div><div class="label">No answer</div></div>
+      <div class="card"><div class="num">{len(oracle_issue_records)}</div><div class="label">Oracle skips</div></div>
     </section>
 
     <section class="method">
@@ -164,6 +173,9 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
         <h2>Outcome Breakdown</h2>
         <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody>{failure_rows}</tbody></table>
 
+        <h2>Oracle Health</h2>
+        <table><thead><tr><th>Status</th><th>Runs</th><th>Share</th></tr></thead><tbody>{oracle_rows}</tbody></table>
+
         <h2>Representative Catches</h2>
         <div class="catch-list">{catch_cards or '<p class="muted">No failures in this run.</p>'}</div>
       </div>
@@ -176,7 +188,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
     <h2>Run Details</h2>
     <table>
-      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
+      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Oracle</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
@@ -198,12 +210,17 @@ def render_record(record: RunRecord) -> str:
         status_label = "FAIL"
     status = f'<span class="{"pass" if record.passed and not record.failure_mode else "fail"}">{status_label}</span>'
     answer_text = compact_text(record.answer or record.error or "")
+    evidence = ""
+    if record.ground_truth_snapshot and record.ground_truth_snapshot.evidence_text:
+        evidence = f"<div class=\"muted\" style=\"font-size:11px;margin-top:4px\">Evidence: {esc(record.ground_truth_snapshot.evidence_text)}</div>"
+    oracle_status = pretty_label(record.oracle_status or "unknown")
     return (
         "<tr>"
         f"<td>{status}</td>"
         f"<td><code>{esc(record.task_id)}</code></td>"
         f"<td class=\"claim\">{esc(record.extracted_claim)}</td>"
-        f"<td class=\"truth\">{esc(record.ground_truth)}</td>"
+        f"<td class=\"truth\">{esc(record.ground_truth)}{evidence}</td>"
+        f"<td>{esc(oracle_status)}</td>"
         f"<td class=\"failure\">{esc(pretty_label(record.failure_mode or 'correct'))}</td>"
         f"<td class=\"source\">{esc(record.required_source)}</td>"
         f"<td class=\"answer\">{esc(answer_text)}</td>"
@@ -295,6 +312,13 @@ def pretty_label(value: object) -> str:
         "wrong_value": "wrong value",
         "no_answer": "no answer",
         "tool_failure": "tool failure",
+        "verified": "verified",
+        "low_confidence": "low confidence",
+        "conflicting_values": "conflicting values",
+        "source_unreachable": "source unreachable",
+        "selector_broken": "selector broken",
+        "ground_truth_ambiguous": "ground truth ambiguous",
+        "oracle_failed": "oracle failed",
         "correct": "correct",
     }
     text = str(value)

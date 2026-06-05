@@ -38,6 +38,10 @@ tasks:
 
 `notes`: oracle details and known failure modes.
 
+`stability`: optional source stability label. Use `stable`, `semi_stable`, or `volatile`.
+
+`ci_safe`: optional boolean. Set to `false` for volatile live-web tasks that should produce reports but should not fail CI by default.
+
 `ground_truth`: how Agent Royale fetches or verifies the correct value.
 
 ## Ground Truth Methods
@@ -74,10 +78,15 @@ ground_truth:
   method: http_regex
   url: "https://example.com/pricing"
   regex: "Pro[\\s\\S]{0,800}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+  require_near_text:
+    - "Pro"
+    - "monthly"
+  reject_near_text:
+    - "Enterprise"
   source_url: "example.com/pricing"
 ```
 
-Regex tasks should be treated as maintained source-specific parsers. If the page changes, update or quarantine the task.
+Regex tasks should be treated as maintained source-specific parsers. `require_near_text` and `reject_near_text` help prevent broad regexes from accepting nearby but wrong values. If multiple plausible values remain, Agent Royale marks the oracle ambiguous and skips scoring that task.
 
 ### bright_data
 
@@ -106,6 +115,8 @@ ground_truth:
 - One required source.
 - One exact target field.
 - A deterministic oracle.
+- Clear source stability and CI-safety.
+- Context hints for noisy pages, such as plan names, billing intervals, variants, or units.
 - A natural question a user might actually ask.
 - Clear notes about source quirks.
 
@@ -122,3 +133,26 @@ ground_truth:
 ```bash
 python -m agent_royale validate task-packs
 ```
+
+## Audit Oracle Health
+
+Use `audit` to fetch task-pack oracles before testing a target:
+
+```bash
+python -m agent_royale audit task-packs/devtools/dependency-research-v1.yaml
+```
+
+Every scored run now stores a ground-truth snapshot with source URL, fetch time, parser, evidence text, oracle status, and validation checks. Tasks with failed or ambiguous oracles are skipped rather than counted as target failures.
+
+## CI-Safe Runs
+
+Use `--ci` when a build should run only tasks marked `ci_safe: true`:
+
+```bash
+python -m agent_royale run task-packs \
+  --target examples/echo_agent.py:answer \
+  --ci \
+  --fail-under-exact 0.9
+```
+
+Volatile packs, such as ecommerce prices or social counts, should generally set `ci_safe: false` and be run as scheduled or on-demand reports.

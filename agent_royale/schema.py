@@ -10,6 +10,16 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 
 AnswerType = Literal["string", "number", "currency", "percentage", "date", "enum"]
 GroundTruthMethod = Literal["static", "http_json", "http_regex", "bright_data"]
+OracleStatus = Literal[
+    "verified",
+    "low_confidence",
+    "conflicting_values",
+    "source_unreachable",
+    "selector_broken",
+    "ground_truth_ambiguous",
+    "oracle_failed",
+]
+TaskStability = Literal["stable", "semi_stable", "volatile"]
 
 
 class Citation(BaseModel):
@@ -39,6 +49,8 @@ class GroundTruthSpec(BaseModel):
     field: str | None = None
     regex: str | None = None
     headers: dict[str, str] = Field(default_factory=dict)
+    require_near_text: list[str] = Field(default_factory=list)
+    reject_near_text: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_method_fields(self) -> "GroundTruthSpec":
@@ -65,6 +77,27 @@ class Task(BaseModel):
     labels: list[str] = Field(default_factory=list)
     ground_truth: GroundTruthSpec
     notes: str = ""
+    stability: TaskStability = "semi_stable"
+    ci_safe: bool = True
+
+
+class GroundTruthSnapshot(BaseModel):
+    task_id: str
+    status: OracleStatus
+    value: str | float | None = None
+    normalized_value: str | float | None = None
+    source_url: str = ""
+    final_url: str = ""
+    method: GroundTruthMethod
+    tool: str | None = None
+    fetched_at: str
+    parser: str = ""
+    evidence_text: str = ""
+    raw_excerpt: str = ""
+    confidence: str = "verified"
+    ambiguity_flags: list[str] = Field(default_factory=list)
+    validation_checks: dict[str, bool] = Field(default_factory=dict)
+    error: str | None = None
 
 
 class TaskPack(BaseModel):
@@ -81,6 +114,9 @@ class RunRecord(BaseModel):
     answer: str
     extracted_claim: str | float | None
     ground_truth: str | float
+    ground_truth_snapshot: GroundTruthSnapshot | None = None
+    oracle_status: OracleStatus | None = None
+    scoreable: bool = True
     normalized_claim: str | float | None
     normalized_truth: str | float | None
     passed: bool

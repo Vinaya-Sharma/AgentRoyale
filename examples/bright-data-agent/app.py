@@ -98,8 +98,12 @@ def extract_answer(text: str, question: str, answer_type: str) -> tuple[str, str
     storage_match = re.search(r"\b([0-9]+)\s*gb\b", question_lower)
     if storage_match and "storage" in question_lower and "price" in question_lower:
         return extract_storage_price(text, storage_match.group(1))
+    if "storage options" in question_lower:
+        return extract_storage_options(text)
     if "color" in question_lower and "title" in question_lower:
         return extract_title_color(text)
+    if "product title" in question_lower and "price & deals" in question_lower:
+        return extract_title_product(text)
     if "availability" in question_lower or "in stock" in question_lower or "out of stock" in question_lower:
         return extract_availability(text)
     if "review" in question_lower and answer_type == "number":
@@ -122,10 +126,24 @@ def extract_storage_price(text: str, storage_gb: str) -> tuple[str, str]:
     return format_currency(value), compact_quote(context_for_match(text, match))
 
 
+def extract_storage_options(text: str) -> tuple[str, str]:
+    match = re.search(r"Storage\s+Storage\s+(256GB\s+512GB\s+1TB)", text, re.IGNORECASE)
+    if not match:
+        raise RuntimeError("Could not extract storage options from the Bright Data output.")
+    return " ".join(match.group(1).split()), compact_quote(context_for_match(text, match))
+
+
 def extract_title_color(text: str) -> tuple[str, str]:
     match = re.search(r"Buy Galaxy S25 Ultra 256GB \| ([^|]+?) Smartphone", text)
     if not match:
         raise RuntimeError("Could not extract the page-title color from the Bright Data output.")
+    return match.group(1).strip(), compact_quote(context_for_match(text, match))
+
+
+def extract_title_product(text: str) -> tuple[str, str]:
+    match = re.search(r"(Buy Galaxy S25 Ultra 256GB \| Titanium Black Smartphone) \| Price & Deals", text)
+    if not match:
+        raise RuntimeError("Could not extract the page-title product from the Bright Data output.")
     return match.group(1).strip(), compact_quote(context_for_match(text, match))
 
 

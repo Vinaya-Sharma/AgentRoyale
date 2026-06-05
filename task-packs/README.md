@@ -15,7 +15,7 @@ These packs are intentionally small, readable, and source-specific. Developers s
 - `mobile-apps/apple-app-store.yaml`: Apple App Store rating and version fields backed by Apple's lookup API.
 - `subscription-pricing/example.yaml`: official pricing-page examples backed by regex page extractors.
 - `bright-data/rapid-web.yaml`: Bright Data Rapid-mode search, docs, and release checks backed by `search_engine` and `scrape_as_markdown`.
-- `bright-data/ecommerce-accuracy-v1.yaml`: focused Samsung ecommerce tasks for product price, storage-option price, and page-title color extraction.
+- `bright-data/ecommerce-accuracy-v1.yaml`: focused Samsung ecommerce tasks for page-title, storage-option, and color-variant extraction.
 - `bright-data/linkedin-company.yaml`: LinkedIn company metrics backed by Bright Data structured extraction.
 - `bright-data/ecommerce-pricing.yaml`: ecommerce product pricing backed by Bright Data page extraction.
 

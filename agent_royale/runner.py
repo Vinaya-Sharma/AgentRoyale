@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from agent_royale.grading import grade
-from agent_royale.ground_truth import fetch_ground_truth
+from agent_royale.ground_truth import fetch_ground_truth_snapshot
 from agent_royale.schema import RunRecord, Task
 from agent_royale.targets import call_target
 
@@ -47,7 +47,33 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
     created_at = datetime.now(timezone.utc).isoformat()
     run_id = str(uuid.uuid4())
     try:
-        truth, truth_source = await fetch_ground_truth(task, timeout_seconds=timeout_seconds)
+        truth_snapshot = await fetch_ground_truth_snapshot(task, timeout_seconds=timeout_seconds)
+        if truth_snapshot.status != "verified" or truth_snapshot.value is None:
+            return RunRecord(
+                run_id=run_id,
+                task_id=task.id,
+                task_question=task.question,
+                target=target,
+                answer="",
+                extracted_claim="",
+                ground_truth="",
+                ground_truth_snapshot=truth_snapshot,
+                oracle_status=truth_snapshot.status,
+                scoreable=False,
+                normalized_claim=None,
+                normalized_truth=None,
+                passed=False,
+                outcome="ground_truth_ambiguous" if "ambiguous" in truth_snapshot.status else "oracle_failed",
+                failure_mode="ground_truth_ambiguous" if "ambiguous" in truth_snapshot.status else "oracle_failed",
+                citations=[],
+                citation_supported=False,
+                required_source=truth_snapshot.source_url or task.required_source,
+                latency_ms=0,
+                cost_usd=None,
+                created_at=created_at,
+                error=truth_snapshot.error,
+            )
+        truth = truth_snapshot.value
         stack_response, latency_ms = await asyncio.wait_for(
             call_target(target, task, timeout_seconds=timeout_seconds),
             timeout=timeout_seconds,
@@ -73,6 +99,9 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             answer=stack_response.answer,
             extracted_claim=claim,
             ground_truth=truth,
+            ground_truth_snapshot=truth_snapshot,
+            oracle_status=truth_snapshot.status,
+            scoreable=True,
             normalized_claim=normalized_claim,
             normalized_truth=normalized_truth,
             passed=passed,
@@ -80,7 +109,7 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             failure_mode=failure_mode,
             citations=stack_response.citations,
             citation_supported=citation_supported,
-            required_source=truth_source or task.required_source,
+            required_source=truth_snapshot.source_url or task.required_source,
             latency_ms=latency_ms,
             cost_usd=stack_response.trace.cost_usd,
             created_at=created_at,
@@ -94,6 +123,9 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             answer="",
             extracted_claim="",
             ground_truth="",
+            ground_truth_snapshot=None,
+            oracle_status="oracle_failed",
+            scoreable=False,
             normalized_claim=None,
             normalized_truth=None,
             passed=False,

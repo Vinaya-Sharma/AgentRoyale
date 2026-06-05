@@ -1,8 +1,16 @@
 # Changelog
 
+## v0.2.4
+
+- Added auditable ground-truth snapshots with oracle status, evidence snippets, parser metadata, and source provenance.
+- Added `agent-royale audit` for checking oracle health before running a target.
+- Added context-aware regex extraction with `require_near_text` and `reject_near_text`, plus non-scored oracle outcomes for ambiguous or failed ground truth.
+- Added `stability`, `ci_safe`, and `run --ci` support so volatile live-web tasks can be reported without blocking builds by default.
+- Updated reports to separate Oracle Health from target exact accuracy.
+
 ## v0.2.3
 
-- Added a focused Bright Data ecommerce accuracy pack covering Samsung product price, storage-option price, page-title color, and variant ambiguity.
+- Added a focused Bright Data ecommerce accuracy pack covering Samsung page-title, storage-option, and variant ambiguity.
 - Added a Bright Data target adapter example for evaluating Bright Data-backed ecommerce retrieval as an Agent Royale target.
 
 ## v0.2.2

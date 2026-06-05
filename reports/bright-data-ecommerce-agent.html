@@ -69,13 +69,13 @@
         <div class="meta">
           <span class="pill">target: http://127.0.0.1:3001/api/agent</span>
           <span class="pill">runs: 3</span>
-          <span class="pill">generated: 2026-06-03</span>
+          <span class="pill">generated: 2026-06-05</span>
         </div>
       </div>
       <div class="verdict">
         <div class="score">100%</div>
         <div class="verdict-label">Launch-safe</div>
-        <p>Exact-value pass rate across 3 runs</p>
+        <p>Exact-value pass rate across 3 scoreable runs</p>
       </div>
     </header>
 
@@ -84,6 +84,7 @@
       <div class="card"><div class="num">3</div><div class="label">Source-supported</div></div>
       <div class="card"><div class="num">0</div><div class="label">Issues</div></div>
       <div class="card"><div class="num">0</div><div class="label">No answer</div></div>
+      <div class="card"><div class="num">0</div><div class="label">Oracle skips</div></div>
     </section>
 
     <section class="method">
@@ -93,7 +94,7 @@
       </div>
       <div class="method-card">
         <strong>Grading</strong>
-        <p>2 numeric tasks parsed the claimed number and compared it to the oracle with the task tolerance; 1 text task normalized case and punctuation before comparison.</p>
+        <p>3 text tasks normalized case and punctuation before comparison.</p>
       </div>
       <div class="method-card">
         <strong>Source check</strong>
@@ -111,24 +112,35 @@
         <h2>Outcome Breakdown</h2>
         <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot source-supported-correct"></span>correct with source support</td><td>3</td><td>100%</td></tr></tbody></table>
 
+        <h2>Oracle Health</h2>
+        <table><thead><tr><th>Status</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot verified"></span>verified</td><td>3</td><td>100%</td></tr></tbody></table>
+
         <h2>Representative Catches</h2>
         <div class="catch-list"><p class="muted">No failures in this run.</p></div>
       </div>
 
       <div>
         <h2>Task-Level Results</h2>
-        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>bd_ecom_v1_samsung_s25_ultra_256_unlocked_price</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>bd_ecom_v1_samsung_s25_ultra_512_storage_price</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
+        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
       </div>
     </section>
 
     <h2>Run Details</h2>
     <table>
-      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
-      <tbody><tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_256_unlocked_price</code></td><td class="claim">$1299.99</td><td class="truth">1,299.99</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">$1299.99</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_512_storage_price</code></td><td class="claim">$1419.99</td><td class="truth">1,419.99</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">$1419.99</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code></td><td class="claim">Titanium Black</td><td class="truth">Titanium Black</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Titanium Black</td></tr></tbody>
+      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Oracle</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
+      <tbody><tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code></td><td class="claim">256GB
+
+512GB
+
+1TB</td><td class="truth">256GB
+
+512GB
+
+1TB<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Exclusive Titanium Jadegreen Titanium Jetblack Titanium Pinkgold Titanium Black Titanium Gray Titanium Silverblue Titanium Whitesilver</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">256GB 512GB 1TB</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code></td><td class="claim">Titanium Black</td><td class="truth">Titanium Black<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Excl</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Titanium Black</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code></td><td class="claim">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td><td class="truth">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Exclusive Titanium</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td></tr></tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
   </main>

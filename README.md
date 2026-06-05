@@ -193,12 +193,12 @@ task-packs/finance/yahoo-quotes.yaml      Yahoo Finance regular-market quote fie
 task-packs/mobile-apps/apple-app-store.yaml   Apple App Store rating and version fields
 task-packs/subscription-pricing/example.yaml   official pricing-page examples
 task-packs/bright-data/rapid-web.yaml      Bright Data Rapid-mode search/docs/release checks
-task-packs/bright-data/ecommerce-accuracy-v1.yaml  Samsung ecommerce price and variant accuracy
+task-packs/bright-data/ecommerce-accuracy-v1.yaml  Samsung ecommerce variant and title accuracy
 task-packs/bright-data/linkedin-company.yaml   LinkedIn company metrics
 task-packs/bright-data/ecommerce-pricing.yaml  ecommerce product pricing
 ```
 
-GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `search_engine` and `scrape_as_markdown`, which are the best fit for Bright Data's MCP free tier. The Bright Data ecommerce accuracy pack is the main messy-page example: it tests Samsung product price, storage-option price, and page-title color extraction from one dynamic product page. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
+GitHub, npm, finance, and Apple App Store packs use public APIs. The Bright Data Rapid pack uses `search_engine` and `scrape_as_markdown`, which are the best fit for Bright Data's MCP free tier. The Bright Data ecommerce accuracy pack is the main messy-page example: it tests Samsung page-title, storage-option, and color-variant extraction from one dynamic product page. The structured Bright Data packs handle LinkedIn and ecommerce pages where a plain HTTP request won't get you a clean value. Travel, local business, and dynamic pricing packs are good next contributions.
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics. The best first PR is a task pack for a source your own agent depends on.
 
@@ -228,7 +228,13 @@ Check pack requirements without running a full eval:
 python -m agent_royale doctor task-packs/github task-packs/npm
 ```
 
-Add `--check-ground-truth` when you want to fetch each oracle and catch parser or API failures before a benchmark run.
+Audit oracle health when you want to verify ground truth before testing a target:
+
+```bash
+python -m agent_royale audit task-packs/github task-packs/npm
+```
+
+Every scored run stores a ground-truth snapshot with source URL, fetch time, parser metadata, evidence text, and oracle status. If the oracle is ambiguous or fails, Agent Royale skips scoring that task instead of blaming the target.
 
 Run a pack:
 
@@ -238,6 +244,17 @@ python -m agent_royale run task-packs/github/example.yaml \
   --report reports/github.html \
   --fail-under-exact 0.8
 ```
+
+For CI, run only tasks marked `ci_safe: true`:
+
+```bash
+python -m agent_royale run task-packs \
+  --target examples/echo_agent.py:answer \
+  --ci \
+  --fail-under-exact 0.9
+```
+
+Volatile live-web packs, such as ecommerce prices or social counts, are better as scheduled or on-demand reports than build-blocking gates.
 
 ## Bright Data Ground Truth
 
