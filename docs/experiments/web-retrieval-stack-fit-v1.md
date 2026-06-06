@@ -38,6 +38,8 @@ The goal is not to rank vendors. Different tools are built for different jobs. T
 
 ![OpenRouter search discovery report](../assets/experiments/stack-fit-v1/openrouter-search-discovery-report.png)
 
+![OpenRouter known-source report](../assets/experiments/stack-fit-v1/openrouter-known-source-reading-report.png)
+
 ![OpenRouter dev web retrieval report](../assets/experiments/stack-fit-v1/openrouter-dev-web-retrieval-report.png)
 
 Additional Stack Fit v1 runs should be committed as JSONL and HTML reports under:
