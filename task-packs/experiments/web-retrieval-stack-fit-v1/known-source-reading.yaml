@@ -42,3 +42,31 @@ tasks:
       url: "https://raw.githubusercontent.com/vercel/next.js/canary/package.json"
       field: "packageManager"
       source_url: "github.com/vercel/next.js/blob/canary/package.json"
+
+  - id: stackfit_known_react_default_branch
+    question: "On the facebook/react GitHub repository page, which default branch is listed?"
+    required_source: "github.com/facebook/react"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, known_source_reading, github_repository, default_branch]
+    notes: "Known repository metadata task that catches stale assumptions about master versus main."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/facebook/react"
+      field: "default_branch"
+      source_url: "github.com/facebook/react"
+
+  - id: stackfit_known_rust_license_spdx
+    question: "On the rust-lang/rust GitHub repository page, which SPDX license identifier is listed?"
+    required_source: "github.com/rust-lang/rust"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, known_source_reading, github_repository, license]
+    notes: "Known repository metadata task for exact license-field extraction."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/rust-lang/rust"
+      field: "license.spdx_id"
+      source_url: "github.com/rust-lang/rust"

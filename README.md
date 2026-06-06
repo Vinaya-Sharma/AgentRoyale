@@ -207,17 +207,17 @@ Agent Royale can also be used as a fit test for web retrieval infrastructure. Th
 
 The current public evidence includes:
 
-- Jina Reader on known-source reading: 3/3 exact
-- Firecrawl on known-source reading: 3/3 exact
-- Tavily extract on known-source extraction: 3/3 exact
-- Tavily search on the same known-source pack: 1/3 exact, showing why endpoint choice should be evaluated
+- Jina Reader on known-source reading: 5/5 exact
+- Firecrawl on known-source reading: 5/5 exact
+- Tavily extract on known-source extraction: 4/5 exact
+- Tavily search on the same known-source pack: 1/5 exact, showing why endpoint choice should be evaluated
 - Bright Data on focused dynamic ecommerce extraction: 3/3 exact
 - OpenRouter GPT-4o Mini on search/discovery: 2/3 exact
 - OpenRouter GPT-4o Mini on Dev Web Retrieval Eval v1: 20/28 exact
 
 See [docs/experiments/web-retrieval-stack-fit-v1.md](docs/experiments/web-retrieval-stack-fit-v1.md) for the lane design, reports, and reproduction commands.
 
-The focused [Search Is Not Reading v1](docs/experiments/search-is-not-reading-v1.md) experiment shows why this matters: on the same known-source task pack, Tavily extract scored 3/3 exact while Tavily search scored 1/3 exact.
+The focused [Search Is Not Reading v1](docs/experiments/search-is-not-reading-v1.md) experiment shows why this matters: on the same known-source task pack, Tavily extract scored 4/5 exact while Tavily search scored 1/5 exact.
 
 ## CI
 

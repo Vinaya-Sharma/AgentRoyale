@@ -43,6 +43,7 @@
     .fail { color:var(--bad); }
     .muted { color:var(--muted); }
     .answer { max-width:360px; white-space:pre-wrap; color:#344054; }
+    .question { color:var(--muted); font-size:12px; line-height:1.35; max-width:320px; margin-top:5px; }
     .claim { font-weight:750; }
     .truth { font-weight:750; color:#175cd3; }
     .failure { color:var(--bad); font-weight:750; }
@@ -122,18 +123,18 @@
 
       <div>
         <h2>Task-Level Results</h2>
-        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>stackfit_search_node_latest_release_version</code></td><td>0/1</td><td>0/1</td><td>wrong value</td></tr>
-<tr><td><code>stackfit_search_npm_vite_latest</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>stackfit_search_openai_requires_python</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
+        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>stackfit_search_node_latest_release_version</code><div class="question">From Node.js&#x27;s official release index, which release version appears in the latest row?</div></td><td>0/1</td><td>0/1</td><td>wrong value</td></tr>
+<tr><td><code>stackfit_search_npm_vite_latest</code><div class="question">On npm, which latest published version is listed for the vite package?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>stackfit_search_openai_requires_python</code><div class="question">On PyPI, what Python version requirement is listed in the latest openai package metadata?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
       </div>
     </section>
 
     <h2>Run Details</h2>
     <table>
       <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Oracle</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
-      <tbody><tr><td><span class="fail">FAIL</span></td><td><code>stackfit_search_node_latest_release_version</code></td><td class="claim">I&#x27;m unable to retrieve the latest release version from the Node.js official release index at this moment. Please check the official Node.js site directly at [nodejs.org/dist/index.json](https://nodejs.org/dist/index.json) for the most current release information.</td><td class="truth">v26.3.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: v26.3.0</div></td><td>verified</td><td class="failure">wrong value</td><td class="source">nodejs.org/dist/index.json</td><td class="answer">I&#x27;m unable to retrieve the latest release version from the Node.js official release index at this moment. Please check the official Node.js site directly at [nodejs.org/dist/index.json](https://nodejs.org/dist/index.json) for the most current release information.</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_search_npm_vite_latest</code></td><td class="claim">8.0.16</td><td class="truth">8.0.16<div class="muted" style="font-size:11px;margin-top:4px">Evidence: 8.0.16</div></td><td>verified</td><td class="failure">correct</td><td class="source">npmjs.com/package/vite</td><td class="answer">The latest published version of the `vite` package is **8.0.16**, published 3 days ago. You can find this information on its [npm page](https://www.npmjs.com/package/vite).</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_search_openai_requires_python</code></td><td class="claim">&gt;=3.9</td><td class="truth">&gt;=3.9<div class="muted" style="font-size:11px;margin-top:4px">Evidence: &gt;=3.9</div></td><td>verified</td><td class="failure">correct</td><td class="source">pypi.org/project/openai</td><td class="answer">The latest version of the OpenAI package on PyPI requires Python version **3.9 or higher**. You can find this information on the [PyPI page for OpenAI](https://pypi.org/project/openai/).</td></tr></tbody>
+      <tbody><tr><td><span class="fail">FAIL</span></td><td><code>stackfit_search_node_latest_release_version</code><div class="question">From Node.js&#x27;s official release index, which release version appears in the latest row?</div></td><td class="claim">I&#x27;m unable to retrieve the latest release version from the Node.js official release index at this moment. Please check the official Node.js site directly at [nodejs.org/dist/index.json](https://nodejs.org/dist/index.json) for the most current release information.</td><td class="truth">v26.3.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: v26.3.0</div></td><td>verified</td><td class="failure">wrong value</td><td class="source">nodejs.org/dist/index.json</td><td class="answer">I&#x27;m unable to retrieve the latest release version from the Node.js official release index at this moment. Please check the official Node.js site directly at [nodejs.org/dist/index.json](https://nodejs.org/dist/index.json) for the most current release information.</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_search_npm_vite_latest</code><div class="question">On npm, which latest published version is listed for the vite package?</div></td><td class="claim">8.0.16</td><td class="truth">8.0.16<div class="muted" style="font-size:11px;margin-top:4px">Evidence: 8.0.16</div></td><td>verified</td><td class="failure">correct</td><td class="source">npmjs.com/package/vite</td><td class="answer">The latest published version of the `vite` package is **8.0.16**, published 3 days ago. You can find this information on its [npm page](https://www.npmjs.com/package/vite).</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_search_openai_requires_python</code><div class="question">On PyPI, what Python version requirement is listed in the latest openai package metadata?</div></td><td class="claim">&gt;=3.9</td><td class="truth">&gt;=3.9<div class="muted" style="font-size:11px;margin-top:4px">Evidence: &gt;=3.9</div></td><td>verified</td><td class="failure">correct</td><td class="source">pypi.org/project/openai</td><td class="answer">The latest version of the OpenAI package on PyPI requires Python version **3.9 or higher**. You can find this information on the [PyPI page for OpenAI](https://pypi.org/project/openai/).</td></tr></tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
   </main>

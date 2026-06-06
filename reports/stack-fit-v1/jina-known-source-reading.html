@@ -43,6 +43,7 @@
     .fail { color:var(--bad); }
     .muted { color:var(--muted); }
     .answer { max-width:360px; white-space:pre-wrap; color:#344054; }
+    .question { color:var(--muted); font-size:12px; line-height:1.35; max-width:320px; margin-top:5px; }
     .claim { font-weight:750; }
     .truth { font-weight:750; color:#175cd3; }
     .failure { color:var(--bad); font-weight:750; }
@@ -65,23 +66,23 @@
     <header>
       <div>
         <h1>Agent Royale Eval Report</h1>
-        <p class="subhead">This run tested one agent target against 3 live-web tasks. Each row shows the agent's extracted claim, the oracle value, the required source, and the reason the task passed or failed.</p>
+        <p class="subhead">This run tested one agent target against 5 live-web tasks. Each row shows the agent's extracted claim, the oracle value, the required source, and the reason the task passed or failed.</p>
         <div class="meta">
           <span class="pill">target: http://127.0.0.1:3011/api/agent</span>
-          <span class="pill">runs: 3</span>
+          <span class="pill">runs: 5</span>
           <span class="pill">generated: 2026-06-06</span>
         </div>
       </div>
       <div class="verdict">
         <div class="score">100%</div>
         <div class="verdict-label">Launch-safe</div>
-        <p>Exact-value pass rate across 3 scoreable runs</p>
+        <p>Exact-value pass rate across 5 scoreable runs</p>
       </div>
     </header>
 
     <section class="grid">
-      <div class="card"><div class="num">3</div><div class="label">Exact values</div></div>
-      <div class="card"><div class="num">3</div><div class="label">Source-supported</div></div>
+      <div class="card"><div class="num">5</div><div class="label">Exact values</div></div>
+      <div class="card"><div class="num">5</div><div class="label">Source-supported</div></div>
       <div class="card"><div class="num">0</div><div class="label">Issues</div></div>
       <div class="card"><div class="num">0</div><div class="label">No answer</div></div>
       <div class="card"><div class="num">0</div><div class="label">Oracle skips</div></div>
@@ -94,7 +95,7 @@
       </div>
       <div class="method-card">
         <strong>Grading</strong>
-        <p>3 text tasks normalized case and punctuation before comparison.</p>
+        <p>5 text tasks normalized case and punctuation before comparison.</p>
       </div>
       <div class="method-card">
         <strong>Source check</strong>
@@ -110,10 +111,10 @@
     <section class="split">
       <div>
         <h2>Outcome Breakdown</h2>
-        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot source-supported-correct"></span>correct with source support</td><td>3</td><td>100%</td></tr></tbody></table>
+        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot source-supported-correct"></span>correct with source support</td><td>5</td><td>100%</td></tr></tbody></table>
 
         <h2>Oracle Health</h2>
-        <table><thead><tr><th>Status</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot verified"></span>verified</td><td>3</td><td>100%</td></tr></tbody></table>
+        <table><thead><tr><th>Status</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot verified"></span>verified</td><td>5</td><td>100%</td></tr></tbody></table>
 
         <h2>Representative Catches</h2>
         <div class="catch-list"><p class="muted">No failures in this run.</p></div>
@@ -121,18 +122,22 @@
 
       <div>
         <h2>Task-Level Results</h2>
-        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>stackfit_known_next_package_manager</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>stackfit_known_openai_python_client_class</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>stackfit_known_playwright_release_tag</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
+        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>stackfit_known_next_package_manager</code><div class="question">In the canary Next.js package.json file on GitHub, what exact packageManager value is listed?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>stackfit_known_openai_python_client_class</code><div class="question">In the main usage example from the openai-python README on GitHub, which client class appears after `from openai import`?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>stackfit_known_playwright_release_tag</code><div class="question">On the microsoft/playwright GitHub Releases page, which latest release tag is listed?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>stackfit_known_react_default_branch</code><div class="question">On the facebook/react GitHub repository page, which default branch is listed?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>stackfit_known_rust_license_spdx</code><div class="question">On the rust-lang/rust GitHub repository page, which SPDX license identifier is listed?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
       </div>
     </section>
 
     <h2>Run Details</h2>
     <table>
       <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Oracle</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
-      <tbody><tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_next_package_manager</code></td><td class="claim">pnpm@10.33.0</td><td class="truth">pnpm@10.33.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: pnpm@10.33.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/vercel/next.js/blob/canary/package.json</td><td class="answer">pnpm@10.33.0</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_openai_python_client_class</code></td><td class="claim">OpenAI</td><td class="truth">OpenAI<div class="muted" style="font-size:11px;margin-top:4px">Evidence: rom PyPI pip install openai ``` ## Usage The full API of this library can be found in [api.md](api.md). The primary API for interacting with OpenAI models is the [Responses API](https://platform.openai.com/docs/api-reference/responses). You can generate text from the model with the code below. ```python import os from openai import OpenAI client = OpenAI( # This is the default and can be omitted api_key=os.environ.get(&quot;OPENAI_API_KEY&quot;), ) response = client.responses.create( model=&quot;gpt-5.5&quot;, instructions=&quot;You are a coding assistant that talks like a pirate.</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/openai/openai-python</td><td class="answer">Title: GitHub - openai/openai-python: The official Python library for the OpenAI API URL Source: https://github.com/openai/openai-python Markdown Content: [![Image 1: PyPI version](https://camo.githubusercontent.com/8604f02a8c199de45f717e017aad786238bf1115870db170c2d54c09a8d9bc4b/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f6f70656e61692e7376673f6c6162656c3d7079706925323028737461626c6529)](https://pypi.org/project/openai/) The OpenAI Python library provides convenient access to the OpenAI REST API from any Python 3.9+ application. The library includes type definitions for all request params and response fields, and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx). It is generated from our [OpenAPI specification](https://github.com/openai/openai-openapi) with [Stainless](https://stainlessapi.com/). ## Documentation [](https://github.com/openai/openai-python#documentation) The REST API documentation can be found on</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_playwright_release_tag</code></td><td class="claim">v1.60.0</td><td class="truth">v1.60.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: v1.60.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/microsoft/playwright/releases/latest</td><td class="answer">v1.60.0</td></tr></tbody>
+      <tbody><tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_next_package_manager</code><div class="question">In the canary Next.js package.json file on GitHub, what exact packageManager value is listed?</div></td><td class="claim">pnpm@10.33.0</td><td class="truth">pnpm@10.33.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: pnpm@10.33.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/vercel/next.js/blob/canary/package.json</td><td class="answer">pnpm@10.33.0</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_openai_python_client_class</code><div class="question">In the main usage example from the openai-python README on GitHub, which client class appears after `from openai import`?</div></td><td class="claim">OpenAI</td><td class="truth">OpenAI<div class="muted" style="font-size:11px;margin-top:4px">Evidence: rom PyPI pip install openai ``` ## Usage The full API of this library can be found in [api.md](api.md). The primary API for interacting with OpenAI models is the [Responses API](https://platform.openai.com/docs/api-reference/responses). You can generate text from the model with the code below. ```python import os from openai import OpenAI client = OpenAI( # This is the default and can be omitted api_key=os.environ.get(&quot;OPENAI_API_KEY&quot;), ) response = client.responses.create( model=&quot;gpt-5.5&quot;, instructions=&quot;You are a coding assistant that talks like a pirate.</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/openai/openai-python</td><td class="answer">Title: GitHub - openai/openai-python: The official Python library for the OpenAI API URL Source: https://github.com/openai/openai-python Markdown Content: [![Image 1: PyPI version](https://camo.githubusercontent.com/8604f02a8c199de45f717e017aad786238bf1115870db170c2d54c09a8d9bc4b/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f6f70656e61692e7376673f6c6162656c3d7079706925323028737461626c6529)](https://pypi.org/project/openai/) The OpenAI Python library provides convenient access to the OpenAI REST API from any Python 3.9+ application. The library includes type definitions for all request params and response fields, and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx). It is generated from our [OpenAPI specification](https://github.com/openai/openai-openapi) with [Stainless](https://stainlessapi.com/). ## Documentation [](https://github.com/openai/openai-python#documentation) The REST API documentation can be found on</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_playwright_release_tag</code><div class="question">On the microsoft/playwright GitHub Releases page, which latest release tag is listed?</div></td><td class="claim">v1.60.0</td><td class="truth">v1.60.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: v1.60.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/microsoft/playwright/releases/latest</td><td class="answer">v1.60.0</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_react_default_branch</code><div class="question">On the facebook/react GitHub repository page, which default branch is listed?</div></td><td class="claim">main</td><td class="truth">main<div class="muted" style="font-size:11px;margin-top:4px">Evidence: main</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/facebook/react</td><td class="answer">main</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_rust_license_spdx</code><div class="question">On the rust-lang/rust GitHub repository page, which SPDX license identifier is listed?</div></td><td class="claim">Apache-2.0</td><td class="truth">Apache-2.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Apache-2.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/rust-lang/rust</td><td class="answer">Apache-2.0</td></tr></tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
   </main>

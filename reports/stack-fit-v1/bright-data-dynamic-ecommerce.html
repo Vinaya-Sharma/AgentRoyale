@@ -43,6 +43,7 @@
     .fail { color:var(--bad); }
     .muted { color:var(--muted); }
     .answer { max-width:360px; white-space:pre-wrap; color:#344054; }
+    .question { color:var(--muted); font-size:12px; line-height:1.35; max-width:320px; margin-top:5px; }
     .claim { font-weight:750; }
     .truth { font-weight:750; color:#175cd3; }
     .failure { color:var(--bad); font-weight:750; }
@@ -121,16 +122,16 @@
 
       <div>
         <h2>Task-Level Results</h2>
-        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
-<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
+        <table><thead><tr><th>Task</th><th>Exact</th><th>Source-supported</th><th>Observed outcomes</th></tr></thead><tbody><tr><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra SKU, what storage options are listed under Storage?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what color is named in the page title?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr>
+<tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what product title appears before the Price &amp; Deals text?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
       </div>
     </section>
 
     <h2>Run Details</h2>
     <table>
       <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Oracle</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
-      <tbody><tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code></td><td class="claim">256GB
+      <tbody><tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra SKU, what storage options are listed under Storage?</div></td><td class="claim">256GB
 
 512GB
 
@@ -139,8 +140,8 @@
 512GB
 
 1TB<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Exclusive Titanium Jadegreen Titanium Jetblack Titanium Pinkgold Titanium Black Titanium Gray Titanium Silverblue Titanium Whitesilver</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">256GB 512GB 1TB</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code></td><td class="claim">Titanium Black</td><td class="truth">Titanium Black<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Excl</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Titanium Black</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code></td><td class="claim">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td><td class="truth">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Exclusive Titanium</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td></tr></tbody>
+<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what color is named in the page title?</div></td><td class="claim">Titanium Black</td><td class="truth">Titanium Black<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Excl</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Titanium Black</td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what product title appears before the Price &amp; Deals text?</div></td><td class="claim">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td><td class="truth">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra Device Device Galaxy S25 Ultra Galaxy S25 Edge Connectivity Connectivity Storage Storage 256GB 512GB 1TB Color Color Online Exclusive Titanium</div></td><td>verified</td><td class="failure">correct</td><td class="source">https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</td><td class="answer">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td></tr></tbody>
     </table>
     <footer>Generated from Agent Royale run data.</footer>
   </main>

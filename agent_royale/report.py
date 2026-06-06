@@ -52,7 +52,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
         for name, count in oracle_statuses.most_common()
     )
     task_rows = "\n".join(
-        f"<tr><td><code>{esc(task_id)}</code></td><td>{sum(1 for r in runs if r.passed)}/{len(runs)}</td>"
+        f"<tr><td><code>{esc(task_id)}</code><div class=\"question\">{esc(runs[0].task_question)}</div></td><td>{sum(1 for r in runs if r.passed)}/{len(runs)}</td>"
         f"<td>{sum(1 for r in runs if r.passed and not r.failure_mode)}/{len(runs)}</td>"
         f"<td>{esc(', '.join(pretty_label(item) for item in sorted(set(r.failure_mode or 'correct' for r in runs))))}</td></tr>"
         for task_id, runs in sorted(by_task.items())
@@ -104,6 +104,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .fail {{ color:var(--bad); }}
     .muted {{ color:var(--muted); }}
     .answer {{ max-width:360px; white-space:pre-wrap; color:#344054; }}
+    .question {{ color:var(--muted); font-size:12px; line-height:1.35; max-width:320px; margin-top:5px; }}
     .claim {{ font-weight:750; }}
     .truth {{ font-weight:750; color:#175cd3; }}
     .failure {{ color:var(--bad); font-weight:750; }}
@@ -217,7 +218,7 @@ def render_record(record: RunRecord) -> str:
     return (
         "<tr>"
         f"<td>{status}</td>"
-        f"<td><code>{esc(record.task_id)}</code></td>"
+        f"<td><code>{esc(record.task_id)}</code><div class=\"question\">{esc(record.task_question)}</div></td>"
         f"<td class=\"claim\">{esc(record.extracted_claim)}</td>"
         f"<td class=\"truth\">{esc(record.ground_truth)}{evidence}</td>"
         f"<td>{esc(oracle_status)}</td>"

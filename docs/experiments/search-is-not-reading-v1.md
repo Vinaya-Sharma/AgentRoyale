@@ -17,16 +17,18 @@ The pack asks for exact values from required public sources:
 - the main OpenAI Python README client class
 - the latest Playwright GitHub release tag
 - the canary Next.js `packageManager` value
+- the facebook/react default branch
+- the rust-lang/rust SPDX license identifier
 
 ## Results
 
 | Target | Retrieval mode | Exact | Source-supported | Report |
 |---|---|---:|---:|---|
-| Jina Reader adapter | URL reader | 3/3 | 3/3 | [`jina-known-source-reading.html`](../../reports/stack-fit-v1/jina-known-source-reading.html) |
-| Firecrawl adapter | Scrape/extract | 3/3 | 3/3 | [`firecrawl-known-source-reading.html`](../../reports/stack-fit-v1/firecrawl-known-source-reading.html) |
-| Tavily extract adapter | URL extract | 3/3 | 2/3 | [`tavily-known-source-extract.html`](../../reports/stack-fit-v1/tavily-known-source-extract.html) |
-| Tavily search adapter | Search | 1/3 | 1/3 | [`tavily-search-known-source.html`](../../reports/stack-fit-v1/tavily-search-known-source.html) |
-| OpenRouter GPT-4o Mini | Model-search stack | 3/3 | 3/3 | [`openrouter-known-source-reading.html`](../../reports/stack-fit-v1/openrouter-known-source-reading.html) |
+| Jina Reader adapter | URL reader | 5/5 | 5/5 | [`jina-known-source-reading.html`](../../reports/stack-fit-v1/jina-known-source-reading.html) |
+| Firecrawl adapter | Scrape/extract | 5/5 | 5/5 | [`firecrawl-known-source-reading.html`](../../reports/stack-fit-v1/firecrawl-known-source-reading.html) |
+| Tavily extract adapter | URL extract | 4/5 | 3/5 | [`tavily-known-source-extract.html`](../../reports/stack-fit-v1/tavily-known-source-extract.html) |
+| Tavily search adapter | Search | 1/5 | 1/5 | [`tavily-search-known-source.html`](../../reports/stack-fit-v1/tavily-search-known-source.html) |
+| OpenRouter GPT-4o Mini | Model-search stack | 3/5 | 3/5 | [`openrouter-known-source-reading.html`](../../reports/stack-fit-v1/openrouter-known-source-reading.html) |
 
 ![Tavily search known-source report](../assets/experiments/stack-fit-v1/tavily-search-known-source-report.png)
 
@@ -40,8 +42,8 @@ The most interesting result is within the same provider:
 
 | Comparison | Exact | Source-supported | Median latency |
 |---|---:|---:|---:|
-| Tavily search | 33.3% | 33.3% | 1627 ms |
-| Tavily extract | 100.0% | 66.7% | 453 ms |
+| Tavily search | 20.0% | 20.0% | 2262 ms |
+| Tavily extract | 80.0% | 60.0% | 392 ms |
 
 See the generated comparison report:
 
