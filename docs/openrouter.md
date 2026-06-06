@@ -21,30 +21,37 @@ Do not commit API keys.
 ## Run A Real Model Stack
 
 ```bash
-python -m agent_royale run task-packs/github/example.yaml task-packs/npm/example.yaml \
+python -m agent_royale run \
+  task-packs/devtools/dependency-research-v1.yaml \
+  task-packs/devtools/docs-freshness-v1.yaml \
+  task-packs/business/saas-pricing-v1.yaml \
   --target openrouter:openai/gpt-4o-mini \
-  --report reports/openrouter-gpt4o-mini-devtools.html
+  --output runs/dev-web-retrieval-v1/openrouter-gpt4o-mini.jsonl \
+  --report reports/dev-web-retrieval-v1/openrouter-gpt4o-mini.html
 ```
 
 ## Example Result
 
-A real run against the GitHub and npm task packs produced:
+A committed real run against Dev Web Retrieval Eval v1 is included in this repo:
+
+- Run log: [`runs/dev-web-retrieval-v1/openrouter-gpt4o-mini.jsonl`](../runs/dev-web-retrieval-v1/openrouter-gpt4o-mini.jsonl)
+- HTML report: [`reports/dev-web-retrieval-v1/openrouter-gpt4o-mini.html`](../reports/dev-web-retrieval-v1/openrouter-gpt4o-mini.html)
+
+That run tested `openrouter:openai/gpt-4o-mini` on 28 source-specific tasks:
 
 ```text
-Exact accuracy: 50.0% (4/8)
+Exact accuracy: 71.4% (20/28)
+Source-supported accuracy: 64.3% (18/28)
 
-Passed:
-- npm_react_latest
-- npm_typescript_license
-- github_fastapi_forks
-- github_playwright_latest_release
-
-Failed:
-- npm_vite_latest: returned an older npm version
-- github_vscode_open_issues: returned a nearby but different count
-- github_nextjs_stars: returned a nearby but stale count
-- npm_next_weekly_downloads: used a non-canonical source
+Observed issues:
+- stale npm package versions for React and Vite
+- stale Next.js canary package version
+- wrong Figma plan prices
+- wrong npm package metadata formatting
+- unsupported citations for two exact answers
 ```
+
+![OpenRouter GPT-4o Mini report screenshot](assets/experiments/dev-web-retrieval-v1/openrouter-gpt4o-mini-report.png)
 
 The point of this example is not to rank one model forever. The point is to show the workflow:
 
