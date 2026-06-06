@@ -210,6 +210,7 @@ The current public evidence includes:
 - Jina Reader on known-source reading: 3/3 exact
 - Firecrawl on known-source reading: 3/3 exact
 - Tavily extract on known-source extraction: 3/3 exact
+- Tavily search on the same known-source pack: 1/3 exact, showing why endpoint choice should be evaluated
 - Bright Data on focused dynamic ecommerce extraction: 3/3 exact
 - OpenRouter GPT-4o Mini on search/discovery: 2/3 exact
 - OpenRouter GPT-4o Mini on Dev Web Retrieval Eval v1: 20/28 exact

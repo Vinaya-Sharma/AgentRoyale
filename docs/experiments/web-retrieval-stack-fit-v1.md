@@ -20,6 +20,7 @@ The goal is not to rank vendors. Different tools are built for different jobs. T
 | Jina Reader target adapter | Known-source reading | 3 | [`jina-known-source-reading.html`](../../reports/stack-fit-v1/jina-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
 | Firecrawl target adapter | Known-source reading | 3 | [`firecrawl-known-source-reading.html`](../../reports/stack-fit-v1/firecrawl-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
 | Tavily extract target adapter | Known-source extraction | 3 | [`tavily-known-source-extract.html`](../../reports/stack-fit-v1/tavily-known-source-extract.html) | 100.0% exact, 66.7% source-supported |
+| Tavily search target adapter | Known-source reading | 3 | [`tavily-search-known-source.html`](../../reports/stack-fit-v1/tavily-search-known-source.html) | 33.3% exact, 33.3% source-supported |
 | Bright Data target adapter | Dynamic ecommerce extraction | 3 | [`bright-data-dynamic-ecommerce.html`](../../reports/stack-fit-v1/bright-data-dynamic-ecommerce.html) | 100.0% exact, 100.0% source-supported |
 | `openrouter:openai/gpt-4o-mini` | Search/discovery | 3 | [`openrouter-search-discovery.html`](../../reports/stack-fit-v1/openrouter-search-discovery.html) | 66.7% exact, 66.7% source-supported |
 | `openrouter:openai/gpt-4o-mini` | Full model-search behavior | 28 | [`openrouter-dev-web-retrieval.html`](../../reports/stack-fit-v1/openrouter-dev-web-retrieval.html) | 71.4% exact, 64.3% source-supported |
@@ -29,6 +30,8 @@ The goal is not to rank vendors. Different tools are built for different jobs. T
 ![Firecrawl known-source report](../assets/experiments/stack-fit-v1/firecrawl-known-source-reading-report.png)
 
 ![Tavily extract known-source report](../assets/experiments/stack-fit-v1/tavily-known-source-extract-report.png)
+
+![Tavily search known-source report](../assets/experiments/stack-fit-v1/tavily-search-known-source-report.png)
 
 ![Bright Data dynamic ecommerce report](../assets/experiments/stack-fit-v1/bright-data-dynamic-ecommerce-report.png)
 
@@ -43,6 +46,16 @@ runs/stack-fit-v1/
 reports/stack-fit-v1/
 docs/assets/experiments/stack-fit-v1/
 ```
+
+## Interesting Finding
+
+Endpoint choice changed the result more than vendor choice on the known-source lane.
+
+The Tavily extract adapter scored 3/3 exact on the known-source reading pack. The Tavily search adapter, run against the same tasks, scored 1/3 exact. The failed search-mode tasks returned search response envelopes without the exact value, even though the required source URLs were present.
+
+That is the core use case for Agent Royale: it does not only ask "which provider should we use?" It asks "which provider, endpoint, prompt, parser, and source contract should we use for this workflow?"
+
+For a product team, the action item is practical: use scrape/extract endpoints for known-source field extraction, reserve search endpoints for discovery tasks, and run the same task pack after changing retrieval mode.
 
 ## Recommended Launch Matrix
 
