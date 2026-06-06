@@ -82,7 +82,11 @@ reports/*
 !reports/stack-fit-v1/
 !reports/stack-fit-v1/*.html
 !reports/stack-fit-v1/*.md
+!reports/openrouter-model-comparison-v1/
+!reports/openrouter-model-comparison-v1/*.html
 runs/*
 !runs/
 !runs/stack-fit-v1/
 !runs/stack-fit-v1/*.jsonl
+!runs/openrouter-model-comparison-v1/
+!runs/openrouter-model-comparison-v1/*.jsonl

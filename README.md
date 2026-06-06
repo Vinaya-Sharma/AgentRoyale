@@ -219,6 +219,8 @@ See [docs/experiments/web-retrieval-stack-fit-v1.md](docs/experiments/web-retrie
 
 The focused [Search Is Not Reading v1](docs/experiments/search-is-not-reading-v1.md) experiment shows why this matters: on the same known-source task pack, Tavily extract scored 4/5 exact while Tavily search scored 1/5 exact.
 
+[OpenRouter Model Comparison v1](docs/experiments/openrouter-model-comparison-v1.md) compares OpenAI GPT-4o, Gemini 3.1 Flash-Lite, and Perplexity Sonar Pro Search on the same known-source pack.
+
 ## CI
 
 Use CI for stable task packs:
@@ -270,6 +272,7 @@ See [docs/github-actions.md](docs/github-actions.md) for endpoint, OpenRouter, B
 - [Realistic dev-agent eval](docs/realistic-dev-eval.md)
 - [Web Retrieval Stack Fit Eval v1](docs/experiments/web-retrieval-stack-fit-v1.md)
 - [Search Is Not Reading v1](docs/experiments/search-is-not-reading-v1.md)
+- [OpenRouter Model Comparison v1](docs/experiments/openrouter-model-comparison-v1.md)
 
 ## Repo Structure
 
