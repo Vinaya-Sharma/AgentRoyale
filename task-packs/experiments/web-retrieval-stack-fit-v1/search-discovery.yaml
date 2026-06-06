@@ -1,0 +1,44 @@
+name: web-retrieval-stack-fit-v1-search-discovery
+description: Source-discovery tasks for testing search APIs and model-search stacks.
+tasks:
+  - id: stackfit_search_npm_vite_latest
+    question: "On npm, which latest published version is listed for the vite package?"
+    required_source: "npmjs.com/package/vite"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, search_discovery, npm, package_version]
+    notes: "Fast-moving package-version task where stale snippets are common."
+    ground_truth:
+      method: http_json
+      url: "https://registry.npmjs.org/vite/latest"
+      field: "version"
+      source_url: "npmjs.com/package/vite"
+
+  - id: stackfit_search_node_latest_release_version
+    question: "From Node.js's official release index, which release version appears in the latest row?"
+    required_source: "nodejs.org/dist/index.json"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, search_discovery, release_index, nodejs]
+    notes: "Exact release-index task where search snippets can lag behind the source."
+    ground_truth:
+      method: http_json
+      url: "https://nodejs.org/dist/index.json"
+      field: "0.version"
+      source_url: "nodejs.org/dist/index.json"
+
+  - id: stackfit_search_openai_requires_python
+    question: "On PyPI, what Python version requirement is listed in the latest openai package metadata?"
+    required_source: "pypi.org/project/openai"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, search_discovery, pypi, python_requirement]
+    notes: "Source-specific metadata task for a fast-moving SDK package."
+    ground_truth:
+      method: http_json
+      url: "https://pypi.org/pypi/openai/json"
+      field: "info.requires_python"
+      source_url: "pypi.org/project/openai"

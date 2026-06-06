@@ -1,0 +1,44 @@
+name: web-retrieval-stack-fit-v1-known-source-reading
+description: Known-source reading tasks for testing URL readers and scrape/extract APIs.
+tasks:
+  - id: stackfit_known_openai_python_client_class
+    question: "In the main usage example from the openai-python README on GitHub, which client class appears after `from openai import`?"
+    required_source: "github.com/openai/openai-python"
+    answer_type: string
+    tolerance: 0
+    stability: stable
+    labels: [stack_fit_v1, known_source_reading, github_readme, sdk_docs]
+    notes: "Known URL reading task for README extraction. The oracle reads the official GitHub README."
+    ground_truth:
+      method: http_regex
+      url: "https://raw.githubusercontent.com/openai/openai-python/main/README.md"
+      regex: "You can generate text from the model[\\s\\S]{0,500}?from\\s+openai\\s+import\\s+([A-Za-z_][A-Za-z0-9_]*)"
+      source_url: "github.com/openai/openai-python"
+
+  - id: stackfit_known_playwright_release_tag
+    question: "On the microsoft/playwright GitHub Releases page, which latest release tag is listed?"
+    required_source: "github.com/microsoft/playwright/releases"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, known_source_reading, github_releases, package_version]
+    notes: "Known-source release task that catches confusion between GitHub release tags and package versions."
+    ground_truth:
+      method: http_json
+      url: "https://api.github.com/repos/microsoft/playwright/releases/latest"
+      field: "tag_name"
+      source_url: "github.com/microsoft/playwright/releases/latest"
+
+  - id: stackfit_known_next_package_manager
+    question: "In the canary Next.js package.json file on GitHub, what exact packageManager value is listed?"
+    required_source: "github.com/vercel/next.js/blob/canary/package.json"
+    answer_type: string
+    tolerance: 0
+    stability: semi_stable
+    labels: [stack_fit_v1, known_source_reading, github_file, package_manager]
+    notes: "Known raw-file task that catches answers from npm metadata, docs pages, or older lockfile assumptions."
+    ground_truth:
+      method: http_json
+      url: "https://raw.githubusercontent.com/vercel/next.js/canary/package.json"
+      field: "packageManager"
+      source_url: "github.com/vercel/next.js/blob/canary/package.json"

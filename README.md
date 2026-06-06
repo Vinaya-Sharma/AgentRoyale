@@ -201,6 +201,18 @@ Treat that result as motivation, not a universal benchmark. The important findin
 
 See [docs/experiments/dev-web-retrieval-v1.md](docs/experiments/dev-web-retrieval-v1.md) for a larger reproducible eval and methodology notes.
 
+## Stack Fit Eval
+
+Agent Royale can also be used as a fit test for web retrieval infrastructure. The Stack Fit eval groups tasks by workflow so teams can test URL readers, scrape/extract APIs, search APIs, dynamic-web extractors, and model-search stacks without treating unlike tools as a single leaderboard.
+
+The current public evidence includes:
+
+- Jina Reader on known-source reading: 3/3 exact
+- Bright Data on focused dynamic ecommerce extraction: 3/3 exact
+- OpenRouter GPT-4o Mini on Dev Web Retrieval Eval v1: 20/28 exact
+
+See [docs/experiments/web-retrieval-stack-fit-v1.md](docs/experiments/web-retrieval-stack-fit-v1.md) for the lane design, reports, and reproduction commands.
+
 ## CI
 
 Use CI for stable task packs:
@@ -250,6 +262,7 @@ See [docs/github-actions.md](docs/github-actions.md) for endpoint, OpenRouter, B
 - [Bright Data ground truth](docs/bright-data.md)
 - [OpenRouter eval](docs/openrouter.md)
 - [Realistic dev-agent eval](docs/realistic-dev-eval.md)
+- [Web Retrieval Stack Fit Eval v1](docs/experiments/web-retrieval-stack-fit-v1.md)
 
 ## Repo Structure
 
