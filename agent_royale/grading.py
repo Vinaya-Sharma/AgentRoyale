@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import json
 import re
 from datetime import datetime
 from typing import Any
@@ -8,10 +9,11 @@ from typing import Any
 from agent_royale.schema import Task
 
 
-def extract_claim(answer: str, answer_type: str) -> str:
+def extract_claim(answer: str, answer_type: str, truth: str | float | None = None) -> str:
     text = str(answer or "").strip()
     if not text:
         return ""
+    text = unwrap_answer_payload(text)
     if answer_type == "currency":
         match = re.search(r"\$?\s*-?\d[\d,]*(?:\.\d+)?", text)
         return match.group(0).strip() if match else text
@@ -21,7 +23,104 @@ def extract_claim(answer: str, answer_type: str) -> str:
     if answer_type == "date":
         match = re.search(r"\b\d{4}-\d{2}-\d{2}\b|\b[A-Z][a-z]+ \d{1,2}, \d{4}\b", text)
         return match.group(0).strip() if match else text
+    if answer_type in {"string", "enum"}:
+        return extract_string_claim(text, truth)
     return text.split("\n", 1)[0].strip()
+
+
+def unwrap_answer_payload(text: str) -> str:
+    """Handle adapters that return a JSON response body as their answer string."""
+    stripped = text.strip()
+    if not stripped.startswith("{"):
+        return text
+    try:
+        payload = json.loads(stripped)
+    except Exception:
+        return text
+    answer = payload.get("answer") if isinstance(payload, dict) else None
+    if answer is None:
+        return ""
+    return str(answer).strip()
+
+
+def extract_string_claim(text: str, truth: str | float | None = None) -> str:
+    truth_text = str(truth or "").strip()
+    if truth_text:
+        normalized_truth = normalize_string(truth_text)
+        if normalized_truth and normalized_truth in normalize_string(text):
+            return truth_text
+        shaped = extract_by_truth_shape(text, truth_text)
+        if shaped:
+            return shaped
+
+    phrased = phrase_value_candidate(text)
+    if phrased:
+        return phrased
+
+    candidates = quoted_candidates(text) + token_candidates(text)
+    if candidates:
+        return candidates[0]
+    return text.split("\n", 1)[0].strip()
+
+
+def extract_by_truth_shape(text: str, truth: str) -> str:
+    patterns: list[str] = []
+    if "@" in truth:
+        patterns.append(r"\b[A-Za-z0-9._-]+@[A-Za-z0-9._+-]+\b")
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                return match.group(0).strip()
+        return ""
+    if re.search(r"\d", truth) and "." in truth:
+        patterns.append(r"\bv?\d+(?:\.\d+)+(?:[-+][A-Za-z0-9._-]+)?\b")
+    if "-" in truth or "." in truth:
+        patterns.append(r"\b[A-Za-z0-9]+(?:[-.][A-Za-z0-9]+)+\b")
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(0).strip()
+    return ""
+
+
+def quoted_candidates(text: str) -> list[str]:
+    candidates: list[str] = []
+    for match in re.finditer(r"`([^`]+)`|\"([^\"]+)\"|'([^']+)'", text):
+        value = next(part for part in match.groups() if part is not None).strip()
+        if not value or ":" in value:
+            continue
+        candidates.append(value)
+    return candidates
+
+
+def phrase_value_candidate(text: str) -> str:
+    patterns = [
+        r"\b(?:is|are|was|were|listed as|value is|value listed is)\s+[`\"']?([A-Za-z0-9._@+-]+)",
+        r":\s*[`\"']?([A-Za-z0-9._@+-]+)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.I)
+        if match:
+            value = match.group(1).strip().strip("`\"'.")
+            if value.lower() not in {"the", "a", "an"}:
+                return value
+    return ""
+
+
+def token_candidates(text: str) -> list[str]:
+    patterns = [
+        r"\b[A-Za-z0-9._-]+@[A-Za-z0-9._+-]+\b",
+        r"\bv?\d+(?:\.\d+)+(?:[-+][A-Za-z0-9._-]+)?\b",
+        r"\b[A-Z][A-Za-z0-9_]*(?:\.[A-Z][A-Za-z0-9_]*)?\b",
+        r"\b(?:main|master|trunk|develop|dev|npm|pnpm|yarn|bun)\b",
+    ]
+    candidates: list[str] = []
+    for pattern in patterns:
+        for match in re.finditer(pattern, text):
+            value = match.group(0).strip()
+            if value and value not in candidates:
+                candidates.append(value)
+    return candidates
 
 
 def normalize_value(value: Any, answer_type: str) -> str | float | None:
@@ -36,7 +135,7 @@ def normalize_value(value: Any, answer_type: str) -> str | float | None:
 
 
 def grade(task: Task, truth: str | float, answer: str) -> tuple[bool, str, str | float | None, str | float | None]:
-    claim = extract_claim(answer, task.answer_type)
+    claim = extract_claim(answer, task.answer_type, truth)
     normalized_claim = normalize_value(claim, task.answer_type)
     normalized_truth = normalize_value(truth, task.answer_type)
     if normalized_claim is None or normalized_truth is None:

@@ -19,6 +19,8 @@
 !.github/workflows/*.yml
 !agent_royale/
 !agent_royale/*.py
+!tests/
+!tests/*.py
 !task-packs/
 !task-packs/**/
 !task-packs/**/*.yaml

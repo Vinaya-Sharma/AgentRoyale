@@ -87,6 +87,7 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
         failure_mode = classify_failure(
             passed=passed,
             answer=stack_response.answer,
+            claim=str(claim),
             citation_supported=citation_supported,
             required_source=task.required_source,
             citations=[item.url for item in stack_response.citations],
@@ -160,6 +161,7 @@ def classify_failure(
     *,
     passed: bool,
     answer: str,
+    claim: str = "",
     citation_supported: bool,
     required_source: str,
     citations: list[str],
@@ -168,7 +170,7 @@ def classify_failure(
         if citation_supported or not citations:
             return None
         return "unsupported_citation"
-    if not answer.strip():
+    if not answer.strip() or not claim.strip():
         return "no_answer"
     if citations and not any(normalize_url(required_source) in normalize_url(url) for url in citations):
         return "wrong_source"
