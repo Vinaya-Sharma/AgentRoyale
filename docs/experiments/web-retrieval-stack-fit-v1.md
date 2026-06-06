@@ -18,12 +18,21 @@ The goal is not to rank vendors. Different tools are built for different jobs. T
 | Target | Lane | Tasks | Report | Result |
 |---|---|---:|---|---|
 | Jina Reader target adapter | Known-source reading | 3 | [`jina-known-source-reading.html`](../../reports/stack-fit-v1/jina-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
+| Firecrawl target adapter | Known-source reading | 3 | [`firecrawl-known-source-reading.html`](../../reports/stack-fit-v1/firecrawl-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
+| Tavily extract target adapter | Known-source extraction | 3 | [`tavily-known-source-extract.html`](../../reports/stack-fit-v1/tavily-known-source-extract.html) | 100.0% exact, 66.7% source-supported |
 | Bright Data target adapter | Dynamic ecommerce extraction | 3 | [`bright-data-dynamic-ecommerce.html`](../../reports/stack-fit-v1/bright-data-dynamic-ecommerce.html) | 100.0% exact, 100.0% source-supported |
+| `openrouter:openai/gpt-4o-mini` | Search/discovery | 3 | [`openrouter-search-discovery.html`](../../reports/stack-fit-v1/openrouter-search-discovery.html) | 66.7% exact, 66.7% source-supported |
 | `openrouter:openai/gpt-4o-mini` | Full model-search behavior | 28 | [`openrouter-dev-web-retrieval.html`](../../reports/stack-fit-v1/openrouter-dev-web-retrieval.html) | 71.4% exact, 64.3% source-supported |
 
 ![Jina Reader known-source report](../assets/experiments/stack-fit-v1/jina-known-source-reading-report.png)
 
+![Firecrawl known-source report](../assets/experiments/stack-fit-v1/firecrawl-known-source-reading-report.png)
+
+![Tavily extract known-source report](../assets/experiments/stack-fit-v1/tavily-known-source-extract-report.png)
+
 ![Bright Data dynamic ecommerce report](../assets/experiments/stack-fit-v1/bright-data-dynamic-ecommerce-report.png)
+
+![OpenRouter search discovery report](../assets/experiments/stack-fit-v1/openrouter-search-discovery-report.png)
 
 ![OpenRouter dev web retrieval report](../assets/experiments/stack-fit-v1/openrouter-dev-web-retrieval-report.png)
 
@@ -41,7 +50,7 @@ docs/assets/experiments/stack-fit-v1/
 |---|---|---|
 | Jina Reader | Lightweight known-URL reading baseline | General search or dynamic page interaction |
 | Firecrawl | Scrape/extract from required URLs | Universal web-agent accuracy |
-| Tavily | Search and source discovery | Exact extraction from every known URL |
+| Tavily | Source extraction and search workflows, depending on endpoint | Source support when the returned citation does not quote the extracted value |
 | Bright Data | Dynamic public web and ecommerce extraction | Stable CI behavior for volatile ecommerce values |
 | OpenRouter | Full model-search behavior under Agent Royale grading | That one model result predicts every model |
 | Stagehand/Browserbase | Browser-rendered or page-state extraction | Search ranking or non-browser API extraction |
@@ -97,6 +106,23 @@ python -m agent_royale run \
   --report reports/stack-fit-v1/tavily-search-discovery.html
 ```
 
+Known-source extraction with Tavily:
+
+```bash
+export TAVILY_API_KEY=...
+export TAVILY_STRATEGY=extract
+cd examples/tavily-agent
+pip install -r requirements.txt
+uvicorn app:app --host 127.0.0.1 --port 3013
+
+cd ../..
+python -m agent_royale run \
+  task-packs/experiments/web-retrieval-stack-fit-v1/known-source-reading.yaml \
+  --target http://127.0.0.1:3013/api/agent \
+  --output runs/stack-fit-v1/tavily-known-source-extract.jsonl \
+  --report reports/stack-fit-v1/tavily-known-source-extract.html
+```
+
 Dynamic ecommerce extraction with Bright Data:
 
 ```bash
@@ -124,6 +150,8 @@ python -m agent_royale run \
   --output runs/stack-fit-v1/openrouter-search-discovery.jsonl \
   --report reports/stack-fit-v1/openrouter-search-discovery.html
 ```
+
+Stagehand/Browserbase can be tested in the browser-rendered lane after setting `BROWSERBASE_API_KEY`, `BROWSERBASE_PROJECT_ID`, and the model key required by the Stagehand client.
 
 ## How To Interpret Results
 

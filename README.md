@@ -208,7 +208,10 @@ Agent Royale can also be used as a fit test for web retrieval infrastructure. Th
 The current public evidence includes:
 
 - Jina Reader on known-source reading: 3/3 exact
+- Firecrawl on known-source reading: 3/3 exact
+- Tavily extract on known-source extraction: 3/3 exact
 - Bright Data on focused dynamic ecommerce extraction: 3/3 exact
+- OpenRouter GPT-4o Mini on search/discovery: 2/3 exact
 - OpenRouter GPT-4o Mini on Dev Web Retrieval Eval v1: 20/28 exact
 
 See [docs/experiments/web-retrieval-stack-fit-v1.md](docs/experiments/web-retrieval-stack-fit-v1.md) for the lane design, reports, and reproduction commands.
