@@ -15,16 +15,18 @@ The goal is not to rank vendors. Different tools are built for different jobs. T
 
 ## Current Public Evidence
 
-| Target | Lane | Tasks | Report | Result |
-|---|---|---:|---|---|
-| Jina Reader target adapter | Known-source reading | 5 | [`jina-known-source-reading.html`](../../reports/stack-fit-v1/jina-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
-| Firecrawl target adapter | Known-source reading | 5 | [`firecrawl-known-source-reading.html`](../../reports/stack-fit-v1/firecrawl-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
-| Tavily extract target adapter | Known-source extraction | 5 | [`tavily-known-source-extract.html`](../../reports/stack-fit-v1/tavily-known-source-extract.html) | 80.0% exact, 60.0% source-supported |
-| Tavily search target adapter | Known-source reading | 5 | [`tavily-search-known-source.html`](../../reports/stack-fit-v1/tavily-search-known-source.html) | 20.0% exact, 20.0% source-supported |
-| Bright Data target adapter | Dynamic ecommerce extraction | 3 | [`bright-data-dynamic-ecommerce.html`](../../reports/stack-fit-v1/bright-data-dynamic-ecommerce.html) | 100.0% exact, 100.0% source-supported |
-| `openrouter:openai/gpt-4o-mini` | Search/discovery | 3 | [`openrouter-search-discovery.html`](../../reports/stack-fit-v1/openrouter-search-discovery.html) | 66.7% exact, 66.7% source-supported |
-| `openrouter:openai/gpt-4o-mini` | Known-source reading | 5 | [`openrouter-known-source-reading.html`](../../reports/stack-fit-v1/openrouter-known-source-reading.html) | 60.0% exact, 60.0% source-supported |
-| `openrouter:openai/gpt-4o-mini` | Full model-search behavior | 28 | [`openrouter-dev-web-retrieval.html`](../../reports/stack-fit-v1/openrouter-dev-web-retrieval.html) | 71.4% exact, 64.3% source-supported |
+In this table, HTTP URLs are local Agent Royale adapter endpoints that wrap a retrieval API. They are not models. The OpenRouter rows are the only rows in this eval that call a model directly.
+
+| Stack under test | Model | Adapter / target called | Lane | Tasks | Report | Result |
+|---|---|---|---|---:|---|---|
+| Jina Reader | None | Local Jina Reader adapter endpoint | Known-source reading | 5 | [`jina-known-source-reading.html`](../../reports/stack-fit-v1/jina-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
+| Firecrawl | None | Local Firecrawl adapter endpoint | Known-source reading | 5 | [`firecrawl-known-source-reading.html`](../../reports/stack-fit-v1/firecrawl-known-source-reading.html) | 100.0% exact, 100.0% source-supported |
+| Tavily Extract API | None | Local Tavily adapter with `TAVILY_STRATEGY=extract` | Known-source extraction | 5 | [`tavily-known-source-extract.html`](../../reports/stack-fit-v1/tavily-known-source-extract.html) | 80.0% exact, 60.0% source-supported |
+| Tavily Search API | None | Local Tavily adapter with `TAVILY_STRATEGY=search` | Known-source reading | 5 | [`tavily-search-known-source.html`](../../reports/stack-fit-v1/tavily-search-known-source.html) | 20.0% exact, 20.0% source-supported |
+| Bright Data | None | Local Bright Data adapter endpoint | Dynamic ecommerce extraction | 3 | [`bright-data-dynamic-ecommerce.html`](../../reports/stack-fit-v1/bright-data-dynamic-ecommerce.html) | 100.0% exact, 100.0% source-supported |
+| OpenRouter | `openai/gpt-4o-mini` | `openrouter:openai/gpt-4o-mini` | Search/discovery | 3 | [`openrouter-search-discovery.html`](../../reports/stack-fit-v1/openrouter-search-discovery.html) | 66.7% exact, 66.7% source-supported |
+| OpenRouter | `openai/gpt-4o-mini` | `openrouter:openai/gpt-4o-mini` | Known-source reading | 5 | [`openrouter-known-source-reading.html`](../../reports/stack-fit-v1/openrouter-known-source-reading.html) | 60.0% exact, 60.0% source-supported |
+| OpenRouter | `openai/gpt-4o-mini` | `openrouter:openai/gpt-4o-mini` | Full model-search behavior | 28 | [`openrouter-dev-web-retrieval.html`](../../reports/stack-fit-v1/openrouter-dev-web-retrieval.html) | 71.4% exact, 64.3% source-supported |
 
 ![Jina Reader known-source report](../assets/experiments/stack-fit-v1/jina-known-source-reading-report.png)
 

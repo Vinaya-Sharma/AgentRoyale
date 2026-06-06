@@ -130,7 +130,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     <header>
       <div>
         <h1>Agent Royale Eval Report</h1>
-        <p class="subhead">This run tested one agent target against {total} live-web tasks. The table below shows the model or target called, question, answer returned, extracted claim, ground truth, and citations.</p>
+        <p class="subhead">This run tested one agent target against {total} live-web tasks. The table below shows the stack, model, or adapter target called, question, answer returned, extracted claim, ground truth, and citations.</p>
         <div class="meta">
           <span class="pill">target: {esc(target)}</span>
           <span class="pill">runs: {total}</span>
@@ -164,7 +164,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
         <col style="width:8%">
         <col style="width:10%">
       </colgroup>
-      <thead><tr><th>Status</th><th>Question</th><th>Model / Target</th><th>Answer returned</th><th>Extracted claim</th><th>Ground truth</th><th>Outcome</th><th>Citations / source</th></tr></thead>
+      <thead><tr><th>Status</th><th>Question</th><th>Stack / Target</th><th>Answer returned</th><th>Extracted claim</th><th>Ground truth</th><th>Outcome</th><th>Citations / source</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
 
