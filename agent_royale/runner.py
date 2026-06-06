@@ -109,6 +109,8 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             failure_mode=failure_mode,
             citations=stack_response.citations,
             citation_supported=citation_supported,
+            search_queries=stack_response.trace.search_queries,
+            tools_used=stack_response.trace.tools_used,
             required_source=truth_snapshot.source_url or task.required_source,
             latency_ms=latency_ms,
             cost_usd=stack_response.trace.cost_usd,

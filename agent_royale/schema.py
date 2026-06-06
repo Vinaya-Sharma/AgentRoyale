@@ -124,6 +124,8 @@ class RunRecord(BaseModel):
     failure_mode: str | None = None
     citations: list[Citation] = Field(default_factory=list)
     citation_supported: bool = False
+    search_queries: list[str] = Field(default_factory=list)
+    tools_used: list[str] = Field(default_factory=list)
     required_source: str
     latency_ms: float
     cost_usd: float | None = None

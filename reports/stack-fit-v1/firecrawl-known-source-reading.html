@@ -11,23 +11,23 @@
       --panel:#ffffff; --good:#087f5b; --bad:#c92a2a; --warn:#b76e00; --blue:#2563eb;
     }
     * { box-sizing:border-box; }
-    body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:linear-gradient(180deg,#f8fbff 0,#f5f7fb 260px,#ffffff 260px); }
-    .wrap { max-width:1200px; margin:0 auto; padding:34px 28px 56px; }
-    header { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:24px; align-items:start; }
-    h1 { margin:0 0 8px; font-size:38px; line-height:1.05; letter-spacing:0; }
-    h2 { margin:28px 0 12px; font-size:20px; letter-spacing:0; }
+    body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:linear-gradient(180deg,#f8fbff 0,#ffffff 220px); }
+    .wrap { max-width:1440px; margin:0 auto; padding:22px 24px 44px; }
+    header { display:grid; grid-template-columns:minmax(0,1fr) 170px; gap:18px; align-items:start; }
+    h1 { margin:0 0 6px; font-size:28px; line-height:1.08; letter-spacing:0; }
+    h2 { margin:20px 0 10px; font-size:18px; letter-spacing:0; }
     p { margin:0; color:var(--muted); line-height:1.5; }
     code { font-family:"SFMono-Regular", Consolas, monospace; font-size:12px; }
-    .subhead { max-width:760px; font-size:16px; }
-    .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
-    .pill { border:1px solid var(--line); background:rgba(255,255,255,.82); border-radius:999px; padding:7px 10px; color:#344054; font-size:12px; font-weight:700; }
-    .verdict { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:18px; box-shadow:0 12px 36px rgba(15,23,42,.06); }
-    .score { font-size:44px; line-height:1; font-weight:850; color:var(--good); }
-    .verdict-label { margin-top:8px; font-size:13px; font-weight:800; color:var(--ink); }
-    .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:26px; }
-    .card { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:16px; box-shadow:0 8px 24px rgba(15,23,42,.04); }
-    .num { font-size:26px; line-height:1; font-weight:850; }
-    .label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-top:8px; font-weight:800; }
+    .subhead { max-width:880px; font-size:14px; }
+    .meta { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+    .pill { border:1px solid var(--line); background:rgba(255,255,255,.88); border-radius:999px; padding:6px 9px; color:#344054; font-size:11px; font-weight:700; }
+    .verdict { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:13px; box-shadow:0 10px 28px rgba(15,23,42,.05); }
+    .score { font-size:34px; line-height:1; font-weight:850; color:var(--good); }
+    .verdict-label { margin-top:6px; font-size:12px; font-weight:800; color:var(--ink); }
+    .grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:16px; }
+    .card { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:12px; box-shadow:0 7px 20px rgba(15,23,42,.035); }
+    .num { font-size:24px; line-height:1; font-weight:850; }
+    .label { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.08em; margin-top:6px; font-weight:800; }
     .insight { margin-top:16px; border:1px solid #c7d7fe; background:#eff6ff; border-radius:8px; padding:14px 16px; display:grid; grid-template-columns:128px minmax(0,1fr); gap:14px; align-items:start; }
     .insight strong { color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
     .method { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px; }
@@ -35,19 +35,22 @@
     .method-card strong { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#344054; margin-bottom:6px; }
     .split { display:grid; grid-template-columns:.82fr 1.18fr; gap:22px; align-items:start; }
     table { width:100%; border-collapse:separate; border-spacing:0; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:0 8px 24px rgba(15,23,42,.04); }
-    th,td { text-align:left; padding:12px 14px; border-bottom:1px solid #e8ecf3; vertical-align:middle; font-size:14px; }
-    th { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#f7f9fc; font-weight:850; }
+    th,td { text-align:left; padding:10px 11px; border-bottom:1px solid #e8ecf3; vertical-align:top; font-size:13px; }
+    th { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#f7f9fc; font-weight:850; }
     tr:last-child td { border-bottom:0; }
     .pass,.fail { font-weight:850; }
     .pass { color:var(--good); }
     .fail { color:var(--bad); }
     .muted { color:var(--muted); }
-    .answer { max-width:360px; white-space:pre-wrap; color:#344054; }
-    .question { color:var(--muted); font-size:12px; line-height:1.35; max-width:320px; margin-top:5px; }
+    .answer { max-width:310px; white-space:pre-wrap; color:#344054; }
+    .question { color:var(--muted); font-size:12px; line-height:1.35; max-width:340px; margin-top:5px; }
+    .model { max-width:210px; overflow-wrap:anywhere; font-size:12px; color:#344054; }
     .claim { font-weight:750; }
     .truth { font-weight:750; color:#175cd3; }
     .failure { color:var(--bad); font-weight:750; }
-    .source { color:#475467; font-size:12px; max-width:260px; overflow-wrap:anywhere; }
+    .source { color:#475467; font-size:12px; max-width:320px; overflow-wrap:anywhere; }
+    .citation-list { margin-top:6px; display:grid; gap:3px; }
+    .required { font-weight:800; color:#344054; }
     .catch-list { display:grid; gap:10px; }
     .catch { border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:8px; background:#fff; padding:13px 14px; }
     .catch-title { display:flex; justify-content:space-between; gap:14px; align-items:center; margin-bottom:8px; }
@@ -58,7 +61,7 @@
     .status-dot.correct,.status-dot.source-supported-correct { background:var(--good); }
     .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer { background:var(--bad); }
     footer { margin-top:24px; color:var(--muted); font-size:12px; }
-    @media(max-width:860px) { header,.split,.method { grid-template-columns:1fr; } .grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } th:nth-child(6),td:nth-child(6) { display:none; } }
+    @media(max-width:980px) { header,.split,.method { grid-template-columns:1fr; } .grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } th:nth-child(7),td:nth-child(7) { display:none; } }
   </style>
 </head>
 <body>
@@ -66,7 +69,7 @@
     <header>
       <div>
         <h1>Agent Royale Eval Report</h1>
-        <p class="subhead">This run tested one agent target against 5 live-web tasks. Each row shows the agent's extracted claim, the oracle value, the required source, and the reason the task passed or failed.</p>
+        <p class="subhead">This run tested one agent target against 5 live-web tasks. The table below shows the model or target called, question, answer returned, extracted claim, ground truth, and citations.</p>
         <div class="meta">
           <span class="pill">target: http://127.0.0.1:3012/api/agent</span>
           <span class="pill">runs: 5</span>
@@ -87,6 +90,26 @@
       <div class="card"><div class="num">0</div><div class="label">No answer</div></div>
       <div class="card"><div class="num">0</div><div class="label">Oracle skips</div></div>
     </section>
+
+    <h2>Run Details</h2>
+    <table>
+      <colgroup>
+        <col style="width:5%">
+        <col style="width:23%">
+        <col style="width:12%">
+        <col style="width:17%">
+        <col style="width:15%">
+        <col style="width:10%">
+        <col style="width:8%">
+        <col style="width:10%">
+      </colgroup>
+      <thead><tr><th>Status</th><th>Question</th><th>Model / Target</th><th>Answer returned</th><th>Extracted claim</th><th>Ground truth</th><th>Outcome</th><th>Citations / source</th></tr></thead>
+      <tbody><tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_next_package_manager</code><div class="question">In the canary Next.js package.json file on GitHub, what exact packageManager value is listed?</div></td><td class="model">http://127.0.0.1:3012/api/agent</td><td class="answer">pnpm@10.33.0</td><td class="claim">pnpm@10.33.0</td><td class="truth">pnpm@10.33.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: pnpm@10.33.0</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> github.com/vercel/next.js/blob/canary/package.json</div><div class="citation-list"><span class="required">Cited:</span><div>github.com/vercel/next.js/blob/canary/package.json</div></div></td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_openai_python_client_class</code><div class="question">In the main usage example from the openai-python README on GitHub, which client class appears after `from openai import`?</div></td><td class="model">http://127.0.0.1:3012/api/agent</td><td class="answer">OpenAI</td><td class="claim">OpenAI</td><td class="truth">OpenAI<div class="muted" style="font-size:11px;margin-top:4px">Evidence: rom PyPI pip install openai ``` ## Usage The full API of this library can be found in [api.md](api.md). The primary API for interacting w...</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> github.com/openai/openai-python</div><div class="citation-list"><span class="required">Cited:</span><div>github.com/openai/openai-python</div></div></td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_playwright_release_tag</code><div class="question">On the microsoft/playwright GitHub Releases page, which latest release tag is listed?</div></td><td class="model">http://127.0.0.1:3012/api/agent</td><td class="answer">v1.60.0</td><td class="claim">v1.60.0</td><td class="truth">v1.60.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: v1.60.0</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> github.com/microsoft/playwright/releases/latest</div><div class="citation-list"><span class="required">Cited:</span><div>github.com/microsoft/playwright/releases</div></div></td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_react_default_branch</code><div class="question">On the facebook/react GitHub repository page, which default branch is listed?</div></td><td class="model">http://127.0.0.1:3012/api/agent</td><td class="answer">main</td><td class="claim">main</td><td class="truth">main<div class="muted" style="font-size:11px;margin-top:4px">Evidence: main</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> github.com/facebook/react</div><div class="citation-list"><span class="required">Cited:</span><div>github.com/facebook/react</div></div></td></tr>
+<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_rust_license_spdx</code><div class="question">On the rust-lang/rust GitHub repository page, which SPDX license identifier is listed?</div></td><td class="model">http://127.0.0.1:3012/api/agent</td><td class="answer">Apache-2.0</td><td class="claim">Apache-2.0</td><td class="truth">Apache-2.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Apache-2.0</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> github.com/rust-lang/rust</div><div class="citation-list"><span class="required">Cited:</span><div>github.com/rust-lang/rust</div></div></td></tr></tbody>
+    </table>
 
     <section class="method">
       <div class="method-card">
@@ -130,15 +153,6 @@
       </div>
     </section>
 
-    <h2>Run Details</h2>
-    <table>
-      <thead><tr><th>Status</th><th>Task</th><th>Claim</th><th>Ground truth</th><th>Oracle</th><th>Outcome</th><th>Required source</th><th>Answer</th></tr></thead>
-      <tbody><tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_next_package_manager</code><div class="question">In the canary Next.js package.json file on GitHub, what exact packageManager value is listed?</div></td><td class="claim">pnpm@10.33.0</td><td class="truth">pnpm@10.33.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: pnpm@10.33.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/vercel/next.js/blob/canary/package.json</td><td class="answer">pnpm@10.33.0</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_openai_python_client_class</code><div class="question">In the main usage example from the openai-python README on GitHub, which client class appears after `from openai import`?</div></td><td class="claim">OpenAI</td><td class="truth">OpenAI<div class="muted" style="font-size:11px;margin-top:4px">Evidence: rom PyPI pip install openai ``` ## Usage The full API of this library can be found in [api.md](api.md). The primary API for interacting with OpenAI models is the [Responses API](https://platform.openai.com/docs/api-reference/responses). You can generate text from the model with the code below. ```python import os from openai import OpenAI client = OpenAI( # This is the default and can be omitted api_key=os.environ.get(&quot;OPENAI_API_KEY&quot;), ) response = client.responses.create( model=&quot;gpt-5.5&quot;, instructions=&quot;You are a coding assistant that talks like a pirate.</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/openai/openai-python</td><td class="answer">OpenAI</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_playwright_release_tag</code><div class="question">On the microsoft/playwright GitHub Releases page, which latest release tag is listed?</div></td><td class="claim">v1.60.0</td><td class="truth">v1.60.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: v1.60.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/microsoft/playwright/releases/latest</td><td class="answer">v1.60.0</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_react_default_branch</code><div class="question">On the facebook/react GitHub repository page, which default branch is listed?</div></td><td class="claim">main</td><td class="truth">main<div class="muted" style="font-size:11px;margin-top:4px">Evidence: main</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/facebook/react</td><td class="answer">main</td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>stackfit_known_rust_license_spdx</code><div class="question">On the rust-lang/rust GitHub repository page, which SPDX license identifier is listed?</div></td><td class="claim">Apache-2.0</td><td class="truth">Apache-2.0<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Apache-2.0</div></td><td>verified</td><td class="failure">correct</td><td class="source">github.com/rust-lang/rust</td><td class="answer">Apache-2.0</td></tr></tbody>
-    </table>
     <footer>Generated from Agent Royale run data.</footer>
   </main>
 </body>
