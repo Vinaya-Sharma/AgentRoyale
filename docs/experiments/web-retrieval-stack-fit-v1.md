@@ -57,6 +57,8 @@ That is the core use case for Agent Royale: it does not only ask "which provider
 
 For a product team, the action item is practical: use scrape/extract endpoints for known-source field extraction, reserve search endpoints for discovery tasks, and run the same task pack after changing retrieval mode.
 
+See [`Search Is Not Reading v1`](search-is-not-reading-v1.md) for the focused experiment behind this finding.
+
 ## Recommended Launch Matrix
 
 | Tool | Public claim to make if the run is clean | Do not claim |

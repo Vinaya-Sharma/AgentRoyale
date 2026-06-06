@@ -217,6 +217,8 @@ The current public evidence includes:
 
 See [docs/experiments/web-retrieval-stack-fit-v1.md](docs/experiments/web-retrieval-stack-fit-v1.md) for the lane design, reports, and reproduction commands.
 
+The focused [Search Is Not Reading v1](docs/experiments/search-is-not-reading-v1.md) experiment shows why this matters: on the same known-source task pack, Tavily extract scored 3/3 exact while Tavily search scored 1/3 exact.
+
 ## CI
 
 Use CI for stable task packs:
@@ -267,6 +269,7 @@ See [docs/github-actions.md](docs/github-actions.md) for endpoint, OpenRouter, B
 - [OpenRouter eval](docs/openrouter.md)
 - [Realistic dev-agent eval](docs/realistic-dev-eval.md)
 - [Web Retrieval Stack Fit Eval v1](docs/experiments/web-retrieval-stack-fit-v1.md)
+- [Search Is Not Reading v1](docs/experiments/search-is-not-reading-v1.md)
 
 ## Repo Structure
 

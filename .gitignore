@@ -81,6 +81,7 @@ reports/*
 !reports/dev-web-retrieval-v1/*.html
 !reports/stack-fit-v1/
 !reports/stack-fit-v1/*.html
+!reports/stack-fit-v1/*.md
 runs/*
 !runs/
 !runs/stack-fit-v1/
