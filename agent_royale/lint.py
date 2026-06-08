@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
-from agent_royale.schema import Task, load_task_packs
+from agent_royale.schema import Task, flatten_tasks, load_task_packs
 
 
 @dataclass(frozen=True)
@@ -18,7 +18,7 @@ class LintFinding:
 
 def lint_task_paths(paths: list[Path]) -> list[LintFinding]:
     packs = load_task_packs(paths)
-    tasks = [task for pack in packs for task in pack.tasks]
+    tasks = flatten_tasks(packs)
     findings: list[LintFinding] = []
     seen_ids: dict[str, str] = {}
     seen_questions: dict[str, str] = {}
@@ -69,6 +69,24 @@ def lint_task(task: Task) -> list[LintFinding]:
                 task.id,
                 "CI-safe task uses a live page oracle without stability=stable.",
                 "Use CI gates for stable backing sources, or set ci_safe: false and run this pack on demand.",
+            )
+        )
+    if task.ci_safe and not task.task_pack_version:
+        findings.append(
+            LintFinding(
+                "warning",
+                task.id,
+                "CI-safe task pack does not declare a version.",
+                "Add a top-level version so old reports can be tied back to a specific task-pack revision.",
+            )
+        )
+    if task.source_policy.match == "contains" and task.ci_safe:
+        findings.append(
+            LintFinding(
+                "warning",
+                task.id,
+                "CI-safe task uses permissive source_policy.match=contains.",
+                "Use same_path, exact_url, or allowed_sources when citation source precision matters.",
             )
         )
     if ground_truth.method in {"http_json", "http_regex", "bright_data"} and not ground_truth.source_url:

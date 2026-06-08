@@ -249,7 +249,7 @@ def verified_snapshot(
     tool: str | None = None,
     validation_checks: dict[str, bool] | None = None,
 ) -> GroundTruthSnapshot:
-    return GroundTruthSnapshot(
+    snapshot = GroundTruthSnapshot(
         task_id=task.id,
         status="verified",
         value=value,
@@ -265,6 +265,71 @@ def verified_snapshot(
         confidence="verified",
         validation_checks=validation_checks or {"value_found": True},
     )
+    return apply_oracle_policy(task, snapshot)
+
+
+def apply_oracle_policy(task: Task, snapshot: GroundTruthSnapshot) -> GroundTruthSnapshot:
+    policy = task.oracle_policy
+    checks = dict(snapshot.validation_checks)
+    if policy.require_single_candidate and checks.get("single_candidate") is False:
+        snapshot.status = "ground_truth_ambiguous"
+        snapshot.confidence = "ambiguous"
+        snapshot.error = "Oracle policy require_single_candidate failed."
+        snapshot.ambiguity_flags = [*snapshot.ambiguity_flags, "policy_single_candidate_failed"]
+        snapshot.validation_checks = checks
+        return snapshot
+    if policy.require_evidence_contains_value:
+        evidence_ok = evidence_contains_value(snapshot.evidence_text, snapshot.value)
+        checks["policy_evidence_contains_value"] = evidence_ok
+        if not evidence_ok:
+            snapshot.status = "low_confidence"
+            snapshot.confidence = "low"
+            snapshot.error = "Oracle policy require_evidence_contains_value failed."
+            snapshot.validation_checks = checks
+            return snapshot
+    if policy.require_confidence and snapshot.confidence != policy.require_confidence:
+        checks["policy_confidence_required"] = False
+        snapshot.status = "low_confidence"
+        snapshot.error = f"Oracle policy required confidence={policy.require_confidence!r}."
+        snapshot.validation_checks = checks
+        return snapshot
+    checks["policy_confidence_required"] = True
+    if policy.max_source_age_seconds is not None:
+        age_ok = source_age_ok(snapshot.fetched_at, policy.max_source_age_seconds)
+        checks["policy_source_age_ok"] = age_ok
+        if not age_ok:
+            snapshot.status = "low_confidence"
+            snapshot.confidence = "low"
+            snapshot.error = "Oracle policy max_source_age_seconds failed."
+            snapshot.validation_checks = checks
+            return snapshot
+    snapshot.validation_checks = checks
+    return snapshot
+
+
+def evidence_contains_value(evidence_text: str, value: str | float | None) -> bool:
+    if value is None:
+        return False
+    evidence = str(evidence_text or "").lower()
+    raw = str(value).strip().lower()
+    if not raw:
+        return False
+    if raw in evidence:
+        return True
+    value_digits = re.sub(r"[^0-9.]", "", raw)
+    evidence_digits = re.sub(r"[^0-9.]", "", evidence)
+    return bool(value_digits and value_digits in evidence_digits)
+
+
+def source_age_ok(fetched_at: str, max_age_seconds: int) -> bool:
+    try:
+        fetched = datetime.fromisoformat(fetched_at)
+    except ValueError:
+        return False
+    if fetched.tzinfo is None:
+        fetched = fetched.replace(tzinfo=timezone.utc)
+    age = datetime.now(timezone.utc) - fetched.astimezone(timezone.utc)
+    return age.total_seconds() <= max_age_seconds
 
 
 def failed_snapshot(

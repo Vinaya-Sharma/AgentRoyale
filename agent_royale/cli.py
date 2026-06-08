@@ -15,7 +15,7 @@ from agent_royale import __version__
 from agent_royale.compare import compare_run_files, render_markdown_report, render_terminal_summary
 from agent_royale.ground_truth import fetch_ground_truth, fetch_ground_truth_snapshot
 from agent_royale.lint import lint_task_paths, render_lint_findings
-from agent_royale.report import load_records, write_html_report
+from agent_royale.report import load_records, write_html_report, write_junit_report, write_summary_json
 from agent_royale.runner import run_tasks
 from agent_royale.schema import flatten_tasks, load_task_packs, validation_errors
 from agent_royale.targets import call_target
@@ -23,6 +23,7 @@ from agent_royale.targets import call_target
 
 EXAMPLE_TASK_PACK = {
     "name": "agent-royale-example",
+    "version": "1.0.0",
     "description": "Tiny static task pack for testing the Agent Royale runner.",
     "tasks": [
         {
@@ -32,6 +33,7 @@ EXAMPLE_TASK_PACK = {
             "answer_type": "currency",
             "tolerance": 0,
             "labels": ["example", "pricing"],
+            "source_policy": {"match": "same_path"},
             "ground_truth": {
                 "method": "static",
                 "value": "$19.00",
@@ -47,6 +49,7 @@ def task_pack_template(slug: str, ground_truth: str = "static") -> dict:
         return bright_data_rapid_task_pack_template(slug)
     return {
         "name": slug,
+        "version": "0.1.0",
         "description": f"Starter task pack for {slug.replace('-', ' ')} retrieval tests.",
         "tasks": [
             {
@@ -56,6 +59,7 @@ def task_pack_template(slug: str, ground_truth: str = "static") -> dict:
                 "answer_type": "currency",
                 "tolerance": 0,
                 "labels": [slug, "example", "pricing"],
+                "source_policy": {"match": "same_path"},
                 "notes": (
                     "Replace this static smoke task with a source-specific oracle. "
                     "Good task packs use public APIs when they expose the exact field, "
@@ -74,6 +78,7 @@ def task_pack_template(slug: str, ground_truth: str = "static") -> dict:
 def bright_data_rapid_task_pack_template(slug: str) -> dict:
     return {
         "name": slug,
+        "version": "0.1.0",
         "description": (
             f"Starter Bright Data Rapid-mode task pack for {slug.replace('-', ' ')} retrieval tests."
         ),
@@ -85,6 +90,7 @@ def bright_data_rapid_task_pack_template(slug: str) -> dict:
                 "answer_type": "currency",
                 "tolerance": 0,
                 "labels": [slug, "bright_data", "rapid_mode", "pricing"],
+                "source_policy": {"match": "same_path"},
                 "notes": (
                     "Replace the URL and regex with a source-specific live page. "
                     "Rapid-mode Bright Data tasks should use search_engine or scrape_as_markdown; "
@@ -163,6 +169,7 @@ def build_parser() -> argparse.ArgumentParser:
     audit.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
     audit.add_argument("--timeout", type=float, default=30)
     audit.add_argument("--jsonl", default="", help="Optional JSONL output path for oracle snapshots.")
+    audit.add_argument("--only", default="", help="Comma-separated task IDs to audit.")
 
     lint = sub.add_parser("lint", help="Check task packs for fragile oracle and CI patterns.")
     lint.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
@@ -173,6 +180,9 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--target", required=True, help="http(s) endpoint, openrouter:<model>, or path.py:function.")
     run.add_argument("--output", default="runs/agent-royale-runs.jsonl")
     run.add_argument("--report", default="")
+    run.add_argument("--summary", default="", help="Optional machine-readable JSON summary output.")
+    run.add_argument("--junit", default="", help="Optional JUnit XML output for CI systems.")
+    run.add_argument("--only", default="", help="Comma-separated task IDs to run.")
     run.add_argument("--runs-per-task", type=int, default=1)
     run.add_argument("--concurrency", type=int, default=4)
     run.add_argument("--timeout", type=float, default=120)
@@ -182,6 +192,8 @@ def build_parser() -> argparse.ArgumentParser:
     report = sub.add_parser("report", help="Generate an HTML report from JSONL runs.")
     report.add_argument("input", help="Run JSONL file.")
     report.add_argument("--output", default="reports/agent-royale-report.html")
+    report.add_argument("--summary", default="", help="Optional machine-readable JSON summary output.")
+    report.add_argument("--junit", default="", help="Optional JUnit XML output.")
 
     compare = sub.add_parser("compare", help="Compare two JSONL run logs.")
     compare.add_argument("before", help="Baseline run JSONL file.")
@@ -354,7 +366,7 @@ async def cmd_doctor(args: argparse.Namespace) -> int:
 
 async def cmd_audit(args: argparse.Namespace) -> int:
     packs = load_task_packs([Path(item) for item in args.paths])
-    tasks = flatten_tasks(packs)
+    tasks = filter_tasks(flatten_tasks(packs), args.only)
     snapshots = []
     print(f"Auditing {len(tasks)} task oracle{'s' if len(tasks) != 1 else ''}")
     for task in tasks:
@@ -433,7 +445,7 @@ async def cmd_run(args: argparse.Namespace) -> int:
     if output.exists():
         output.unlink()
     packs = load_task_packs([Path(item) for item in args.paths])
-    tasks = flatten_tasks(packs)
+    tasks = filter_tasks(flatten_tasks(packs), args.only)
     if args.ci:
         skipped = [task for task in tasks if not task.ci_safe]
         tasks = [task for task in tasks if task.ci_safe]
@@ -460,6 +472,14 @@ async def cmd_run(args: argparse.Namespace) -> int:
         report_path = Path(args.report)
         write_html_report(records, report_path)
         print(f"Report: {report_path}")
+    if args.summary:
+        summary_path = Path(args.summary)
+        write_summary_json(records, summary_path)
+        print(f"Summary: {summary_path}")
+    if args.junit:
+        junit_path = Path(args.junit)
+        write_junit_report(records, junit_path)
+        print(f"JUnit: {junit_path}")
     if args.fail_under_exact is not None and accuracy < args.fail_under_exact:
         print(f"Failed threshold: {accuracy:.1%} < {args.fail_under_exact:.1%}")
         return 2
@@ -471,6 +491,14 @@ def cmd_report(args: argparse.Namespace) -> int:
     output = Path(args.output)
     write_html_report(records, output)
     print(f"Report: {output}")
+    if args.summary:
+        summary_path = Path(args.summary)
+        write_summary_json(records, summary_path)
+        print(f"Summary: {summary_path}")
+    if args.junit:
+        junit_path = Path(args.junit)
+        write_junit_report(records, junit_path)
+        print(f"JUnit: {junit_path}")
     return 0
 
 
@@ -485,3 +513,14 @@ def cmd_compare(args: argparse.Namespace) -> int:
     if args.fail_on_regression and comparison.regressions:
         return 2
     return 0
+
+
+def filter_tasks(tasks: list, only: str) -> list:
+    if not only:
+        return tasks
+    wanted = {item.strip() for item in only.split(",") if item.strip()}
+    filtered = [task for task in tasks if task.id in wanted]
+    missing = sorted(wanted - {task.id for task in filtered})
+    if missing:
+        raise ValueError(f"Unknown task id(s) for --only: {', '.join(missing)}")
+    return filtered

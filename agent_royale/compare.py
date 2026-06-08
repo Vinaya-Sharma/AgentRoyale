@@ -144,7 +144,7 @@ def supported_rate(records: list[RunRecord]) -> float:
     scoreable = [record for record in records if record.scoreable]
     if not scoreable:
         return 0
-    return sum(1 for record in scoreable if record.passed and not record.failure_mode) / len(scoreable)
+    return sum(1 for record in scoreable if source_supported(record)) / len(scoreable)
 
 
 def count_scoreable(records: list[RunRecord]) -> int:
@@ -174,8 +174,26 @@ def total_cost(records: list[RunRecord]) -> float | None:
 
 
 def outcomes(records: list[RunRecord]) -> tuple[str, ...]:
-    names = {record.failure_mode or ("correct" if record.passed else record.outcome) for record in records}
+    names = {record_verdict(record) for record in records}
     return tuple(sorted(names))
+
+
+def source_supported(record: RunRecord) -> bool:
+    if record.citation_supports_claim:
+        return bool(record.passed)
+    return bool(record.passed and not record.failure_mode and record.citation_supported)
+
+
+def record_verdict(record: RunRecord) -> str:
+    if record.final_verdict:
+        return record.final_verdict
+    if not record.scoreable:
+        return record.failure_mode or record.outcome or "oracle_failed"
+    if record.passed and not record.failure_mode:
+        return "correct"
+    if record.passed and record.failure_mode:
+        return "correct_unsupported"
+    return record.failure_mode or record.outcome or "failed"
 
 
 def render_terminal_summary(comparison: RunComparison) -> str:

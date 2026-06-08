@@ -134,24 +134,88 @@ def normalize_value(value: Any, answer_type: str) -> str | float | None:
     return normalize_string(raw)
 
 
-def grade(task: Task, truth: str | float, answer: str) -> tuple[bool, str, str | float | None, str | float | None]:
+def grade_with_trace(task: Task, truth: str | float, answer: str) -> dict[str, Any]:
     claim = extract_claim(answer, task.answer_type, truth)
     normalized_claim = normalize_value(claim, task.answer_type)
     normalized_truth = normalize_value(truth, task.answer_type)
+    trace: dict[str, Any] = {
+        "answer_type": task.answer_type,
+        "raw_answer": str(answer or ""),
+        "raw_claim": claim,
+        "raw_truth": truth,
+        "normalized_claim": normalized_claim,
+        "normalized_truth": normalized_truth,
+        "tolerance": None,
+        "comparison": "unparseable",
+        "matched": False,
+    }
     if normalized_claim is None or normalized_truth is None:
-        return False, claim, normalized_claim, normalized_truth
+        return {
+            "passed": False,
+            "claim": claim,
+            "normalized_claim": normalized_claim,
+            "normalized_truth": normalized_truth,
+            "trace": trace,
+        }
     if isinstance(normalized_claim, (int, float)) and isinstance(normalized_truth, (int, float)):
         tolerance = parse_tolerance(task.tolerance, float(normalized_truth))
-        return math.isclose(
+        matched = math.isclose(
             float(normalized_claim),
             float(normalized_truth),
             abs_tol=tolerance,
-        ), claim, normalized_claim, normalized_truth
+        )
+        trace.update(
+            {
+                "tolerance": tolerance,
+                "comparison": "numeric_abs_tolerance",
+                "delta": abs(float(normalized_claim) - float(normalized_truth)),
+                "matched": matched,
+            }
+        )
+        return {
+            "passed": matched,
+            "claim": claim,
+            "normalized_claim": normalized_claim,
+            "normalized_truth": normalized_truth,
+            "trace": trace,
+        }
     if normalized_truth and task.answer_type in {"string", "enum", "date"}:
         normalized_answer = normalize_string(answer)
         if str(normalized_truth) in normalized_answer:
-            return True, str(truth), normalized_truth, normalized_truth
-    return normalized_claim == normalized_truth, claim, normalized_claim, normalized_truth
+            trace.update(
+                {
+                    "raw_claim": str(truth),
+                    "normalized_claim": normalized_truth,
+                    "comparison": "truth_substring_in_answer",
+                    "matched": True,
+                }
+            )
+            return {
+                "passed": True,
+                "claim": str(truth),
+                "normalized_claim": normalized_truth,
+                "normalized_truth": normalized_truth,
+                "trace": trace,
+            }
+    matched = normalized_claim == normalized_truth
+    trace.update({"comparison": "normalized_exact", "matched": matched})
+    return {
+        "passed": matched,
+        "claim": claim,
+        "normalized_claim": normalized_claim,
+        "normalized_truth": normalized_truth,
+        "trace": trace,
+    }
+
+
+def grade(task: Task, truth: str | float, answer: str) -> tuple[bool, str, str | float | None, str | float | None]:
+    result = grade_with_trace(task, truth, answer)
+    return (
+        bool(result["passed"]),
+        str(result["claim"]),
+        result["normalized_claim"],
+        result["normalized_truth"],
+    )
 
 
 def parse_number(value: str) -> float | None:

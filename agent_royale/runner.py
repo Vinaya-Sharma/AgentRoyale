@@ -6,10 +6,14 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from agent_royale.grading import grade
+from agent_royale.grading import grade_with_trace
 from agent_royale.ground_truth import fetch_ground_truth_snapshot
 from agent_royale.schema import RunRecord, Task
 from agent_royale.targets import call_target
+
+
+GRADER_VERSION = "2"
+ORACLE_VERSION = "2"
 
 
 async def run_tasks(
@@ -60,11 +64,34 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
                 ground_truth_snapshot=truth_snapshot,
                 oracle_status=truth_snapshot.status,
                 scoreable=False,
+                task_pack_name=task.task_pack_name,
+                task_pack_version=task.task_pack_version,
+                task_hash=task.stable_hash(),
+                grader_version=GRADER_VERSION,
+                oracle_version=ORACLE_VERSION,
+                value_correct=False,
+                source_correct=False,
+                citation_supports_claim=False,
+                final_verdict=(
+                    "ground_truth_ambiguous"
+                    if "ambiguous" in truth_snapshot.status
+                    else "oracle_failed"
+                ),
                 normalized_claim=None,
                 normalized_truth=None,
+                grading_trace={},
+                citation_checks=[],
                 passed=False,
-                outcome="ground_truth_ambiguous" if "ambiguous" in truth_snapshot.status else "oracle_failed",
-                failure_mode="ground_truth_ambiguous" if "ambiguous" in truth_snapshot.status else "oracle_failed",
+                outcome=(
+                    "ground_truth_ambiguous"
+                    if "ambiguous" in truth_snapshot.status
+                    else "oracle_failed"
+                ),
+                failure_mode=(
+                    "ground_truth_ambiguous"
+                    if "ambiguous" in truth_snapshot.status
+                    else "oracle_failed"
+                ),
                 citations=[],
                 citation_supported=False,
                 required_source=truth_snapshot.source_url or task.required_source,
@@ -78,19 +105,31 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             call_target(target, task, timeout_seconds=timeout_seconds),
             timeout=timeout_seconds,
         )
-        passed, claim, normalized_claim, normalized_truth = grade(task, truth, stack_response.answer)
-        citation_supported = citations_support(
+        grading = grade_with_trace(task, truth, stack_response.answer)
+        passed = bool(grading["passed"])
+        claim = str(grading["claim"])
+        normalized_claim = grading["normalized_claim"]
+        normalized_truth = grading["normalized_truth"]
+        citation_result = check_citations(
             stack_response.citations,
-            required_source=task.required_source,
-            claim=str(claim),
+            task=task,
+            claim=claim,
         )
+        source_correct = bool(citation_result["source_correct"])
+        citation_supported = bool(citation_result["citation_supports_claim"])
         failure_mode = classify_failure(
             passed=passed,
             answer=stack_response.answer,
-            claim=str(claim),
+            claim=claim,
+            source_correct=source_correct,
             citation_supported=citation_supported,
             required_source=task.required_source,
             citations=[item.url for item in stack_response.citations],
+        )
+        final_verdict = final_verdict_for(
+            passed=passed,
+            failure_mode=failure_mode,
+            scoreable=True,
         )
         return RunRecord(
             run_id=run_id,
@@ -103,8 +142,19 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             ground_truth_snapshot=truth_snapshot,
             oracle_status=truth_snapshot.status,
             scoreable=True,
+            task_pack_name=task.task_pack_name,
+            task_pack_version=task.task_pack_version,
+            task_hash=task.stable_hash(),
+            grader_version=GRADER_VERSION,
+            oracle_version=ORACLE_VERSION,
+            value_correct=passed,
+            source_correct=source_correct,
+            citation_supports_claim=citation_supported,
+            final_verdict=final_verdict,
             normalized_claim=normalized_claim,
             normalized_truth=normalized_truth,
+            grading_trace=grading["trace"],
+            citation_checks=citation_result["checks"],
             passed=passed,
             outcome="correct" if passed else "failed",
             failure_mode=failure_mode,
@@ -129,8 +179,19 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
             ground_truth_snapshot=None,
             oracle_status="oracle_failed",
             scoreable=False,
+            task_pack_name=task.task_pack_name,
+            task_pack_version=task.task_pack_version,
+            task_hash=task.stable_hash(),
+            grader_version=GRADER_VERSION,
+            oracle_version=ORACLE_VERSION,
+            value_correct=False,
+            source_correct=False,
+            citation_supports_claim=False,
+            final_verdict="tool_failure",
             normalized_claim=None,
             normalized_truth=None,
+            grading_trace={},
+            citation_checks=[],
             passed=False,
             outcome="error",
             failure_mode="tool_failure",
@@ -144,17 +205,55 @@ async def evaluate_one(task: Task, target: str, timeout_seconds: float) -> RunRe
         )
 
 
-def citations_support(citations: list, *, required_source: str, claim: str) -> bool:
-    required = normalize_url(required_source)
+def check_citations(citations: list, *, task: Task, claim: str) -> dict:
+    required = normalize_url(task.required_source)
     claim_norm = claim.strip().lower()
+    claim_digits = digits(claim_norm)
+    checks = []
+    source_correct = False
+    citation_supports_claim = False
+    policy = task.source_policy
     for citation in citations:
         url = normalize_url(citation.url)
-        if required and required not in url and url not in required:
-            continue
+        source_matches = source_matches_policy(url, required, task)
+        source_correct = source_correct or source_matches
         quote = citation.quote.lower()
-        if not quote or claim_norm in quote or digits(claim_norm) in digits(quote):
-            return True
-    return False
+        quote_digits = digits(quote)
+        quote_supports = bool(
+            source_matches
+            and (quote or not policy.require_quote)
+            and (
+                claim_norm in quote
+                or (claim_digits and claim_digits in quote_digits)
+                or not policy.require_quote
+            )
+        )
+        citation_supports_claim = citation_supports_claim or quote_supports
+        checks.append(
+            {
+                "url": citation.url,
+                "source_matches": source_matches,
+                "quote_present": bool(quote.strip()),
+                "quote_supports_claim": quote_supports,
+            }
+        )
+    return {
+        "source_correct": source_correct,
+        "citation_supports_claim": citation_supports_claim,
+        "checks": checks,
+    }
+
+
+def citations_support(citations: list, *, required_source: str, claim: str) -> bool:
+    task = Task(
+        id="citation_support",
+        question="",
+        required_source=required_source,
+        ground_truth={"method": "static", "value": "unused"},
+    )
+    return bool(
+        check_citations(citations, task=task, claim=claim)["citation_supports_claim"]
+    )
 
 
 def classify_failure(
@@ -162,23 +261,69 @@ def classify_failure(
     passed: bool,
     answer: str,
     claim: str = "",
+    source_correct: bool,
     citation_supported: bool,
     required_source: str,
     citations: list[str],
 ) -> str | None:
     if passed:
-        if citation_supported or not citations:
+        if citation_supported:
             return None
+        if citations and not source_correct:
+            return "wrong_source"
         return "unsupported_citation"
     if not answer.strip() or not claim.strip():
         return "no_answer"
-    if citations and not any(normalize_url(required_source) in normalize_url(url) for url in citations):
+    if citations and not source_correct:
         return "wrong_source"
     return "wrong_value"
 
 
+def final_verdict_for(*, passed: bool, failure_mode: str | None, scoreable: bool) -> str:
+    if not scoreable:
+        return failure_mode or "oracle_failed"
+    if passed and not failure_mode:
+        return "correct"
+    if passed and failure_mode:
+        return "correct_unsupported"
+    return failure_mode or "failed"
+
+
 def normalize_url(value: str) -> str:
-    return str(value or "").lower().replace("https://", "").replace("http://", "").rstrip("/")
+    text = str(value or "").lower().strip()
+    text = text.replace("https://", "").replace("http://", "")
+    text = text.removeprefix("www.")
+    return text.split("#", 1)[0].split("?", 1)[0].rstrip("/")
+
+
+def source_matches_policy(url: str, required: str, task: Task) -> bool:
+    policy = task.source_policy
+    candidates = [required, *[normalize_url(item) for item in policy.allowed_sources]]
+    if policy.match == "allowed_sources":
+        return any(url_matches(url, item, "exact_url") for item in candidates if item)
+    return any(url_matches(url, item, policy.match) for item in candidates if item)
+
+
+def url_matches(url: str, required: str, mode: str) -> bool:
+    if not url or not required:
+        return False
+    if mode == "contains":
+        return required in url or url in required
+    if mode == "exact_url":
+        return url == required
+    url_domain, url_path = split_url(url)
+    required_domain, required_path = split_url(required)
+    if mode == "same_domain":
+        return bool(url_domain and url_domain == required_domain)
+    if mode == "same_path":
+        return bool(url_domain and url_domain == required_domain and url_path == required_path)
+    return False
+
+
+def split_url(value: str) -> tuple[str, str]:
+    text = normalize_url(value)
+    domain, _, path = text.partition("/")
+    return domain, "/" + path if path else ""
 
 
 def digits(value: str) -> str:

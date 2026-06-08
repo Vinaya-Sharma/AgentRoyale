@@ -1,4 +1,5 @@
 name: static-smoke
+version: 1.0.0
 description: Offline smoke tasks for checking a local Agent Royale target contract.
 tasks:
   - id: smoke_price
@@ -9,6 +10,8 @@ tasks:
     labels:
       - smoke
       - pricing
+    source_policy:
+      match: same_path
     ground_truth:
       method: static
       value: "$19.00"
@@ -22,6 +25,8 @@ tasks:
     labels:
       - smoke
       - social
+    source_policy:
+      match: same_path
     ground_truth:
       method: static
       value: 12500

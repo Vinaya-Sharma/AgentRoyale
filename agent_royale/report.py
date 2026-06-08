@@ -6,6 +6,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from statistics import median
 from urllib.parse import urlparse
+from xml.etree import ElementTree
 
 from agent_royale.schema import RunRecord
 
@@ -25,12 +26,12 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     oracle_issue_records = [item for item in records if not item.scoreable]
     scoreable_total = len(scoreable_records)
     exact_correct = sum(1 for item in scoreable_records if item.passed)
-    source_supported = sum(1 for item in scoreable_records if item.passed and not item.failure_mode)
+    source_supported = sum(1 for item in scoreable_records if record_source_supported(item))
     accuracy = exact_correct / scoreable_total if scoreable_total else 0
     issue_count = sum(1 for item in records if item.failure_mode)
     no_answer = sum(1 for item in records if item.failure_mode == "no_answer")
     latencies = [item.latency_ms for item in records if item.latency_ms]
-    failures = Counter(item.failure_mode or "source_supported_correct" for item in records)
+    failures = Counter(record_verdict(item) for item in records)
     oracle_statuses = Counter(item.oracle_status or "unknown" for item in records)
     median_latency = median(latencies) if latencies else 0
     by_task = defaultdict(list)
@@ -40,8 +41,8 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     created_at = records[0].created_at if records else ""
     source_summary = summarize_required_sources(records)
     grading_summary = summarize_grading(records)
-    rows = "\n".join(render_record(record) for record in sorted(records, key=lambda item: (not bool(item.failure_mode), item.task_id)))
-    issue_records = [record for record in records if record.failure_mode]
+    rows = "\n".join(render_record(record) for record in sorted(records, key=lambda item: (record_verdict(item) == "correct", item.task_id)))
+    issue_records = [record for record in records if record_verdict(record) != "correct"]
     catch_cards = "\n".join(render_catch(record) for record in issue_records[:3])
     failure_rows = "\n".join(
         f"<tr><td><span class=\"status-dot {status_class(name)}\"></span>{esc(pretty_label(name))}</td><td>{count}</td><td>{pct(count, total)}</td></tr>"
@@ -53,8 +54,8 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     )
     task_rows = "\n".join(
         f"<tr><td><code>{esc(task_id)}</code><div class=\"question\">{esc(runs[0].task_question)}</div></td><td>{sum(1 for r in runs if r.passed)}/{len(runs)}</td>"
-        f"<td>{sum(1 for r in runs if r.passed and not r.failure_mode)}/{len(runs)}</td>"
-        f"<td>{esc(', '.join(pretty_label(item) for item in sorted(set(r.failure_mode or 'correct' for r in runs))))}</td></tr>"
+        f"<td>{sum(1 for r in runs if record_source_supported(r))}/{len(runs)}</td>"
+        f"<td>{esc(', '.join(pretty_label(item) for item in sorted(set(record_verdict(r) for r in runs))))}</td></tr>"
         for task_id, runs in sorted(by_task.items())
     )
     verdict = "Launch-safe" if accuracy >= 0.8 else "Needs attention" if accuracy >= 0.6 else "High risk"
@@ -111,6 +112,10 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .failure {{ color:var(--bad); font-weight:750; }}
     .source {{ color:#475467; font-size:12px; max-width:320px; overflow-wrap:anywhere; }}
     .citation-list {{ margin-top:6px; display:grid; gap:3px; }}
+    details.debug {{ margin-top:8px; border:1px solid #e8ecf3; border-radius:8px; background:#f8fafc; padding:7px 8px; }}
+    details.debug summary {{ cursor:pointer; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }}
+    .debug-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; margin-top:7px; font-size:11px; color:#475467; }}
+    .debug-grid code {{ font-size:11px; overflow-wrap:anywhere; }}
     .required {{ font-weight:800; color:#344054; }}
     .catch-list {{ display:grid; gap:10px; }}
     .catch {{ border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:8px; background:#fff; padding:13px 14px; }}
@@ -179,7 +184,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
       </div>
       <div class="method-card">
         <strong>Source check</strong>
-        <p>Each citation URL is checked against the task's required source. Matching values from the wrong source are marked as source failures.</p>
+        <p>Each citation URL is checked against the task's required source, and citation quotes must support the extracted claim. Correct values without source-backed quotes are separated from fully supported answers.</p>
       </div>
     </section>
 
@@ -214,16 +219,100 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     output.write_text(html_text, encoding="utf-8")
 
 
+def write_summary_json(records: list[RunRecord], output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    total = len(records)
+    scoreable = [record for record in records if record.scoreable]
+    exact_correct = sum(1 for record in scoreable if record.passed)
+    source_supported = sum(1 for record in scoreable if record_source_supported(record))
+    payload = {
+        "total_runs": total,
+        "scoreable_runs": len(scoreable),
+        "exact_correct": exact_correct,
+        "exact_accuracy": exact_correct / len(scoreable) if scoreable else 0,
+        "source_supported_correct": source_supported,
+        "source_supported_accuracy": source_supported / len(scoreable) if scoreable else 0,
+        "oracle_skips": total - len(scoreable),
+        "outcomes": dict(Counter(record_verdict(record) for record in records)),
+        "oracle_statuses": dict(Counter(record.oracle_status or "unknown" for record in records)),
+        "tasks": [
+            {
+                "task_id": record.task_id,
+                "task_pack_name": record.task_pack_name,
+                "task_pack_version": record.task_pack_version,
+                "task_hash": record.task_hash,
+                "final_verdict": record_verdict(record),
+                "value_correct": record.value_correct,
+                "source_correct": record.source_correct,
+                "citation_supports_claim": record.citation_supports_claim,
+                "failure_mode": record.failure_mode,
+                "required_source": record.required_source,
+                "extracted_claim": record.extracted_claim,
+                "ground_truth": record.ground_truth,
+                "latency_ms": record.latency_ms,
+                "error": record.error,
+            }
+            for record in records
+        ],
+    }
+    output.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def write_junit_report(records: list[RunRecord], output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    failures = [record for record in records if record_verdict(record) != "correct"]
+    suite = ElementTree.Element(
+        "testsuite",
+        {
+            "name": "agent-royale",
+            "tests": str(len(records)),
+            "failures": str(len(failures)),
+            "errors": "0",
+        },
+    )
+    for record in records:
+        case = ElementTree.SubElement(
+            suite,
+            "testcase",
+            {
+                "classname": record.task_pack_name or "agent_royale",
+                "name": record.task_id,
+                "time": f"{record.latency_ms / 1000:.3f}" if record.latency_ms else "0",
+            },
+        )
+        verdict = record_verdict(record)
+        if verdict != "correct":
+            failure = ElementTree.SubElement(
+                case,
+                "failure",
+                {
+                    "type": verdict,
+                    "message": pretty_label(verdict),
+                },
+            )
+            failure.text = (
+                f"Question: {record.task_question}\n"
+                f"Expected: {record.ground_truth}\n"
+                f"Got: {record.extracted_claim or record.answer}\n"
+                f"Required source: {record.required_source}\n"
+                f"Error: {record.error or ''}"
+            )
+    tree = ElementTree.ElementTree(suite)
+    ElementTree.indent(tree, space="  ")
+    tree.write(output, encoding="utf-8", xml_declaration=True)
+
+
 def render_record(record: RunRecord) -> str:
-    if record.failure_mode == "wrong_source":
+    verdict = record_verdict(record)
+    if verdict == "wrong_source":
         status_label = "SOURCE FAIL"
-    elif record.failure_mode == "unsupported_citation":
+    elif verdict in {"unsupported_citation", "correct_unsupported"}:
         status_label = "SOURCE ISSUE"
     elif record.passed:
         status_label = "PASS"
     else:
         status_label = "FAIL"
-    status = f'<span class="{"pass" if record.passed and not record.failure_mode else "fail"}">{status_label}</span>'
+    status = f'<span class="{"pass" if verdict == "correct" else "fail"}">{status_label}</span>'
     answer_text = truncate_text(compact_text(record.answer or record.error or ""), 260)
     model = model_label(record)
     evidence = ""
@@ -237,11 +326,36 @@ def render_record(record: RunRecord) -> str:
         f"<td><code>{esc(record.task_id)}</code><div class=\"question\">{esc(record.task_question)}</div></td>"
         f"<td class=\"model\">{esc(model)}{render_tools(record)}</td>"
         f"<td class=\"answer\">{esc(answer_text)}</td>"
-        f"<td class=\"claim\">{esc(record.extracted_claim)}</td>"
+        f"<td class=\"claim\">{esc(record.extracted_claim)}{render_debug(record)}</td>"
         f"<td class=\"truth\">{esc(record.ground_truth)}{evidence}</td>"
-        f"<td><div class=\"failure\">{esc(pretty_label(record.failure_mode or 'correct'))}</div><div class=\"muted\" style=\"font-size:11px;margin-top:3px\">Oracle: {esc(oracle_status)}</div></td>"
+        f"<td><div class=\"failure\">{esc(pretty_label(verdict))}</div><div class=\"muted\" style=\"font-size:11px;margin-top:3px\">Oracle: {esc(oracle_status)}</div></td>"
         f"<td class=\"source\">{render_citations(record)}</td>"
         "</tr>"
+    )
+
+
+def render_debug(record: RunRecord) -> str:
+    trace = record.grading_trace or {}
+    if not trace and not record.citation_checks:
+        return ""
+    claim = trace.get("normalized_claim", record.normalized_claim)
+    truth = trace.get("normalized_truth", record.normalized_truth)
+    comparison = trace.get("comparison", "")
+    tolerance = trace.get("tolerance", "")
+    citation_count = len(record.citation_checks)
+    quote_support = sum(1 for item in record.citation_checks if item.get("quote_supports_claim"))
+    source_matches = sum(1 for item in record.citation_checks if item.get("source_matches"))
+    return (
+        '<details class="debug">'
+        "<summary>grading trace</summary>"
+        '<div class="debug-grid">'
+        f"<div>normalized claim</div><code>{esc(claim)}</code>"
+        f"<div>normalized truth</div><code>{esc(truth)}</code>"
+        f"<div>comparison</div><code>{esc(comparison)}</code>"
+        f"<div>tolerance</div><code>{esc(tolerance)}</code>"
+        f"<div>source matches</div><code>{source_matches}/{citation_count}</code>"
+        f"<div>quote supports</div><code>{quote_support}/{citation_count}</code>"
+        "</div></details>"
     )
 
 
@@ -266,7 +380,10 @@ def render_tools(record: RunRecord) -> str:
 
 
 def render_citations(record: RunRecord) -> str:
-    required = f"<div><span class=\"required\">Required:</span> {esc(record.required_source)}</div>"
+    required = (
+        f"<div><span class=\"required\">Required:</span> {esc(record.required_source)}</div>"
+        f"<div class=\"muted\" style=\"font-size:11px\">Source match: {yes_no(record.source_correct)}; quote support: {yes_no(record.citation_supports_claim)}</div>"
+    )
     if not record.citations:
         return required + "<div class=\"citation-list muted\">No citations returned</div>"
     citation_rows = []
@@ -281,7 +398,7 @@ def render_catch(record: RunRecord) -> str:
     cited = ", ".join(citation_domain(item.url) for item in record.citations[:2]) or "none"
     return (
         "<div class=\"catch\">"
-        f"<div class=\"catch-title\"><code>{esc(record.task_id)}</code><span class=\"failure\">{esc(pretty_label(record.failure_mode or 'failed'))}</span></div>"
+        f"<div class=\"catch-title\"><code>{esc(record.task_id)}</code><span class=\"failure\">{esc(pretty_label(record_verdict(record)))}</span></div>"
         "<div class=\"catch-grid\">"
         f"<div><div class=\"mini-label\">Agent said</div><div class=\"claim\">{esc(record.extracted_claim)}</div></div>"
         f"<div><div class=\"mini-label\">Oracle had</div><div class=\"truth\">{esc(record.ground_truth)}</div></div>"
@@ -295,7 +412,7 @@ def render_catch(record: RunRecord) -> str:
 def short_summary(records: list[RunRecord]) -> str:
     if not records:
         return "Every answer matched the independent oracle and source-support check for this run."
-    modes = Counter(record.failure_mode or "failed" for record in records)
+    modes = Counter(record_verdict(record) for record in records)
     parts = []
     if modes.get("wrong_source"):
         parts.append("source drift")
@@ -303,6 +420,8 @@ def short_summary(records: list[RunRecord]) -> str:
         parts.append("stale or incorrect values")
     if modes.get("unsupported_citation"):
         parts.append("answers whose citations did not support the claim")
+    if modes.get("correct_unsupported"):
+        parts.append("correct values without source-backed citation quotes")
     if modes.get("no_answer"):
         parts.append("missing answers")
     if not parts:
@@ -368,6 +487,7 @@ def compact_url(value: str) -> str:
 def pretty_label(value: object) -> str:
     labels = {
         "source_supported_correct": "correct with source support",
+        "correct_unsupported": "correct but unsupported",
         "unsupported_citation": "unsupported citation",
         "wrong_source": "wrong source",
         "wrong_value": "wrong value",
@@ -384,6 +504,28 @@ def pretty_label(value: object) -> str:
     }
     text = str(value)
     return labels.get(text, text.replace("_", " "))
+
+
+def record_verdict(record: RunRecord) -> str:
+    if record.final_verdict:
+        return record.final_verdict
+    if not record.scoreable:
+        return record.failure_mode or record.outcome or "oracle_failed"
+    if record.passed and not record.failure_mode:
+        return "correct"
+    if record.passed and record.failure_mode:
+        return "correct_unsupported"
+    return record.failure_mode or record.outcome or "failed"
+
+
+def record_source_supported(record: RunRecord) -> bool:
+    if record.citation_supports_claim:
+        return bool(record.passed)
+    return bool(record.passed and not record.failure_mode and record.citation_supported)
+
+
+def yes_no(value: object) -> str:
+    return "yes" if value else "no"
 
 
 def status_class(value: object) -> str:

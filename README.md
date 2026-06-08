@@ -32,7 +32,7 @@ task pack -> oracle audit -> target run -> report -> compare before/after
 2. Fetch independent ground truth from a public API, page parser, or Bright Data.
 3. Call the target agent or retrieval layer.
 4. Grade exact values deterministically.
-5. Store provenance, evidence snippets, oracle status, latency, and cost.
+5. Store provenance, evidence snippets, oracle status, grading trace, citation checks, latency, and cost.
 6. Compare runs after prompt, model, parser, or retrieval changes.
 
 No LLM judge is used for the core exact-value grade.
@@ -51,7 +51,9 @@ python -m agent_royale lint task-packs/static-smoke.yaml
 python -m agent_royale audit task-packs/static-smoke.yaml
 python -m agent_royale run task-packs/static-smoke.yaml \
   --target examples/echo_agent.py:answer \
-  --report reports/smoke.html
+  --report reports/smoke.html \
+  --summary reports/smoke-summary.json \
+  --junit reports/smoke.xml
 ```
 
 Watch the runner catch a wrong answer:
@@ -60,6 +62,15 @@ Watch the runner catch a wrong answer:
 python -m agent_royale run task-packs/static-smoke.yaml \
   --target examples/flaky_agent.py:answer \
   --report reports/failure-demo.html
+```
+
+Reproduce one task by ID when debugging:
+
+```bash
+python -m agent_royale run task-packs/static-smoke.yaml \
+  --target examples/flaky_agent.py:answer \
+  --only smoke_price \
+  --report reports/smoke-price-debug.html
 ```
 
 Targets can be:
@@ -105,21 +116,55 @@ See [docs/golden-path.md](docs/golden-path.md) for the full walkthrough.
 - **Task packs:** YAML files for exact, source-specific retrieval tests
 - **Oracle audit:** preflight checks that verify ground truth before testing a target
 - **Ground-truth snapshots:** source URL, fetch time, parser metadata, evidence text, oracle status, and ambiguity flags
+- **Oracle policies:** task-level checks for evidence support, single-candidate extraction, confidence, and source freshness
 - **Target adapters:** HTTP endpoint, Python function, OpenRouter, and examples for web data, search, browser, and scraping stacks
 - **Deterministic graders:** string, number, currency, percentage, date, and enum matching
-- **Failure labels:** wrong value, wrong source, unsupported citation, no answer, tool failure, oracle ambiguity
-- **Reports:** terminal summary, JSONL run log, and shareable HTML report
+- **Citation policies:** source matching by contains, exact URL, same path, same domain, or explicit allowed sources
+- **Failure labels:** wrong value, wrong source, unsupported citation, no answer, tool failure, oracle ambiguity, correct-but-unsupported
+- **Reports:** terminal summary, JSONL run log, shareable HTML report, JSON summary, and JUnit XML
 - **Run comparison:** before/after accuracy, source-supported accuracy, oracle skips, latency, cost, regressions, and Markdown output
-- **Task-pack linting:** static checks for fragile oracles, volatile CI gates, broad regexes, missing provenance, and weak search-result ground truth
+- **Task-pack linting:** static checks for fragile oracles, volatile CI gates, broad regexes, missing provenance, weak search-result ground truth, missing pack versions, and permissive CI source matching
 - **CI gates:** nonzero exit when accuracy drops below a threshold
 
 ## Why Ground Truth Is Treated Carefully
 
 Ground truth is the product. Agent Royale does not assume a live page is stable just because it was fetched.
 
-Every scored run stores an oracle snapshot. If the oracle cannot verify a value, returns conflicting candidates, misses required context, or looks ambiguous, the task is skipped instead of counted against the target. Task packs can mark sources as `stable`, `semi_stable`, or `volatile`, and volatile tasks can be excluded from CI with `ci_safe: false`.
+Every scored run stores an oracle snapshot, task-pack metadata, a stable task hash, grader version, oracle version, normalized values, and citation checks. If the oracle cannot verify a value, returns conflicting candidates, misses required context, violates the task's `oracle_policy`, or looks ambiguous, the task is skipped instead of counted against the target. Task packs can mark sources as `stable`, `semi_stable`, or `volatile`, and volatile tasks can be excluded from CI with `ci_safe: false`.
 
 For build-blocking checks, use stable packs backed by public APIs or slow-moving source fields. For fast-changing pages such as ecommerce prices, social counts, and dynamic public profiles, use scheduled or on-demand reports.
+
+Task packs can tighten oracle and source requirements:
+
+```yaml
+name: pricing-pages-v1
+version: 1.0.0
+tasks:
+  - id: example_pro_price
+    question: "Using Example Pricing, what is the current Pro plan monthly price in USD?"
+    required_source: "example.com/pricing"
+    answer_type: currency
+    tolerance: 0
+    stability: stable
+    ci_safe: true
+    source_policy:
+      match: same_path
+      require_quote: true
+    oracle_policy:
+      require_single_candidate: true
+      require_evidence_contains_value: true
+      require_confidence: verified
+    ground_truth:
+      method: http_regex
+      url: "https://example.com/pricing"
+      source_url: "example.com/pricing"
+      regex: "Pro[\\s\\S]{0,400}?\\$\\s*([0-9]+(?:\\.[0-9]{2})?)"
+      require_near_text:
+        - "Pro"
+        - "monthly"
+```
+
+Source-supported accuracy is stricter than exact-value accuracy: the answer must match the oracle, cite the required source under the task's `source_policy`, and include a quote that supports the extracted claim.
 
 ## Task Packs
 
@@ -249,12 +294,17 @@ jobs:
             --target examples/echo_agent.py:answer \
             --ci \
             --report reports/agent-royale.html \
+            --summary reports/agent-royale-summary.json \
+            --junit reports/agent-royale.xml \
             --fail-under-exact 1.0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: agent-royale-report
-          path: reports/agent-royale.html
+          path: |
+            reports/agent-royale.html
+            reports/agent-royale-summary.json
+            reports/agent-royale.xml
 ```
 
 See [docs/github-actions.md](docs/github-actions.md) for endpoint, OpenRouter, Bright Data, and comparison examples.

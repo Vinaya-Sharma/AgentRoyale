@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 from typing import Any, Literal
 
@@ -20,6 +21,7 @@ OracleStatus = Literal[
     "oracle_failed",
 ]
 TaskStability = Literal["stable", "semi_stable", "volatile"]
+SourceMatchMode = Literal["contains", "exact_url", "same_path", "same_domain", "allowed_sources"]
 
 
 class Citation(BaseModel):
@@ -68,6 +70,19 @@ class GroundTruthSpec(BaseModel):
         return self
 
 
+class OraclePolicy(BaseModel):
+    require_single_candidate: bool = True
+    require_evidence_contains_value: bool = True
+    require_confidence: str = "verified"
+    max_source_age_seconds: int | None = None
+
+
+class SourcePolicy(BaseModel):
+    match: SourceMatchMode = "contains"
+    allowed_sources: list[str] = Field(default_factory=list)
+    require_quote: bool = True
+
+
 class Task(BaseModel):
     id: str
     question: str
@@ -76,9 +91,24 @@ class Task(BaseModel):
     tolerance: float | str = 0
     labels: list[str] = Field(default_factory=list)
     ground_truth: GroundTruthSpec
+    oracle_policy: OraclePolicy = Field(default_factory=OraclePolicy)
+    source_policy: SourcePolicy = Field(default_factory=SourcePolicy)
     notes: str = ""
     stability: TaskStability = "semi_stable"
     ci_safe: bool = True
+    task_pack_name: str = ""
+    task_pack_version: str = ""
+
+    def stable_hash(self) -> str:
+        payload = self.model_dump(
+            exclude={
+                "task_pack_name",
+                "task_pack_version",
+            },
+            mode="json",
+        )
+        text = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 class GroundTruthSnapshot(BaseModel):
@@ -102,6 +132,7 @@ class GroundTruthSnapshot(BaseModel):
 
 class TaskPack(BaseModel):
     name: str = "custom"
+    version: str = ""
     description: str = ""
     tasks: list[Task]
 
@@ -117,8 +148,19 @@ class RunRecord(BaseModel):
     ground_truth_snapshot: GroundTruthSnapshot | None = None
     oracle_status: OracleStatus | None = None
     scoreable: bool = True
+    task_pack_name: str = ""
+    task_pack_version: str = ""
+    task_hash: str = ""
+    grader_version: str = "1"
+    oracle_version: str = "1"
+    value_correct: bool = False
+    source_correct: bool = False
+    citation_supports_claim: bool = False
+    final_verdict: str = ""
     normalized_claim: str | float | None
     normalized_truth: str | float | None
+    grading_trace: dict[str, Any] = Field(default_factory=dict)
+    citation_checks: list[dict[str, Any]] = Field(default_factory=list)
     passed: bool
     outcome: str
     failure_mode: str | None = None
@@ -165,6 +207,8 @@ def flatten_tasks(packs: list[TaskPack]) -> list[Task]:
             if task.id in seen:
                 raise ValueError(f"Duplicate task id: {task.id}")
             seen.add(task.id)
+            task.task_pack_name = pack.name
+            task.task_pack_version = pack.version
             tasks.append(task)
     return tasks
 
