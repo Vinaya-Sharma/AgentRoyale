@@ -6,6 +6,7 @@ import json
 import os
 import re
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
@@ -15,7 +16,14 @@ from agent_royale import __version__
 from agent_royale.compare import compare_run_files, render_markdown_report, render_terminal_summary
 from agent_royale.ground_truth import fetch_ground_truth, fetch_ground_truth_snapshot
 from agent_royale.lint import lint_task_paths, render_lint_findings
-from agent_royale.report import load_records, write_html_report, write_junit_report, write_summary_json
+from agent_royale.report import (
+    load_records,
+    record_source_supported,
+    record_verdict,
+    write_html_report,
+    write_junit_report,
+    write_summary_json,
+)
 from agent_royale.runner import run_tasks
 from agent_royale.schema import flatten_tasks, load_task_packs, validation_errors
 from agent_royale.targets import call_target
@@ -121,8 +129,12 @@ def main(argv: list[str] | None = None) -> int:
         return asyncio.run(cmd_audit(args))
     if args.command == "lint":
         return cmd_lint(args)
+    if args.command == "demo":
+        return asyncio.run(cmd_demo(args))
     if args.command == "run":
         return asyncio.run(cmd_run(args))
+    if args.command == "sweep":
+        return asyncio.run(cmd_sweep(args))
     if args.command == "compare":
         return cmd_compare(args)
     if args.command == "report":
@@ -175,6 +187,10 @@ def build_parser() -> argparse.ArgumentParser:
     lint.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
     lint.add_argument("--strict", action="store_true", help="Treat warnings as failures.")
 
+    demo = sub.add_parser("demo", help="Run the offline failure demo and generate reports.")
+    demo.add_argument("--output-dir", default="reports/demo", help="Directory for demo outputs.")
+    demo.add_argument("--target", default="examples/flaky_agent.py:answer", help="Demo target to evaluate.")
+
     run = sub.add_parser("run", help="Run tasks against a target stack.")
     run.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
     run.add_argument("--target", required=True, help="http(s) endpoint, openrouter:<model>, or path.py:function.")
@@ -194,6 +210,25 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--output", default="reports/agent-royale-report.html")
     report.add_argument("--summary", default="", help="Optional machine-readable JSON summary output.")
     report.add_argument("--junit", default="", help="Optional JUnit XML output.")
+
+    sweep = sub.add_parser("sweep", help="Run one task pack across several models or targets.")
+    sweep.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
+    sweep.add_argument(
+        "--models",
+        default="",
+        help="Comma-separated OpenRouter model IDs. Values are converted to openrouter:<model>.",
+    )
+    sweep.add_argument(
+        "--targets",
+        default="",
+        help="Comma-separated raw targets: http(s) endpoint, openrouter:<model>, or path.py:function.",
+    )
+    sweep.add_argument("--output-dir", default="", help="Directory for sweep outputs.")
+    sweep.add_argument("--only", default="", help="Comma-separated task IDs to run.")
+    sweep.add_argument("--runs-per-task", type=int, default=1)
+    sweep.add_argument("--concurrency", type=int, default=4)
+    sweep.add_argument("--timeout", type=float, default=120)
+    sweep.add_argument("--ci", action="store_true", help="Run only tasks marked ci_safe=true.")
 
     compare = sub.add_parser("compare", help="Compare two JSONL run logs.")
     compare.add_argument("before", help="Baseline run JSONL file.")
@@ -440,6 +475,45 @@ def print_task_summary(tasks: list) -> None:
     print("Answer types: " + ", ".join(f"{name}={count}" for name, count in sorted(answer_counts.items())))
 
 
+async def cmd_demo(args: argparse.Namespace) -> int:
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output = output_dir / "demo-runs.jsonl"
+    report = output_dir / "demo-report.html"
+    summary = output_dir / "demo-summary.json"
+    junit = output_dir / "demo-junit.xml"
+    if output.exists():
+        output.unlink()
+    packs = load_task_packs([Path("task-packs/static-smoke.yaml")])
+    tasks = flatten_tasks(packs)
+    print(f"Running Agent Royale demo against {args.target}")
+    records = await run_tasks(
+        tasks,
+        target=args.target,
+        output=output,
+        runs_per_task=1,
+        concurrency=2,
+        timeout_seconds=30,
+    )
+    write_html_report(records, report)
+    write_summary_json(records, summary)
+    write_junit_report(records, junit)
+    scoreable = [record for record in records if record.scoreable]
+    passed = sum(1 for record in scoreable if record.passed)
+    issues = [record for record in records if record_verdict(record) != "correct"]
+    print(f"\nDemo exact accuracy: {passed}/{len(scoreable)}")
+    if issues:
+        print("Representative issue:")
+        issue = issues[0]
+        print(f"- {issue.task_id}: {record_verdict(issue)}")
+        print(f"  expected: {issue.ground_truth}")
+        print(f"  got: {issue.extracted_claim or issue.answer}")
+    print(f"\nReport: {report}")
+    print(f"Summary: {summary}")
+    print(f"JUnit: {junit}")
+    return 0
+
+
 async def cmd_run(args: argparse.Namespace) -> int:
     output = Path(args.output)
     if output.exists():
@@ -486,6 +560,69 @@ async def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+async def cmd_sweep(args: argparse.Namespace) -> int:
+    targets = sweep_targets(args.models, args.targets)
+    if not targets:
+        print("Pass at least one --models or --targets value.")
+        return 1
+    output_dir = Path(args.output_dir or default_sweep_dir())
+    output_dir.mkdir(parents=True, exist_ok=True)
+    packs = load_task_packs([Path(item) for item in args.paths])
+    tasks = filter_tasks(flatten_tasks(packs), args.only)
+    if args.ci:
+        skipped = [task for task in tasks if not task.ci_safe]
+        tasks = [task for task in tasks if task.ci_safe]
+        if skipped:
+            print(f"Skipping {len(skipped)} non-CI-safe task{'s' if len(skipped) != 1 else ''}.")
+    print(f"Running sweep: {len(tasks)} task(s) across {len(targets)} target(s)")
+    rows = []
+    for target in targets:
+        slug = slugify(target.replace(":", "-").replace("/", "-"))
+        run_path = output_dir / f"{slug}.jsonl"
+        report_path = output_dir / f"{slug}.html"
+        summary_path = output_dir / f"{slug}-summary.json"
+        junit_path = output_dir / f"{slug}.xml"
+        if run_path.exists():
+            run_path.unlink()
+        print(f"\nTarget: {target}")
+        records = await run_tasks(
+            tasks,
+            target=target,
+            output=run_path,
+            runs_per_task=args.runs_per_task,
+            concurrency=args.concurrency,
+            timeout_seconds=args.timeout,
+        )
+        write_html_report(records, report_path)
+        write_summary_json(records, summary_path)
+        write_junit_report(records, junit_path)
+        row = sweep_row(target, records, run_path, report_path, summary_path, junit_path)
+        rows.append(row)
+        print(
+            f"Exact: {row['exact_accuracy']:.1%}; "
+            f"source-supported: {row['source_supported_accuracy']:.1%}; "
+            f"median latency: {row['median_latency_ms']:.0f} ms"
+        )
+    rows.sort(
+        key=lambda item: (
+            -item["source_supported_accuracy"],
+            -item["exact_accuracy"],
+            item["median_latency_ms"],
+        )
+    )
+    write_sweep_outputs(rows, output_dir)
+    print(f"\nSweep summary: {output_dir / 'sweep-summary.md'}")
+    print(f"Sweep JSON: {output_dir / 'sweep-summary.json'}")
+    print("\nTop target:")
+    winner = rows[0]
+    print(
+        f"- {winner['target']} "
+        f"({winner['exact_accuracy']:.1%} exact, "
+        f"{winner['source_supported_accuracy']:.1%} source-supported)"
+    )
+    return 0
+
+
 def cmd_report(args: argparse.Namespace) -> int:
     records = load_records(Path(args.input))
     output = Path(args.output)
@@ -524,3 +661,82 @@ def filter_tasks(tasks: list, only: str) -> list:
     if missing:
         raise ValueError(f"Unknown task id(s) for --only: {', '.join(missing)}")
     return filtered
+
+
+def sweep_targets(models: str, targets: str) -> list[str]:
+    values = []
+    for model in split_csv(models):
+        values.append(model if model.startswith("openrouter:") else f"openrouter:{model}")
+    values.extend(split_csv(targets))
+    seen = set()
+    deduped = []
+    for value in values:
+        if value not in seen:
+            seen.add(value)
+            deduped.append(value)
+    return deduped
+
+
+def split_csv(value: str) -> list[str]:
+    return [item.strip() for item in str(value or "").split(",") if item.strip()]
+
+
+def default_sweep_dir() -> str:
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    return f"runs/sweeps/{stamp}"
+
+
+def sweep_row(
+    target: str,
+    records: list,
+    run_path: Path,
+    report_path: Path,
+    summary_path: Path,
+    junit_path: Path,
+) -> dict:
+    scoreable = [record for record in records if record.scoreable]
+    exact = sum(1 for record in scoreable if record.passed)
+    supported = sum(1 for record in scoreable if record_source_supported(record))
+    latencies = sorted(record.latency_ms for record in records if record.latency_ms)
+    median_latency = latencies[len(latencies) // 2] if latencies else 0
+    costs = [record.cost_usd for record in records if record.cost_usd is not None]
+    outcomes = Counter(record_verdict(record) for record in records)
+    return {
+        "target": target,
+        "runs": len(records),
+        "scoreable": len(scoreable),
+        "exact_correct": exact,
+        "exact_accuracy": exact / len(scoreable) if scoreable else 0,
+        "source_supported_correct": supported,
+        "source_supported_accuracy": supported / len(scoreable) if scoreable else 0,
+        "oracle_skips": len(records) - len(scoreable),
+        "median_latency_ms": median_latency,
+        "total_cost_usd": sum(costs) if costs else None,
+        "outcomes": dict(outcomes),
+        "run_path": str(run_path),
+        "report_path": str(report_path),
+        "summary_path": str(summary_path),
+        "junit_path": str(junit_path),
+    }
+
+
+def write_sweep_outputs(rows: list[dict], output_dir: Path) -> None:
+    json_path = output_dir / "sweep-summary.json"
+    md_path = output_dir / "sweep-summary.md"
+    json_path.write_text(json.dumps({"targets": rows}, indent=2, sort_keys=True), encoding="utf-8")
+    lines = [
+        "# Agent Royale Sweep Summary",
+        "",
+        "| Rank | Target | Exact | Source-supported | Median latency | Cost | Report |",
+        "| ---: | --- | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for idx, row in enumerate(rows, start=1):
+        cost = "" if row["total_cost_usd"] is None else f"${row['total_cost_usd']:.4f}"
+        lines.append(
+            f"| {idx} | `{row['target']}` | {row['exact_accuracy']:.1%} | "
+            f"{row['source_supported_accuracy']:.1%} | {row['median_latency_ms']:.0f} ms | "
+            f"{cost} | [{Path(row['report_path']).name}]({Path(row['report_path']).name}) |"
+        )
+    lines.append("")
+    lines.append("Targets are ranked by source-supported accuracy, then exact accuracy, then median latency.")
+    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")

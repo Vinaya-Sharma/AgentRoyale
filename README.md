@@ -47,6 +47,12 @@ agent-royale --version
 Run the offline smoke test:
 
 ```bash
+python -m agent_royale demo
+```
+
+Or run the steps directly:
+
+```bash
 python -m agent_royale lint task-packs/static-smoke.yaml
 python -m agent_royale audit task-packs/static-smoke.yaml
 python -m agent_royale run task-packs/static-smoke.yaml \
@@ -78,6 +84,22 @@ Targets can be:
 - a local or staging HTTP endpoint, such as `http://localhost:3000/api/agent`
 - an OpenRouter model adapter, such as `openrouter:provider/model`
 - a local Python function, such as `examples/echo_agent.py:answer`
+
+Sweep the same task pack across multiple models or targets:
+
+```bash
+python -m agent_royale sweep task-packs/static-smoke.yaml \
+  --targets examples/echo_agent.py:answer,examples/flaky_agent.py:answer
+```
+
+For OpenRouter model sweeps:
+
+```bash
+python -m agent_royale sweep task-packs/devtools/dependency-research.yaml \
+  --models openai/gpt-4o,google/gemini-3-1-flash-lite
+```
+
+Sweep outputs include per-target JSONL runs, HTML reports, JSON summaries, JUnit XML, and a ranked `sweep-summary.md`.
 
 ## Golden Path
 
@@ -122,6 +144,7 @@ See [docs/golden-path.md](docs/golden-path.md) for the full walkthrough.
 - **Citation policies:** source matching by contains, exact URL, same path, same domain, or explicit allowed sources
 - **Failure labels:** wrong value, wrong source, unsupported citation, no answer, tool failure, oracle ambiguity, correct-but-unsupported
 - **Reports:** terminal summary, JSONL run log, shareable HTML report, JSON summary, and JUnit XML
+- **Demo and sweeps:** one-command offline demo plus multi-target/model sweeps for choosing the right stack
 - **Run comparison:** before/after accuracy, source-supported accuracy, oracle skips, latency, cost, regressions, and Markdown output
 - **Task-pack linting:** static checks for fragile oracles, volatile CI gates, broad regexes, missing provenance, weak search-result ground truth, missing pack versions, and permissive CI source matching
 - **CI gates:** nonzero exit when accuracy drops below a threshold
