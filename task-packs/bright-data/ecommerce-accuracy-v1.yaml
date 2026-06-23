@@ -10,6 +10,7 @@
 # to a Browser API workflow with rendered evidence before being used as a
 # scoreable task.
 name: bright-data-ecommerce-accuracy-v1
+version: 1.0.0
 description: Focused ecommerce product-page tasks for Samsung Galaxy S25 Ultra variant and title extraction with Bright Data ground truth.
 tasks:
   - id: bd_ecom_v1_samsung_s25_ultra_title_color
@@ -34,10 +35,10 @@ tasks:
         - "Buy Galaxy S25 Ultra 256GB"
       source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
 
-  - id: bd_ecom_v1_samsung_s25_ultra_storage_options
-    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra SKU, what storage options are listed under Storage?"
+  - id: bd_ecom_v1_samsung_s25_ultra_512gb_price
+    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra SKU, what price is listed for the 512GB storage option in USD?"
     required_source: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
-    answer_type: string
+    answer_type: currency
     tolerance: 0
     stability: volatile
     ci_safe: false
@@ -45,15 +46,16 @@ tasks:
       - bright_data
       - ecommerce_accuracy_v1
       - samsung
-      - storage_variant
-    notes: "Extract the storage options listed under the Storage section. Reject device-family navigation labels and unrelated product options."
+      - storage_price
+    notes: "Extract the 512GB price from the Storage section. Reject the base device price, Galaxy S25 Edge price, and unrelated storage/color labels."
     ground_truth:
       method: bright_data
       tool: scrape_as_markdown
       url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
-      regex: "Storage\\s+Storage\\s+(256GB\\s+512GB\\s+1TB)"
+      regex: "Storage\\s+Storage[\\s\\S]{0,120}?512GB\\s+\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
       require_near_text:
         - "Storage"
+        - "512GB"
       source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
 
   - id: bd_ecom_v1_samsung_s25_ultra_title_product

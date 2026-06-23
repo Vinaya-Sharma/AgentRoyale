@@ -8,6 +8,7 @@
 # documents as part of the Rapid free MCP mode. They demonstrate search-result
 # and docs-page oracles without requiring Pro structured-data tools.
 name: bright-data-rapid-web
+version: 1.0.0
 description: Free-tier-friendly Bright Data MCP tasks backed by search results and scrape-as-Markdown page extraction.
 tasks:
   - id: bd_rapid_docs_search_top_result
@@ -41,12 +42,17 @@ tasks:
       - rapid_mode
       - free_tier
       - docs
+    source_policy:
+      match: same_path
     notes: "Ground truth uses Bright Data Rapid-mode scrape_as_markdown and extracts the documented monthly free request count."
     ground_truth:
       method: bright_data
       tool: scrape_as_markdown
       url: "https://docs.brightdata.com/ai/mcp-server/overview"
-      regex: "([0-9,]+)\\s+(?:free\\s+)?requests per month"
+      regex: "MCP Server Overview[\\s\\S]{0,500}?real-time access to public web data with\\s+([0-9,]+)\\s+free requests per month"
+      require_near_text:
+        - "real-time access to public web data"
+        - "zero infrastructure setup"
       source_url: "docs.brightdata.com/ai/mcp-server/overview"
 
   - id: bd_rapid_python_latest_release
@@ -66,5 +72,7 @@ tasks:
       method: bright_data
       tool: scrape_as_markdown
       url: "https://www.python.org/downloads/"
-      regex: "Download Python\\s+([0-9]+(?:\\.[0-9]+)+)"
+      regex: "Download the latest source release\\s+\\[Download Python\\s+([0-9]+(?:\\.[0-9]+)+)"
+      require_near_text:
+        - "Download the latest source release"
       source_url: "python.org/downloads"
