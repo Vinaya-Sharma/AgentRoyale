@@ -1,4 +1,6 @@
 {
+  "bd_bestbuy_airpods_pro_price": "Bright Data oracle quarantine: Best Buy AirPods Pro page returned empty content through scrape_as_markdown, scrape_as_html/product URL variants, and direct product-page fallbacks during audit. Needs a rendered Browser API workflow or structured ecommerce endpoint before official scoring.",
+  "bd_ecom_v1_samsung_s25_ultra_storage_options": "Retired after oracle audit: Samsung markdown evidence interleaved prices between storage labels, making a broad storage-options answer brittle. Replaced in the public scoreable pack with deterministic Samsung variant/price tasks rather than loosening the parser.",
   "v1_ecom_001": "Ground-truth audit quarantine: Bright Data Amazon structured product data did not expose a reliable current buy/new price field; avoid list-price/current-price ambiguity.",
   "v1_ecom_003": "Ground-truth audit quarantine: Bright Data Amazon structured product data did not expose a reliable current buy/new price field; avoid list-price/current-price ambiguity.",
   "v1_ecom_004": "Ground-truth audit quarantine: Bright Data Best Buy structured product data returned an implausible/noncanonical price during audit; needs manual source/tool validation before official scoring.",

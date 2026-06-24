@@ -51,7 +51,7 @@ If `BRIGHT_DATA_API_KEY` is missing, Agent Royale will fail the run with a clear
 
 ## Run The Ecommerce Accuracy Pack
 
-The ecommerce accuracy pack is the most complete Bright Data domain example in the repo. It keeps the first public ecommerce example focused on one dynamic Samsung product page and tests page-title, storage-option, and color-variant extraction that the current markdown oracle can verify. Exact price extraction for interactive product pages should use a Browser API workflow with rendered evidence before it becomes a scoreable task:
+The ecommerce accuracy pack is the most complete Bright Data domain example in the repo. It keeps the first public ecommerce example focused on one dynamic Samsung product page and tests page-title, variant, and price extraction that the current markdown oracle can verify. Product pages that return empty content or hide the needed value behind heavier rendering should move into the oracle salvage backlog until a rendered Browser API or structured workflow can verify them:
 
 ```bash
 python -m agent_royale validate task-packs/bright-data/ecommerce-accuracy-v1.yaml
@@ -146,3 +146,14 @@ Bright Data Pro/groups: ecommerce, LinkedIn, app stores, social, travel, browser
 | Public APIs with exact fields | `http_json` instead of Bright Data | Cheaper, faster, and easier to reproduce. |
 
 Good Bright Data tasks should name the exact source, exact field, expected region or variant, and common wrong nearby values. If the parser stops matching, update or quarantine the task instead of widening the regex until unrelated values pass.
+
+## Oracle Salvage Log
+
+Live-web task packs should improve by making the oracle stronger, not by hiding hard cases. When an oracle cannot fetch the page, finds multiple plausible values, or needs a rendered/browser workflow, keep the case in a backlog with the failure mode and next tool to try.
+
+Current examples:
+
+| Task | Status | Why it is not scoreable yet | Next step |
+|---|---|---|---|
+| `bd_bestbuy_airpods_pro_price` | quarantined | Best Buy returned empty content through the current Bright Data markdown/html/direct fallback path. | Rebuild with a rendered Browser API workflow or a structured ecommerce endpoint before scoring. |
+| `bd_ecom_v1_samsung_s25_ultra_storage_options` | retired after audit | The markdown page interleaved prices between storage labels, making a broad storage-options answer brittle. | Keep narrower Samsung variant/price tasks that the oracle can verify deterministically. |
