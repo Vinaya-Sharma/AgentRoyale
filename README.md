@@ -37,6 +37,8 @@ task pack -> oracle audit -> target run -> report -> compare before/after
 
 No LLM judge is used for the core exact-value grade.
 
+See [Reliability model](docs/reliability.md) for the diagrams, failure-mode tables, and report-field guide that explain why the scoring is trustworthy.
+
 ## Quickstart
 
 ```bash
@@ -152,6 +154,17 @@ See [docs/golden-path.md](docs/golden-path.md) for the full walkthrough.
 ## Why Ground Truth Is Treated Carefully
 
 Ground truth is the product. Agent Royale does not assume a live page is stable just because it was fetched.
+
+```mermaid
+flowchart LR
+    A["Task pack"] --> B["Oracle audit"]
+    B --> C{"Verified ground truth?"}
+    C -- "yes" --> D["Run target"]
+    C -- "no" --> E["Skip scoring + salvage report"]
+    D --> F["Deterministic grade"]
+    F --> G["Source/citation checks"]
+    G --> H["HTML/JSON/JUnit reports"]
+```
 
 Every scored run stores an oracle snapshot, task-pack metadata, a stable task hash, grader version, oracle version, normalized values, and citation checks. If the oracle cannot verify a value, returns conflicting candidates, misses required context, violates the task's `oracle_policy`, or looks ambiguous, the task is skipped instead of counted against the target. Task packs can mark sources as `stable`, `semi_stable`, or `volatile`, and volatile tasks can be excluded from CI with `ci_safe: false`.
 
@@ -350,6 +363,7 @@ See [docs/github-actions.md](docs/github-actions.md) for endpoint, OpenRouter, B
 - [Golden path](docs/golden-path.md)
 - [Quickstart](docs/quickstart.md)
 - [Task spec](docs/task-spec.md)
+- [Reliability model](docs/reliability.md)
 - [V3 task banks](docs/v3-task-banks.md)
 - [Adapter contract](docs/adapter-contract.md)
 - [GitHub Actions](docs/github-actions.md)

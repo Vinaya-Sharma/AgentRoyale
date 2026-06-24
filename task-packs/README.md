@@ -2,6 +2,8 @@
 
 These packs are intentionally small, readable, and source-specific. Developers should be able to inspect the task, understand the oracle, and decide whether the task is fair for their stack.
 
+See [Reliability model](../docs/reliability.md) for diagrams and tables explaining how Agent Royale verifies ground truth, skips unsafe tasks, and exports salvage reports instead of hiding failures.
+
 ## Packs
 
 - `static-smoke.yaml`: offline target-contract smoke tests.
@@ -32,6 +34,15 @@ The V3 external-user task-bank set focuses on three domains:
 - Company intelligence and public profile metrics: employee and follower fields from required company profiles.
 
 See [../docs/v3-task-banks.md](../docs/v3-task-banks.md) for the final domain rationale, ground-truth strategy, and quarantine/salvage policy.
+
+## Task Quality Matrix
+
+| Task quality | Ground-truth state | Report behavior | Developer action |
+|---|---|---|---|
+| Scoreable | One verified value with supporting evidence | Counts toward accuracy | Run against targets and compare stacks. |
+| Salvageable | Source fetched, but parser is broken or ambiguous | Exported by `audit-errors` | Tighten parser, add context, or split the question. |
+| Needs stronger tool | Markdown/HTML path cannot expose the value | Quarantined with next tool to try | Use structured Bright Data, browser workflow, or another oracle. |
+| Not a fit | Subjective, multi-source, or account-specific | Keep out of benchmark | Rewrite as one exact source-specific question. |
 
 Create a starter pack:
 

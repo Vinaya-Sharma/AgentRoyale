@@ -2,6 +2,8 @@
 
 V3 focuses on making Agent Royale usable by external teams who want to bring their own product questions. The final task-bank set should cover three kinds of live-web retrieval work: stable developer metadata, messy ecommerce pages, and dynamic company intelligence.
 
+For the scoring and quarantine mechanics behind these task banks, see the [Reliability model](reliability.md).
+
 ## 1. Developer Dependency And Docs Research
 
 Use this domain for agents that help developers choose packages, read SDK docs, or answer release/version questions.
