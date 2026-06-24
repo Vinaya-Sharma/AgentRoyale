@@ -5,10 +5,10 @@
 #   BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 #
 # This pack intentionally stays narrow. It uses one dynamic Samsung ecommerce
-# page and tests exact variant/title fields that the current Bright Data
-# markdown oracle can verify. Price extraction for pages like this should move
-# to a Browser API workflow with rendered evidence before being used as a
-# scoreable task.
+# page and tests exact variant, title, and price fields that the current
+# Bright Data markdown oracle can verify. Product pages that return empty
+# content or hide values behind heavier rendering should move to the salvage
+# backlog until a rendered Browser API or structured workflow can verify them.
 name: bright-data-ecommerce-accuracy-v1
 version: 1.0.0
 description: Focused ecommerce product-page tasks for Samsung Galaxy S25 Ultra variant and title extraction with Bright Data ground truth.

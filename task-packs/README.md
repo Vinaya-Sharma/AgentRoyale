@@ -23,6 +23,16 @@ The included packs now contain 79 tasks. The flagship Dev Web Retrieval Eval v1 
 
 More packs are coming. Good contributions include cloud pricing, app stores, finance quotes, docs freshness, model pricing, travel, local business data, and social metrics.
 
+## V3 Final Domains
+
+The V3 external-user task-bank set focuses on three domains:
+
+- Developer dependency and docs research: npm, PyPI, GitHub, release indexes, and official READMEs.
+- Ecommerce product and pricing accuracy: exact product, SKU, variant, and price fields from dynamic public pages.
+- Company intelligence and public profile metrics: employee and follower fields from required company profiles.
+
+See [../docs/v3-task-banks.md](../docs/v3-task-banks.md) for the final domain rationale, ground-truth strategy, and quarantine/salvage policy.
+
 Create a starter pack:
 
 ```bash

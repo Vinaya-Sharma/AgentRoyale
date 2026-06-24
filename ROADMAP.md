@@ -41,8 +41,10 @@ Status: shipped.
 
 ## v0.3: External User Reliability
 
+- three final task-bank domains for V3 demos: developer dependency/docs research, ecommerce product/pricing accuracy, and company intelligence
 - oracle salvage routing for Bright Data-backed task packs
 - oracle error audits with suggested salvage actions
+- quarantine reduction through stronger fallback paths before a task is removed from scoring
 - wrong field
 - stale value
 - wrong region

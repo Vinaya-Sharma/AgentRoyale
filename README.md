@@ -231,6 +231,8 @@ python -m agent_royale lint task-packs
 
 The best first contribution is a task pack for a source your own agent depends on. See [TASK_PACK_IDEAS.md](TASK_PACK_IDEAS.md) and [docs/task-spec.md](docs/task-spec.md).
 
+For the V3 external-user focus, see [V3 task banks](docs/v3-task-banks.md): developer dependency/docs research, ecommerce product/pricing accuracy, and company intelligence.
+
 ## Bright Data Ground Truth
 
 Bright Data is useful when the required source is a messy public web page instead of a clean API. Agent Royale uses Bright Data live scraping paths for source-specific public web ground truth rather than relying on stale cached datasets. It supports Bright Data as:
@@ -348,6 +350,7 @@ See [docs/github-actions.md](docs/github-actions.md) for endpoint, OpenRouter, B
 - [Golden path](docs/golden-path.md)
 - [Quickstart](docs/quickstart.md)
 - [Task spec](docs/task-spec.md)
+- [V3 task banks](docs/v3-task-banks.md)
 - [Adapter contract](docs/adapter-contract.md)
 - [GitHub Actions](docs/github-actions.md)
 - [Integrations](docs/integrations.md)
