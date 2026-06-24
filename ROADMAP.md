@@ -39,8 +39,10 @@ Status: shipped.
 - Bright Data-backed CI workflow docs
 - web research API adapter example
 
-## v0.3: Stronger Failure Taxonomy
+## v0.3: External User Reliability
 
+- oracle salvage routing for Bright Data-backed task packs
+- oracle error audits with suggested salvage actions
 - wrong field
 - stale value
 - wrong region
@@ -50,6 +52,7 @@ Status: shipped.
 - citation support checks beyond URL overlap
 - provider failure vs tool failure
 - before/after report comparison
+- hosted/local report viewer for non-CLI users
 
 ## v0.4: Adapter Ecosystem
 

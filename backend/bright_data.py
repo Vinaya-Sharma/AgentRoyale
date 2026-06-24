@@ -50,6 +50,14 @@ def args_for_tool(endpoint: str, url: str) -> dict[str, Any]:
         return {"url": url}
     if endpoint == "web_data_amazon_product":
         return {"url": url}
+    if endpoint == "web_data_bestbuy_products":
+        return {"url": url}
+    if endpoint == "web_data_walmart_product":
+        return {"url": url}
+    if endpoint == "web_data_ebay_product":
+        return {"url": url}
+    if endpoint == "web_data_homedepot_products":
+        return {"url": url}
     if endpoint == "web_data_linkedin_company_profile":
         return {"url": url}
     if endpoint == "web_data_amazon_product_search":
@@ -91,7 +99,7 @@ def yahoo_chart_url(url: str) -> str | None:
     return f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=1d&interval=1m"
 
 
-def fallback_endpoints(primary: str) -> list[str]:
+def fallback_endpoints(primary: str, url: str = "") -> list[str]:
     if primary == "web_data_linkedin_company_profile":
         chain = ["bright_data_linkedin_company_dataset", primary]
     elif primary == "web_data_crunchbase_company":
@@ -100,29 +108,82 @@ def fallback_endpoints(primary: str) -> list[str]:
         chain = [primary, "scrape_as_html", "direct_http"]
     else:
         chain = [primary]
+    structured = structured_ecommerce_endpoint(url)
+    if structured and structured not in chain:
+        chain.insert(0, structured)
     for endpoint in ("scrape_as_markdown", "scrape_as_html", "direct_http"):
         if endpoint not in chain:
             chain.append(endpoint)
     return chain
 
 
+def structured_ecommerce_endpoint(url: str) -> str | None:
+    domain = urlparse(url).netloc.lower()
+    path = urlparse(url).path.lower()
+    if "bestbuy.com" in domain:
+        return "web_data_bestbuy_products"
+    if "walmart.com" in domain and "/ip/" in path:
+        return "web_data_walmart_product"
+    if "ebay." in domain:
+        return "web_data_ebay_product"
+    if "homedepot.com" in domain:
+        return "web_data_homedepot_products"
+    if "amazon." in domain and "/dp/" in path:
+        return "web_data_amazon_product"
+    return None
+
+
 async def fetch_url_with_fallbacks(endpoint: str, url: str) -> BrightDataResult:
     failures: list[str] = []
     last_result: BrightDataResult | None = None
-    for candidate in fallback_endpoints(endpoint):
+    for candidate in fallback_endpoints(endpoint, url):
         result = await fetch_url(candidate, url)
         last_result = result
+        error_content = result_error_content(result)
         has_content = bool(result_text(result, limit=1))
-        if not result.is_error and has_content:
+        if not result.is_error and has_content and not error_content:
             if candidate != endpoint:
                 result.raw["fallback_from"] = endpoint
                 result.raw["fallback_failures"] = failures
             return result
-        failures.append(f"{candidate}: {result.error or 'empty response'}")
+        failures.append(f"{candidate}: {result.error or error_content or 'empty response'}")
     assert last_result is not None
     last_result.error = "; ".join(failures)
     last_result.raw["fallback_failures"] = failures
     return last_result
+
+
+def result_error_content(result: BrightDataResult) -> str:
+    if result.is_error:
+        return result.error or "tool error"
+    for payload in (result.structured_content, text_payload_json(result_text(result, limit=5000))):
+        message = error_message_from_payload(payload)
+        if message:
+            return message
+    return ""
+
+
+def text_payload_json(text: str) -> Any:
+    text = text.strip()
+    if not text or text[0] not in "[{":
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return None
+
+
+def error_message_from_payload(payload: Any) -> str:
+    if isinstance(payload, dict):
+        if payload.get("error") or payload.get("error_code"):
+            return str(payload.get("error") or payload.get("error_code"))
+        return ""
+    if isinstance(payload, list) and payload:
+        messages = [error_message_from_payload(item) for item in payload]
+        messages = [message for message in messages if message]
+        if messages and len(messages) == len(payload):
+            return "; ".join(messages[:3])
+    return ""
 
 
 async def fetch_url(endpoint: str, url: str) -> BrightDataResult:

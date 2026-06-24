@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import csv
 import json
 import os
 import re
@@ -127,6 +128,8 @@ def main(argv: list[str] | None = None) -> int:
         return asyncio.run(cmd_doctor(args))
     if args.command == "audit":
         return asyncio.run(cmd_audit(args))
+    if args.command == "audit-errors":
+        return asyncio.run(cmd_audit_errors(args))
     if args.command == "lint":
         return cmd_lint(args)
     if args.command == "demo":
@@ -182,6 +185,18 @@ def build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--timeout", type=float, default=30)
     audit.add_argument("--jsonl", default="", help="Optional JSONL output path for oracle snapshots.")
     audit.add_argument("--only", default="", help="Comma-separated task IDs to audit.")
+
+    audit_errors = sub.add_parser(
+        "audit-errors",
+        help="Audit task oracle failures and export a salvage/debug report.",
+    )
+    audit_errors.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
+    audit_errors.add_argument("--timeout", type=float, default=30)
+    audit_errors.add_argument("--only", default="", help="Comma-separated task IDs to audit.")
+    audit_errors.add_argument("--output", default="reports/oracle-error-audit.md", help="Markdown output path.")
+    audit_errors.add_argument("--json", default="", help="Optional JSON output path.")
+    audit_errors.add_argument("--csv", default="", help="Optional CSV output path.")
+    audit_errors.add_argument("--include-ok", action="store_true", help="Include verified tasks in the export.")
 
     lint = sub.add_parser("lint", help="Check task packs for fragile oracle and CI patterns.")
     lint.add_argument("paths", nargs="+", help="Task YAML/JSON files or directories.")
@@ -428,6 +443,37 @@ async def cmd_audit(args: argparse.Namespace) -> int:
     return 0 if verified == len(snapshots) else 1
 
 
+async def cmd_audit_errors(args: argparse.Namespace) -> int:
+    packs = load_task_packs([Path(item) for item in args.paths])
+    tasks = filter_tasks(flatten_tasks(packs), args.only)
+    rows = []
+    print(f"Auditing {len(tasks)} task oracle{'s' if len(tasks) != 1 else ''} for errors")
+    for task in tasks:
+        snapshot = await fetch_ground_truth_snapshot(task, timeout_seconds=args.timeout)
+        if snapshot.status == "verified" and not args.include_ok:
+            print(f"OK {task.id}")
+            continue
+        row = oracle_audit_row(task, snapshot)
+        rows.append(row)
+        label = "OK" if snapshot.status == "verified" else "ISSUE"
+        print(f"{label} {task.id}: {snapshot.status} {row['suggested_action']}")
+    output = Path(args.output)
+    write_oracle_error_markdown(rows, output)
+    print(f"\nError audit: {output}")
+    if args.json:
+        json_path = Path(args.json)
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        json_path.write_text(json.dumps({"tasks": rows}, indent=2, sort_keys=True), encoding="utf-8")
+        print(f"JSON: {json_path}")
+    if args.csv:
+        csv_path = Path(args.csv)
+        write_oracle_error_csv(rows, csv_path)
+        print(f"CSV: {csv_path}")
+    issue_count = sum(1 for row in rows if row["status"] != "verified")
+    print(f"Exported {len(rows)} row{'s' if len(rows) != 1 else ''}; issues: {issue_count}")
+    return 0 if issue_count == 0 else 1
+
+
 def cmd_lint(args: argparse.Namespace) -> int:
     task_files = expand_task_files(args.paths)
     findings = lint_task_paths(task_files)
@@ -663,6 +709,144 @@ def filter_tasks(tasks: list, only: str) -> list:
     return filtered
 
 
+def oracle_audit_row(task, snapshot) -> dict:
+    return {
+        "task_id": task.id,
+        "task_pack": task.task_pack_name,
+        "labels": ",".join(task.labels),
+        "domain": citation_domain(task.required_source),
+        "required_source": task.required_source,
+        "ground_truth_method": task.ground_truth.method,
+        "bright_data_tool": task.ground_truth.tool or "",
+        "source_url": task.ground_truth.source_url or task.ground_truth.url or task.required_source,
+        "status": snapshot.status,
+        "error": snapshot.error or "",
+        "parser": snapshot.parser,
+        "final_url": snapshot.final_url,
+        "evidence_text": snapshot.evidence_text,
+        "ambiguity_flags": ",".join(snapshot.ambiguity_flags),
+        "validation_checks": json.dumps(snapshot.validation_checks, sort_keys=True),
+        "suggested_action": suggested_oracle_action(task, snapshot),
+        "salvage_priority": salvage_priority(snapshot.status),
+    }
+
+
+def suggested_oracle_action(task, snapshot) -> str:
+    if snapshot.status == "verified":
+        return "No action needed."
+    if task.ground_truth.method == "bright_data" and "BRIGHT_DATA_API_KEY" in str(snapshot.error or ""):
+        return "Set Bright Data credentials and rerun; task was not actually fetched."
+    if snapshot.status == "selector_broken":
+        return "Update regex/field or add require_near_text around the exact source value."
+    if snapshot.status == "ground_truth_ambiguous":
+        return "Tighten parser context or split the task so the oracle has one candidate."
+    if snapshot.status == "source_unreachable":
+        return "Check source URL/tool availability; try another Bright Data endpoint or rendered workflow."
+    if snapshot.status == "low_confidence":
+        return "Inspect evidence text and policy checks; strengthen evidence or relax policy intentionally."
+    if snapshot.status == "oracle_failed":
+        return "Inspect raw excerpt/error; likely adapter config, parser, or credentials issue."
+    return "Inspect snapshot evidence and raw excerpt."
+
+
+def salvage_priority(status: str) -> str:
+    if status in {"selector_broken", "ground_truth_ambiguous", "low_confidence"}:
+        return "high"
+    if status in {"source_unreachable", "oracle_failed"}:
+        return "medium"
+    return "low"
+
+
+def write_oracle_error_markdown(rows: list[dict], output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    issue_rows = [row for row in rows if row["status"] != "verified"]
+    counts = Counter(row["status"] for row in rows)
+    lines = [
+        "# Agent Royale Oracle Error Audit",
+        "",
+        f"Rows exported: {len(rows)}",
+        f"Issues: {len(issue_rows)}",
+        "",
+        "## Status Counts",
+        "",
+    ]
+    if counts:
+        for status, count in sorted(counts.items()):
+            lines.append(f"- `{status}`: {count}")
+    else:
+        lines.append("- No rows exported. Use `--include-ok` to include verified tasks.")
+    if issue_rows:
+        lines.extend(
+            [
+                "",
+                "## Salvage List",
+                "",
+                "| Priority | Task | Status | Tool | Source | Suggested action |",
+                "| --- | --- | --- | --- | --- | --- |",
+            ]
+        )
+        for row in sorted(issue_rows, key=lambda item: (priority_rank(item["salvage_priority"]), item["task_id"])):
+            lines.append(
+                f"| {row['salvage_priority']} | `{row['task_id']}` | `{row['status']}` | "
+                f"`{row['bright_data_tool'] or row['ground_truth_method']}` | {row['source_url']} | "
+                f"{row['suggested_action']} |"
+            )
+        lines.extend(["", "## Details", ""])
+        for row in issue_rows:
+            lines.extend(
+                [
+                    f"### {row['task_id']}",
+                    "",
+                    f"- Status: `{row['status']}`",
+                    f"- Error: {row['error'] or 'n/a'}",
+                    f"- Required source: {row['required_source']}",
+                    f"- Ground-truth method: `{row['ground_truth_method']}`",
+                    f"- Bright Data tool: `{row['bright_data_tool'] or 'n/a'}`",
+                    f"- Parser: `{row['parser'] or 'n/a'}`",
+                    f"- Validation checks: `{row['validation_checks']}`",
+                    f"- Suggested action: {row['suggested_action']}",
+                    "",
+                ]
+            )
+    output.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def priority_rank(value: str) -> int:
+    return {"high": 0, "medium": 1, "low": 2}.get(value, 3)
+
+
+def write_oracle_error_csv(rows: list[dict], output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "task_id",
+        "task_pack",
+        "labels",
+        "domain",
+        "required_source",
+        "ground_truth_method",
+        "bright_data_tool",
+        "source_url",
+        "status",
+        "error",
+        "parser",
+        "final_url",
+        "ambiguity_flags",
+        "validation_checks",
+        "suggested_action",
+        "salvage_priority",
+    ]
+    with output.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({key: row.get(key, "") for key in fieldnames})
+
+
+def citation_domain(value: str) -> str:
+    parsed = urlparse(str(value or "") if "://" in str(value or "") else f"https://{value}")
+    return parsed.netloc.lower().removeprefix("www.")
+
+
 def sweep_targets(models: str, targets: str) -> list[str]:
     values = []
     for model in split_csv(models):
@@ -727,6 +911,8 @@ def write_sweep_outputs(rows: list[dict], output_dir: Path) -> None:
     lines = [
         "# Agent Royale Sweep Summary",
         "",
+        sweep_recommendation(rows),
+        "",
         "| Rank | Target | Exact | Source-supported | Median latency | Cost | Report |",
         "| ---: | --- | ---: | ---: | ---: | ---: | --- |",
     ]
@@ -739,4 +925,39 @@ def write_sweep_outputs(rows: list[dict], output_dir: Path) -> None:
         )
     lines.append("")
     lines.append("Targets are ranked by source-supported accuracy, then exact accuracy, then median latency.")
+    lines.extend(["", "## Outcome Breakdown", ""])
+    for row in rows:
+        outcomes = ", ".join(f"`{name}`={count}" for name, count in sorted(row["outcomes"].items()))
+        lines.append(f"- `{row['target']}`: {outcomes or 'no outcomes'}")
+    lines.extend(
+        [
+            "",
+            "## How To Use This",
+            "",
+            "- If a simpler model has comparable source-supported accuracy, prefer it for lower operational complexity.",
+            "- If source-supported accuracy is low across models, try a specialized search, scraping, or browser stack.",
+            "- If exact accuracy is high but source-supported accuracy is low, inspect citation/source policy failures.",
+            "- Rerun the sweep after prompt, model, tool, or routing changes to catch regressions.",
+        ]
+    )
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def sweep_recommendation(rows: list[dict]) -> str:
+    if not rows:
+        return "No targets were evaluated."
+    winner = rows[0]
+    if winner["source_supported_accuracy"] >= 0.9:
+        return (
+            f"Recommendation: `{winner['target']}` is the strongest fit in this sweep "
+            f"with {winner['source_supported_accuracy']:.1%} source-supported accuracy."
+        )
+    if winner["exact_accuracy"] >= 0.8 and winner["source_supported_accuracy"] < 0.8:
+        return (
+            "Recommendation: the best target is often finding the right value, but source support is weak. "
+            "Inspect citation failures before trusting this stack."
+        )
+    return (
+        "Recommendation: no target cleared a strong source-supported threshold. "
+        "Try a more specialized search, scraping, browser, or custom-agent workflow for this task pack."
+    )

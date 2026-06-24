@@ -99,7 +99,7 @@ python -m agent_royale sweep task-packs/devtools/dependency-research.yaml \
   --models openai/gpt-4o,google/gemini-3-1-flash-lite
 ```
 
-Sweep outputs include per-target JSONL runs, HTML reports, JSON summaries, JUnit XML, and a ranked `sweep-summary.md`.
+Sweep outputs include per-target JSONL runs, HTML reports, JSON summaries, JUnit XML, and a ranked `sweep-summary.md` with a recommendation and outcome breakdowns.
 
 ## Golden Path
 
@@ -233,7 +233,7 @@ The best first contribution is a task pack for a source your own agent depends o
 
 ## Bright Data Ground Truth
 
-Bright Data is useful when the required source is a messy public web page instead of a clean API. Agent Royale supports Bright Data as:
+Bright Data is useful when the required source is a messy public web page instead of a clean API. Agent Royale uses Bright Data live scraping paths for source-specific public web ground truth rather than relying on stale cached datasets. It supports Bright Data as:
 
 - an independent ground-truth oracle for task packs
 - a target retrieval layer through the local Bright Data adapter example
@@ -245,6 +245,17 @@ export BRIGHT_DATA_API_KEY=...
 export BRIGHT_DATA_MCP_URL=https://mcp.brightdata.com/mcp
 python -m agent_royale doctor task-packs/bright-data/rapid-web.yaml --check-ground-truth
 ```
+
+Export an oracle error audit for tasks that need parser/tool cleanup:
+
+```bash
+python -m agent_royale audit-errors task-packs/bright-data \
+  --output reports/bright-data-error-audit.md \
+  --json reports/bright-data-error-audit.json \
+  --csv reports/bright-data-error-audit.csv
+```
+
+The audit lists failed or ambiguous tasks with the Bright Data tool, source URL, parser, validation checks, error text, and a suggested salvage action. Use it to debug empty results, selector drift, fallback issues, or tasks that need a rendered/browser workflow.
 
 Run the ecommerce accuracy pack against the Bright Data target adapter:
 

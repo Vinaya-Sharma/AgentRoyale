@@ -142,10 +142,20 @@ Bright Data Pro/groups: ecommerce, LinkedIn, app stores, social, travel, browser
 | Public docs, release pages, pricing pages | `scrape_as_markdown` with a narrow regex | Works in Rapid mode and keeps the parser auditable. |
 | Pages where markdown misses the needed field | `scrape_as_html` fallback | Preserves more page structure for source-specific regexes. |
 | LinkedIn company fields | `web_data_linkedin_company_profile` or the dataset fallback | Avoids confusing followers, employee ranges, and rendered page noise. |
-| Ecommerce product pages | Structured `web_data_*` tools when available; otherwise markdown plus a conservative regex | Product pages often mix sale price, list price, installments, and trade-in values. |
+| Ecommerce product pages | Structured `web_data_*` tools when available, then markdown/HTML extraction, then browser workflow if the field is rendered late | Product pages often mix sale price, list price, installments, trade-in values, and variant state. |
 | Public APIs with exact fields | `http_json` instead of Bright Data | Cheaper, faster, and easier to reproduce. |
 
 Good Bright Data tasks should name the exact source, exact field, expected region or variant, and common wrong nearby values. If the parser stops matching, update or quarantine the task instead of widening the regex until unrelated values pass.
+
+## Oracle Salvage Routing
+
+For ecommerce pages, Agent Royale now routes Bright Data-backed oracles through a source-aware fallback ladder:
+
+```text
+structured ecommerce tool -> scrape_as_markdown -> scrape_as_html -> direct_http -> quarantine/browser workflow
+```
+
+For supported domains such as Best Buy, Walmart, eBay, Home Depot, and Amazon, the runner tries the matching structured `web_data_*` tool before generic page extraction. If a structured tool returns an error payload as text, Agent Royale treats that as a failed attempt and continues to the next fallback instead of accepting the error text as evidence.
 
 ## Oracle Salvage Log
 
