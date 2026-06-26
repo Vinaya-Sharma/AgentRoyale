@@ -39,6 +39,10 @@ No LLM judge is used for the core exact-value grade.
 
 See [Reliability model](docs/reliability.md) for the diagrams, failure-mode tables, and report-field guide that explain why the scoring is trustworthy.
 
+![Agent Royale V3 report dashboard](docs/assets/launch/v3-report-decision-dashboard.png)
+
+The V3 report view turns raw eval output into a decision dashboard: source-supported accuracy, scoreable tasks, oracle skips, latency, cost, failure breakdowns, and concrete "what to fix next" guidance.
+
 ## Quickstart
 
 ```bash

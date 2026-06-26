@@ -24,15 +24,29 @@
     .verdict { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:13px; box-shadow:0 10px 28px rgba(15,23,42,.05); }
     .score { font-size:34px; line-height:1; font-weight:850; color:var(--good); }
     .verdict-label { margin-top:6px; font-size:12px; font-weight:800; color:var(--ink); }
-    .grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:16px; }
+    .grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; margin-top:16px; }
     .card { border:1px solid var(--line); background:var(--panel); border-radius:8px; padding:12px; box-shadow:0 7px 20px rgba(15,23,42,.035); }
     .num { font-size:24px; line-height:1; font-weight:850; }
     .label { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.08em; margin-top:6px; font-weight:800; }
+    .metric-detail { color:var(--muted); font-size:11px; margin-top:5px; line-height:1.3; }
     .insight { margin-top:16px; border:1px solid #c7d7fe; background:#eff6ff; border-radius:8px; padding:14px 16px; display:grid; grid-template-columns:128px minmax(0,1fr); gap:14px; align-items:start; }
     .insight strong { color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
     .method { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px; }
     .method-card { border:1px solid var(--line); background:#fff; border-radius:8px; padding:14px 16px; }
     .method-card strong { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#344054; margin-bottom:6px; }
+    .decision { margin-top:16px; border:1px solid #bfdbfe; background:#eff6ff; border-radius:8px; padding:16px; display:grid; grid-template-columns:150px minmax(0,1fr); gap:16px; align-items:start; }
+    .decision strong { color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+    .fix-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }
+    .fix-card { border:1px solid var(--line); background:#fff; border-radius:8px; padding:12px; }
+    .fix-card strong { display:block; font-size:12px; color:#344054; margin-bottom:5px; }
+    .fix-card .count { font-size:22px; font-weight:850; margin-bottom:4px; }
+    .bar { display:flex; height:13px; overflow:hidden; border-radius:999px; background:#eef2f7; border:1px solid #e2e8f0; margin:12px 0 10px; }
+    .bar-part { min-width:2px; }
+    .badge-list { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }
+    .badge { display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:999px; padding:3px 6px; font-size:10px; font-weight:850; color:#344054; background:#fff; }
+    .badge.good { border-color:#a7f3d0; background:#ecfdf3; color:#087f5b; }
+    .badge.bad { border-color:#fecaca; background:#fff1f2; color:#b42318; }
+    .badge.warn { border-color:#fed7aa; background:#fff7ed; color:#9a3412; }
     .split { display:grid; grid-template-columns:.82fr 1.18fr; gap:22px; align-items:start; }
     table { width:100%; border-collapse:separate; border-spacing:0; background:var(--panel); border:1px solid var(--line); border-radius:8px; overflow:hidden; box-shadow:0 8px 24px rgba(15,23,42,.04); }
     th,td { text-align:left; padding:10px 11px; border-bottom:1px solid #e8ecf3; vertical-align:top; font-size:13px; }
@@ -48,8 +62,13 @@
     .claim { font-weight:750; }
     .truth { font-weight:750; color:#175cd3; }
     .failure { color:var(--bad); font-weight:750; }
+    .fix-next { color:#344054; font-size:12px; line-height:1.35; max-width:220px; }
     .source { color:#475467; font-size:12px; max-width:320px; overflow-wrap:anywhere; }
     .citation-list { margin-top:6px; display:grid; gap:3px; }
+    details.debug { margin-top:8px; border:1px solid #e8ecf3; border-radius:8px; background:#f8fafc; padding:7px 8px; }
+    details.debug summary { cursor:pointer; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+    .debug-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; margin-top:7px; font-size:11px; color:#475467; }
+    .debug-grid code { font-size:11px; overflow-wrap:anywhere; }
     .required { font-weight:800; color:#344054; }
     .catch-list { display:grid; gap:10px; }
     .catch { border:1px solid var(--line); border-left:4px solid var(--bad); border-radius:8px; background:#fff; padding:13px 14px; }
@@ -60,8 +79,9 @@
     .status-dot { display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:8px; background:var(--muted); }
     .status-dot.correct,.status-dot.source-supported-correct { background:var(--good); }
     .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer { background:var(--bad); }
+    .status-dot.correct-unsupported { background:var(--warn); }
     footer { margin-top:24px; color:var(--muted); font-size:12px; }
-    @media(max-width:980px) { header,.split,.method { grid-template-columns:1fr; } .grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } th:nth-child(7),td:nth-child(7) { display:none; } }
+    @media(max-width:980px) { header,.split,.method,.decision,.fix-grid { grid-template-columns:1fr; } .grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } th:nth-child(7),td:nth-child(7) { display:none; } }
   </style>
 </head>
 <body>
@@ -69,7 +89,7 @@
     <header>
       <div>
         <h1>Agent Royale Eval Report</h1>
-        <p class="subhead">This run tested one agent target against 3 live-web tasks. The table below shows the stack, model, or adapter target called, question, answer returned, extracted claim, ground truth, and citations.</p>
+        <p class="subhead">This report shows whether one agent target returned exact values from required sources, whether the citations support those claims, and what to fix next.</p>
         <div class="meta">
           <span class="pill">target: http://127.0.0.1:3001/api/agent</span>
           <span class="pill">runs: 3</span>
@@ -78,72 +98,51 @@
       </div>
       <div class="verdict">
         <div class="score">100%</div>
-        <div class="verdict-label">Launch-safe</div>
-        <p>Exact-value pass rate across 3 scoreable runs</p>
+        <div class="verdict-label">Ready for this task pack</div>
+        <p>Source-supported accuracy across 3 scoreable tasks</p>
       </div>
     </header>
 
-    <section class="grid">
-      <div class="card"><div class="num">3</div><div class="label">Exact values</div></div>
-      <div class="card"><div class="num">3</div><div class="label">Source-supported</div></div>
-      <div class="card"><div class="num">0</div><div class="label">Issues</div></div>
-      <div class="card"><div class="num">0</div><div class="label">No answer</div></div>
-      <div class="card"><div class="num">0</div><div class="label">Oracle skips</div></div>
+    <section class="decision">
+      <strong>Decision</strong>
+      <p>3/3 scoreable tasks were correct with source-backed citations; 3/3 matched the exact oracle value. Every answer matched the independent oracle and source-support check for this run. No oracle skips were recorded.</p>
     </section>
 
-    <h2>Run Details</h2>
-    <table>
-      <colgroup>
-        <col style="width:5%">
-        <col style="width:23%">
-        <col style="width:12%">
-        <col style="width:17%">
-        <col style="width:15%">
-        <col style="width:10%">
-        <col style="width:8%">
-        <col style="width:10%">
-      </colgroup>
-      <thead><tr><th>Status</th><th>Question</th><th>Stack / Target</th><th>Answer returned</th><th>Extracted claim</th><th>Ground truth</th><th>Outcome</th><th>Citations / source</th></tr></thead>
-      <tbody><tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra SKU, what storage options are listed under Storage?</div></td><td class="model">http://127.0.0.1:3001/api/agent</td><td class="answer">256GB 512GB 1TB</td><td class="claim">256GB
-
-512GB
-
-1TB</td><td class="truth">256GB
-
-512GB
-
-1TB<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra...</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</div><div class="citation-list"><span class="required">Cited:</span><div>samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-...</div></div></td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what color is named in the page title?</div></td><td class="model">http://127.0.0.1:3001/api/agent</td><td class="answer">Titanium Black</td><td class="claim">Titanium Black</td><td class="truth">Titanium Black<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra...</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</div><div class="citation-list"><span class="required">Cited:</span><div>samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-...</div></div></td></tr>
-<tr><td><span class="pass">PASS</span></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what product title appears before the Price &amp; Deals text?</div></td><td class="model">http://127.0.0.1:3001/api/agent</td><td class="answer">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td><td class="claim">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</td><td class="truth">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra...</div></td><td><div class="failure">correct</div><div class="muted" style="font-size:11px;margin-top:3px">Oracle: verified</div></td><td class="source"><div><span class="required">Required:</span> https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</div><div class="citation-list"><span class="required">Cited:</span><div>samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-...</div></div></td></tr></tbody>
-    </table>
+    <section class="grid">
+      <div class="card"><div class="num">3/3</div><div class="label">Source-supported</div><div class="metric-detail">100% strict pass rate</div></div>
+      <div class="card"><div class="num">3/3</div><div class="label">Exact values</div><div class="metric-detail">100% value match</div></div>
+      <div class="card"><div class="num">3/3</div><div class="label">Scoreable tasks</div><div class="metric-detail">oracle verified before grading</div></div>
+      <div class="card"><div class="num">0</div><div class="label">Oracle skips (not scored)</div><div class="metric-detail">ground truth not safe</div></div>
+      <div class="card"><div class="num">4.3s</div><div class="label">Median latency</div><div class="metric-detail">p95 5.5s</div></div>
+      <div class="card"><div class="num">n/a</div><div class="label">Reported cost</div><div class="metric-detail">0/3 runs reported cost</div></div>
+    </section>
 
     <section class="method">
       <div class="method-card">
-        <strong>Oracle values</strong>
+        <strong>Can I trust this run?</strong>
         <p>Bright Data structured extraction for web pages that need reliable extraction.</p>
       </div>
       <div class="method-card">
-        <strong>Grading</strong>
+        <strong>How scoring works</strong>
         <p>3 text tasks normalized case and punctuation before comparison.</p>
       </div>
       <div class="method-card">
-        <strong>Source check</strong>
-        <p>Each citation URL is checked against the task's required source. Matching values from the wrong source are marked as source failures.</p>
+        <strong>Source support</strong>
+        <p>Each citation URL is checked against the task's required source, and citation quotes must support the extracted claim. Correct values without source-backed quotes are separated from fully supported answers.</p>
       </div>
-    </section>
-
-    <section class="insight">
-      <strong>Result</strong>
-      <p>Every answer matched the independent oracle and source-support check for this run.</p>
     </section>
 
     <section class="split">
       <div>
+        <h2>What To Fix Next</h2>
+        <div class="fix-grid"><div class="fix-card"><div class="count">0</div><strong>No fixes needed</strong><p class="muted">All scoreable tasks passed exact and source-supported checks.</p></div></div>
+
         <h2>Outcome Breakdown</h2>
-        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot source-supported-correct"></span>correct with source support</td><td>3</td><td>100%</td></tr></tbody></table>
+        <div class="bar"><div class="bar-part" title="correct: 3" style="width:100.00%;background:var(--good)"></div></div><div class="badge-list"><span class="badge"><span class="status-dot correct"></span>correct: 3</span></div>
+        <table><thead><tr><th>Outcome</th><th>Runs</th><th>Share</th><th>Fix next</th></tr></thead><tbody><tr><td><span class="status-dot correct"></span>correct</td><td>3</td><td>100%</td><td>No action needed.</td></tr></tbody></table>
 
         <h2>Oracle Health</h2>
-        <table><thead><tr><th>Status</th><th>Runs</th><th>Share</th></tr></thead><tbody><tr><td><span class="status-dot verified"></span>verified</td><td>3</td><td>100%</td></tr></tbody></table>
+        <table><thead><tr><th>Status</th><th>Runs</th><th>Share</th><th>Meaning</th></tr></thead><tbody><tr><td><span class="status-dot verified"></span>verified</td><td>3</td><td>100%</td><td>Ground truth verified.</td></tr></tbody></table>
 
         <h2>Representative Catches</h2>
         <div class="catch-list"><p class="muted">No failures in this run.</p></div>
@@ -156,6 +155,33 @@
 <tr><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what product title appears before the Price &amp; Deals text?</div></td><td>1/1</td><td>1/1</td><td>correct</td></tr></tbody></table>
       </div>
     </section>
+
+    <h2>Task Details</h2>
+    <table>
+      <colgroup>
+        <col style="width:6%">
+        <col style="width:22%">
+        <col style="width:11%">
+        <col style="width:15%">
+        <col style="width:13%">
+        <col style="width:11%">
+        <col style="width:10%">
+        <col style="width:7%">
+        <col style="width:5%">
+      </colgroup>
+      <thead><tr><th>Status</th><th>Task</th><th>Stack / Target</th><th>Got</th><th>Expected</th><th>Source / Citation</th><th>Fix next</th><th>Latency</th><th>Cost</th></tr></thead>
+      <tbody><tr><td><span class="pass">PASS</span><div class="badge-list"><span class="badge bad">Value: no</span><span class="badge bad">Source: no</span><span class="badge bad">Quote: no</span><span class="badge good">Oracle verified</span></div></td><td><code>bd_ecom_v1_samsung_s25_ultra_storage_options</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra SKU, what storage options are listed under Storage?</div><div class="muted" style="font-size:11px;margin-top:5px">Oracle: verified</div></td><td class="model">http://127.0.0.1:3001/api/agent</td><td class="answer"><div class="mini-label">Answer</div>256GB 512GB 1TB<div class="mini-label" style="margin-top:8px">Claim</div><span class="claim">256GB
+
+512GB
+
+1TB</span></td><td class="truth">256GB
+
+512GB
+
+1TB<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra...</div></td><td class="source"><div><span class="required">Required:</span> https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</div><div class="muted" style="font-size:11px">Source match: no; quote support: no</div><div class="citation-list"><span class="required">Cited:</span><div>samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-...</div></div></td><td class="fix-next">No action needed.</td><td>3.7s</td><td>n/a</td></tr>
+<tr><td><span class="pass">PASS</span><div class="badge-list"><span class="badge bad">Value: no</span><span class="badge bad">Source: no</span><span class="badge bad">Quote: no</span><span class="badge good">Oracle verified</span></div></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_color</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what color is named in the page title?</div><div class="muted" style="font-size:11px;margin-top:5px">Oracle: verified</div></td><td class="model">http://127.0.0.1:3001/api/agent</td><td class="answer"><div class="mini-label">Answer</div>Titanium Black<div class="mini-label" style="margin-top:8px">Claim</div><span class="claim">Titanium Black</span></td><td class="truth">Titanium Black<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra...</div></td><td class="source"><div><span class="required">Required:</span> https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</div><div class="muted" style="font-size:11px">Source match: no; quote support: no</div><div class="citation-list"><span class="required">Cited:</span><div>samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-...</div></div></td><td class="fix-next">No action needed.</td><td>5.5s</td><td>n/a</td></tr>
+<tr><td><span class="pass">PASS</span><div class="badge-list"><span class="badge bad">Value: no</span><span class="badge bad">Source: no</span><span class="badge bad">Quote: no</span><span class="badge good">Oracle verified</span></div></td><td><code>bd_ecom_v1_samsung_s25_ultra_title_product</code><div class="question">Using Samsung&#x27;s official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what product title appears before the Price &amp; Deals text?</div><div class="muted" style="font-size:11px;margin-top:5px">Oracle: verified</div></td><td class="model">http://127.0.0.1:3001/api/agent</td><td class="answer"><div class="mini-label">Answer</div>Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone<div class="mini-label" style="margin-top:8px">Claim</div><span class="claim">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone</span></td><td class="truth">Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone<div class="muted" style="font-size:11px;margin-top:4px">Evidence: Buy Galaxy S25 Ultra 256GB | Titanium Black Smartphone | Price &amp; Deals | Samsung US Galaxy S25 Ultra/EdgeGalaxy S25/+/FE Galaxy S25 Ultra...</div></td><td class="source"><div><span class="required">Required:</span> https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/</div><div class="muted" style="font-size:11px">Source match: no; quote support: no</div><div class="citation-list"><span class="required">Cited:</span><div>samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-...</div></div></td><td class="fix-next">No action needed.</td><td>4.3s</td><td>n/a</td></tr></tbody>
+    </table>
 
     <footer>Generated from Agent Royale run data.</footer>
   </main>
