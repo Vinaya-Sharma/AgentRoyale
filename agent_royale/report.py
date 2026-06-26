@@ -30,8 +30,6 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     accuracy = exact_correct / scoreable_total if scoreable_total else 0
     source_supported_accuracy = source_supported / scoreable_total if scoreable_total else 0
     agent_issue_records = [item for item in scoreable_records if record_verdict(item) != "correct"]
-    issue_count = len(agent_issue_records)
-    no_answer = sum(1 for item in records if item.failure_mode == "no_answer")
     latencies = [item.latency_ms for item in records if item.latency_ms]
     costs = [item.cost_usd for item in records if item.cost_usd is not None]
     failures = Counter(record_verdict(item) for item in records)
@@ -44,8 +42,6 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
         by_task[record.task_id].append(record)
     target = records[0].target if records else "unknown"
     created_at = records[0].created_at if records else ""
-    source_summary = summarize_required_sources(records)
-    grading_summary = summarize_grading(records)
     rows = "\n".join(render_record(record) for record in sorted(records, key=lambda item: (record_verdict(item) == "correct", item.task_id)))
     issue_records = [record for record in records if record_verdict(record) != "correct"]
     catch_cards = "\n".join(render_catch(record) for record in issue_records[:3])
@@ -72,7 +68,6 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
         if source_supported_accuracy >= 0.6
         else "High risk on this task pack"
     )
-    caught = short_summary(issue_records)
     decision = decision_summary(
         source_supported=source_supported,
         scoreable_total=scoreable_total,
@@ -113,11 +108,10 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .metric-detail {{ color:var(--muted); font-size:11px; margin-top:5px; line-height:1.3; }}
     .insight {{ margin-top:16px; border:1px solid #c7d7fe; background:#eff6ff; border-radius:8px; padding:14px 16px; display:grid; grid-template-columns:128px minmax(0,1fr); gap:14px; align-items:start; }}
     .insight strong {{ color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }}
-    .method {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px; }}
-    .method-card {{ border:1px solid var(--line); background:#fff; border-radius:8px; padding:14px 16px; }}
-    .method-card strong {{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#344054; margin-bottom:6px; }}
     .decision {{ margin-top:16px; border:1px solid #bfdbfe; background:#eff6ff; border-radius:8px; padding:16px; display:grid; grid-template-columns:150px minmax(0,1fr); gap:16px; align-items:start; }}
     .decision strong {{ color:#1d4ed8; font-size:12px; text-transform:uppercase; letter-spacing:.08em; }}
+    .learn-more {{ margin-top:10px; font-size:12px; color:var(--muted); }}
+    .learn-more a {{ color:#1d4ed8; text-decoration:none; font-weight:750; }}
     .fix-grid {{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }}
     .fix-card {{ border:1px solid var(--line); background:#fff; border-radius:8px; padding:12px; }}
     .fix-card strong {{ display:block; font-size:12px; color:#344054; margin-bottom:5px; }}
@@ -163,7 +157,7 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     .status-dot.wrong-value,.status-dot.wrong-source,.status-dot.unsupported-citation,.status-dot.no-answer {{ background:var(--bad); }}
     .status-dot.correct-unsupported {{ background:var(--warn); }}
     footer {{ margin-top:24px; color:var(--muted); font-size:12px; }}
-    @media(max-width:980px) {{ header,.split,.method,.decision,.fix-grid {{ grid-template-columns:1fr; }} .grid {{ grid-template-columns:1fr 1fr; }} .insight {{ grid-template-columns:1fr; }} th:nth-child(7),td:nth-child(7) {{ display:none; }} }}
+    @media(max-width:980px) {{ header,.split,.decision,.fix-grid {{ grid-template-columns:1fr; }} .grid {{ grid-template-columns:1fr 1fr; }} .insight {{ grid-template-columns:1fr; }} th:nth-child(7),td:nth-child(7) {{ display:none; }} }}
   </style>
 </head>
 <body>
@@ -187,7 +181,10 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
 
     <section class="decision">
       <strong>Decision</strong>
-      <p>{esc(decision)}</p>
+      <div>
+        <p>{esc(decision)}</p>
+        <p class="learn-more">Ground-truth and grading details: <a href="../../docs/reliability.md">Reliability model</a></p>
+      </div>
     </section>
 
     <section class="grid">
@@ -197,21 +194,6 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
       <div class="card"><div class="num">{len(oracle_issue_records)}</div><div class="label">Oracle skips (not scored)</div><div class="metric-detail">ground truth not safe</div></div>
       <div class="card"><div class="num">{fmt_ms(median_latency)}</div><div class="label">Median latency</div><div class="metric-detail">p95 {fmt_ms(p95_latency)}</div></div>
       <div class="card"><div class="num">{fmt_cost(total_cost)}</div><div class="label">Reported cost</div><div class="metric-detail">{len(costs)}/{total} runs reported cost</div></div>
-    </section>
-
-    <section class="method">
-      <div class="method-card">
-        <strong>Can I trust this run?</strong>
-        <p>{esc(source_summary)}</p>
-      </div>
-      <div class="method-card">
-        <strong>How scoring works</strong>
-        <p>{esc(grading_summary)}</p>
-      </div>
-      <div class="method-card">
-        <strong>Source support</strong>
-        <p>Each citation URL is checked against the task's required source, and citation quotes must support the extracted claim. Correct values without source-backed quotes are separated from fully supported answers.</p>
-      </div>
     </section>
 
     <section class="split">
@@ -240,16 +222,16 @@ def write_html_report(records: list[RunRecord], output: Path) -> None:
     <table>
       <colgroup>
         <col style="width:6%">
-        <col style="width:22%">
-        <col style="width:11%">
+        <col style="width:20%">
+        <col style="width:10%">
+        <col style="width:9%">
         <col style="width:15%">
         <col style="width:13%">
-        <col style="width:11%">
+        <col style="width:12%">
         <col style="width:10%">
         <col style="width:7%">
-        <col style="width:5%">
       </colgroup>
-      <thead><tr><th>Status</th><th>Task</th><th>Stack / Target</th><th>Got</th><th>Expected</th><th>Source / Citation</th><th>Fix next</th><th>Latency</th><th>Cost</th></tr></thead>
+      <thead><tr><th>Status</th><th>Question</th><th>Target</th><th>Tool</th><th>Agent answer</th><th>Ground truth</th><th>Source / Citation</th><th>Fix next</th><th>Latency</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
 
@@ -357,22 +339,18 @@ def render_record(record: RunRecord) -> str:
     status = f'<span class="{"pass" if verdict == "correct" else "fail"}">{status_label}</span>'
     answer_text = truncate_text(compact_text(record.answer or record.error or ""), 260)
     model = model_label(record)
-    evidence = ""
-    if record.ground_truth_snapshot and record.ground_truth_snapshot.evidence_text:
-        evidence_text = truncate_text(record.ground_truth_snapshot.evidence_text, 140)
-        evidence = f"<div class=\"muted\" style=\"font-size:11px;margin-top:4px\">Evidence: {esc(evidence_text)}</div>"
     oracle_status = pretty_label(record.oracle_status or "unknown")
     return (
         "<tr>"
         f"<td>{status}{render_quality_badges(record)}</td>"
         f"<td><code>{esc(record.task_id)}</code><div class=\"question\">{esc(record.task_question)}</div><div class=\"muted\" style=\"font-size:11px;margin-top:5px\">Oracle: {esc(oracle_status)}</div></td>"
-        f"<td class=\"model\">{esc(model)}{render_tools(record)}</td>"
-        f"<td class=\"answer\"><div class=\"mini-label\">Answer</div>{esc(answer_text)}<div class=\"mini-label\" style=\"margin-top:8px\">Claim</div><span class=\"claim\">{esc(record.extracted_claim)}</span>{render_debug(record)}</td>"
-        f"<td class=\"truth\">{esc(record.ground_truth)}{evidence}</td>"
+        f"<td class=\"model\">{esc(model)}</td>"
+        f"<td class=\"model\">{esc(tool_label(record))}</td>"
+        f"<td class=\"answer\">{esc(answer_text)}{render_debug(record)}</td>"
+        f"<td class=\"truth\">{esc(record.ground_truth)}</td>"
         f"<td class=\"source\">{render_citations(record)}</td>"
         f"<td class=\"fix-next\">{esc(fix_for_record(record))}</td>"
         f"<td>{esc(fmt_ms(record.latency_ms))}</td>"
-        f"<td>{esc(fmt_cost(record.cost_usd))}</td>"
         "</tr>"
     )
 
@@ -411,6 +389,17 @@ def model_label(record: RunRecord) -> str:
     if target.startswith("openrouter:"):
         return target.removeprefix("openrouter:")
     return target
+
+
+def tool_label(record: RunRecord) -> str:
+    if record.tools_used:
+        tools = ", ".join(str(item) for item in record.tools_used[:3])
+        if len(record.tools_used) > 3:
+            tools += f", +{len(record.tools_used) - 3}"
+        return tools
+    if record.ground_truth_snapshot and record.ground_truth_snapshot.tool:
+        return str(record.ground_truth_snapshot.tool)
+    return "n/a"
 
 
 def render_tools(record: RunRecord) -> str:
@@ -562,9 +551,7 @@ def render_quality_badges(record: RunRecord) -> str:
         quality_badge("Source", record.source_correct),
         quality_badge("Quote", record.citation_supports_claim),
     ]
-    if record.scoreable:
-        badges.append('<span class="badge good">Oracle verified</span>' if record.oracle_status == "verified" else '<span class="badge warn">Oracle unknown</span>')
-    else:
+    if not record.scoreable:
         badges.append('<span class="badge warn">Not scored</span>')
     return f'<div class="badge-list">{"".join(badges)}</div>'
 
