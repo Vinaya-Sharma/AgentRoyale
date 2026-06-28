@@ -104,18 +104,18 @@ async def fetch_bright_data_ground_truth_snapshot(task: Task, fetched_at: str) -
             ),
         )
     assert spec.tool and spec.url
-    from backend.bright_data import fetch_url_with_fallbacks, result_text
-
-    result = await fetch_url_with_fallbacks(spec.tool, spec.url)
-    if result.is_error:
-        return failed_snapshot(
-            task,
-            status="source_unreachable",
-            fetched_at=fetched_at,
-            error=result.error or f"Bright Data tool {spec.tool} failed",
-            raw_excerpt=compact_excerpt(result.raw),
-        )
     if spec.field:
+        from backend.bright_data import fetch_url_with_fallbacks, result_text
+
+        result = await fetch_url_with_fallbacks(spec.tool, spec.url)
+        if result.is_error:
+            return failed_snapshot(
+                task,
+                status="source_unreachable",
+                fetched_at=fetched_at,
+                error=result.error or f"Bright Data tool {spec.tool} failed",
+                raw_excerpt=compact_excerpt(result.raw),
+            )
         payload = result.structured_content
         if payload is None:
             text = result_text(result, limit=50000)
@@ -134,18 +134,54 @@ async def fetch_bright_data_ground_truth_snapshot(task: Task, fetched_at: str) -
             validation_checks={"structured_content": result.structured_content is not None},
         )
     assert spec.regex
-    text = result_text(result, limit=50000)
-    snapshot = snapshot_from_regex(
+    return await fetch_bright_data_regex_snapshot(task, fetched_at=fetched_at)
+
+
+async def fetch_bright_data_regex_snapshot(task: Task, fetched_at: str) -> GroundTruthSnapshot:
+    spec = task.ground_truth
+    assert spec.tool and spec.url and spec.regex
+    from backend.bright_data import fallback_endpoints, fetch_url, result_error_content, result_text
+
+    failures: list[str] = []
+    last_snapshot: GroundTruthSnapshot | None = None
+    for endpoint in fallback_endpoints(spec.tool, spec.url):
+        result = await fetch_url(endpoint, spec.url)
+        error_content = result_error_content(result)
+        text = result_text(result, limit=50000)
+        if result.is_error or error_content or not text:
+            failures.append(f"{endpoint}: {result.error or error_content or 'empty response'}")
+            continue
+        snapshot = snapshot_from_regex(
+            task,
+            text=text,
+            source_url=spec.source_url or spec.url or task.required_source,
+            final_url=str(result.raw.get("final_url") or spec.url or ""),
+            fetched_at=fetched_at,
+            parser=f"bright_data_regex:{spec.regex}",
+            tool=result.endpoint,
+        )
+        snapshot.raw_excerpt = compact_excerpt(text)
+        if snapshot.status == "verified":
+            if failures:
+                snapshot.validation_checks = {
+                    **snapshot.validation_checks,
+                    "fallback_after_failed_attempts": True,
+                }
+            return snapshot
+        last_snapshot = snapshot
+        failures.append(f"{endpoint}: {snapshot.error or snapshot.status}")
+        if snapshot.status == "ground_truth_ambiguous":
+            return snapshot
+
+    if last_snapshot is not None:
+        last_snapshot.error = "; ".join(failures)
+        return last_snapshot
+    return failed_snapshot(
         task,
-        text=text,
-        source_url=spec.source_url or spec.url or task.required_source,
-        final_url=str(result.raw.get("final_url") or spec.url or ""),
+        status="source_unreachable",
         fetched_at=fetched_at,
-        parser=f"bright_data_regex:{spec.regex}",
-        tool=result.endpoint,
+        error="; ".join(failures) or f"Bright Data tool {spec.tool} failed",
     )
-    snapshot.raw_excerpt = compact_excerpt(text)
-    return snapshot
 
 
 def snapshot_from_regex(

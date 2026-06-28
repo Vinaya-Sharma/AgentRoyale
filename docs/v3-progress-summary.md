@@ -181,20 +181,56 @@ To avoid wasting credits, only the current problematic tasks were rerun.
 - source: `python.org/downloads`
 - artifact: `reports/targeted-bright-data-rapid-rerun.jsonl`
 
-### Still Needs Salvage
+### Samsung Salvaged
 
 `bd_ecom_v1_samsung_s25_ultra_512gb_price`
 
-- status: `selector_broken`
-- tool: `scrape_as_markdown`
+- status: verified
+- value: `1419.99`
+- tool: `scrape_as_html` after `scrape_as_markdown` selector miss
 - source: Samsung Galaxy S25 Ultra product page
-- artifact: `reports/targeted-samsung-rerun.jsonl`
+- artifact: `reports/targeted-samsung-512gb-fix-rerun.jsonl`
 
-Current markdown output includes the storage labels:
+The old markdown-only attempt saw storage labels:
 
 ```text
 Storage Storage 256GB 512GB 1TB
 ```
 
-But it no longer includes the prices near that storage section, so the current regex cannot verify the 512GB price from markdown.
+But it did not include the prices near that storage section. The task now points at Samsung's canonical 512GB SKU page and verifies the price from Samsung's Product JSON-LD/schema.org offer in the HTML fallback, anchored to `SM-S938UZKEXAA` and `priceCurrency: USD`.
 
+## Open Bright Data Questions
+
+These are the useful questions to ask Tomer/Bright Data:
+
+1. For Samsung product pages, is there a structured product collector that exposes variant prices directly, or should Agent Royale keep using HTML/schema.org fallback for SKU-level prices?
+2. For the quarantined Best Buy product page, should the next attempt use `web_data_bestbuy_products`, a different URL pattern, or a rendered/browser workflow?
+
+## Current State
+
+Shipped and pushed:
+
+- reliability model docs
+- V3 task-bank docs
+- Bright Data salvage workflow
+- oracle salvage routing
+- cleaner HTML report UX
+- refreshed README and screenshots
+- targeted Bright Data rerun artifacts
+
+Still open:
+
+- decide whether Samsung variant prices should use a structured Bright Data collector when available, or keep the current HTML/schema.org fallback
+- decide the best Bright Data path for Best Buy product pages
+- optionally add a rendered/browser workflow once the best collector path is confirmed
+- eventually add comparison-focused HTML reports for before/after or multi-stack sweeps
+
+## Verification Commands Recently Run
+
+```bash
+python3 -m agent_royale validate task-packs
+python3 -m agent_royale lint task-packs/bright-data
+python3 -m compileall agent_royale/report.py
+```
+
+The Bright Data lint still has one expected warning for the Rapid search-result demo because search-result ordering is a weaker oracle than a required-source page scrape.

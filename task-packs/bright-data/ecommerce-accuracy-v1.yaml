@@ -36,8 +36,8 @@ tasks:
       source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
 
   - id: bd_ecom_v1_samsung_s25_ultra_512gb_price
-    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra SKU, what price is listed for the 512GB storage option in USD?"
-    required_source: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
+    question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra 512GB SKU, what price is listed in USD?"
+    required_source: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-512gb-unlocked-sku-sm-s938uzkexaa/"
     answer_type: currency
     tolerance: 0
     stability: volatile
@@ -47,16 +47,16 @@ tasks:
       - ecommerce_accuracy_v1
       - samsung
       - storage_price
-    notes: "Extract the 512GB price from the Storage section. Reject the base device price, Galaxy S25 Edge price, and unrelated storage/color labels."
+    notes: "Extract the 512GB SKU price from Samsung's Product JSON-LD/schema.org offer. Reject storage labels without nearby price evidence, the base 256GB SKU price, Galaxy S25 Edge price, and unrelated storage/color labels."
     ground_truth:
       method: bright_data
       tool: scrape_as_markdown
-      url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
-      regex: "Storage\\s+Storage[\\s\\S]{0,120}?512GB\\s+\\$\\s*([0-9,]+(?:\\.[0-9]{2})?)"
+      url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-512gb-unlocked-sku-sm-s938uzkexaa/"
+      regex: "\"sku\"\\s*:\\s*\"SM-S938UZKEXAA\"[\\s\\S]{0,600}?\"offers\"[\\s\\S]{0,300}?\"price\"\\s*:\\s*\"([0-9,]+(?:\\.[0-9]{2})?)\""
       require_near_text:
-        - "Storage"
-        - "512GB"
-      source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-256gb-unlocked-sku-sm-s938uzkaxaa/"
+        - "SM-S938UZKEXAA"
+        - "priceCurrency\":\"USD"
+      source_url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/galaxy-s25-ultra-512gb-unlocked-sku-sm-s938uzkexaa/"
 
   - id: bd_ecom_v1_samsung_s25_ultra_title_product
     question: "Using Samsung's official US page for the unlocked Galaxy S25 Ultra 256GB SKU, what product title appears before the Price & Deals text?"
