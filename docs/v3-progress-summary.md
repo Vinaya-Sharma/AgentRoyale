@@ -198,38 +198,3 @@ Storage Storage 256GB 512GB 1TB
 
 But it no longer includes the prices near that storage section, so the current regex cannot verify the 512GB price from markdown.
 
-## Open Bright Data Questions
-
-These are the useful questions to ask Tomer/Bright Data:
-
-1. For Samsung product pages, is there a better collector/tool than `scrape_as_markdown` to expose variant prices?
-2. For the quarantined Best Buy product page, should the next attempt use `web_data_bestbuy_products`, a different URL pattern, or a rendered/browser workflow?
-
-## Current State
-
-Shipped and pushed:
-
-- reliability model docs
-- V3 task-bank docs
-- Bright Data salvage workflow
-- oracle salvage routing
-- cleaner HTML report UX
-- refreshed README and screenshots
-- targeted Bright Data rerun artifacts
-
-Still open:
-
-- decide the best Bright Data path for Samsung variant prices
-- decide the best Bright Data path for Best Buy product pages
-- optionally add a rendered/browser workflow once the best collector path is confirmed
-- eventually add comparison-focused HTML reports for before/after or multi-stack sweeps
-
-## Verification Commands Recently Run
-
-```bash
-python3 -m agent_royale validate task-packs
-python3 -m agent_royale lint task-packs/bright-data
-python3 -m compileall agent_royale/report.py
-```
-
-The Bright Data lint still has one expected warning for the Rapid search-result demo because search-result ordering is a weaker oracle than a required-source page scrape.
