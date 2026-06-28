@@ -39,9 +39,9 @@ No LLM judge is used for the core exact-value grade.
 
 See [Reliability model](docs/reliability.md) for the diagrams, failure-mode tables, and report-field guide that explain why the scoring is trustworthy.
 
-![Agent Royale V3 report dashboard](docs/assets/launch/v3-report-decision-dashboard.png)
+![Agent Royale report dashboard](docs/assets/launch/v3-report-decision-dashboard.png)
 
-The V3 report view turns raw eval output into a decision dashboard: source-supported accuracy, scoreable tasks, oracle skips, latency, cost, failure breakdowns, and concrete "what to fix next" guidance.
+Reports are built for quick decisions: agent answer vs. ground truth, the tool used, source-supported accuracy, scoreable tasks, oracle skips, latency, reported cost, failure breakdowns, and concrete "what to fix next" guidance. Ground-truth and grading details stay in the reliability docs so the report itself stays clean.
 
 ## Quickstart
 
@@ -149,7 +149,7 @@ See [docs/golden-path.md](docs/golden-path.md) for the full walkthrough.
 - **Deterministic graders:** string, number, currency, percentage, date, and enum matching
 - **Citation policies:** source matching by contains, exact URL, same path, same domain, or explicit allowed sources
 - **Failure labels:** wrong value, wrong source, unsupported citation, no answer, tool failure, oracle ambiguity, correct-but-unsupported
-- **Reports:** terminal summary, JSONL run log, shareable HTML report, JSON summary, and JUnit XML
+- **Reports:** clean HTML decision dashboard, terminal summary, JSONL run log, JSON summary, and JUnit XML
 - **Demo and sweeps:** one-command offline demo plus multi-target/model sweeps for choosing the right stack
 - **Run comparison:** before/after accuracy, source-supported accuracy, oracle skips, latency, cost, regressions, and Markdown output
 - **Task-pack linting:** static checks for fragile oracles, volatile CI gates, broad regexes, missing provenance, weak search-result ground truth, missing pack versions, and permissive CI source matching
