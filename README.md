@@ -39,6 +39,8 @@ No LLM judge is used for the core exact-value grade.
 
 See [Reliability model](docs/reliability.md) for the diagrams, failure-mode tables, and report-field guide that explain why the scoring is trustworthy.
 
+For launch materials, see the [Medium article draft](docs/medium-launch-article.md) and [final launch checklist](docs/final-launch-checklist.md).
+
 ![Agent Royale report dashboard](docs/assets/launch/v3-report-decision-dashboard.png)
 
 Reports are built for quick decisions: agent answer vs. ground truth, the tool used, source-supported accuracy, scoreable tasks, oracle skips, latency, reported cost, failure breakdowns, and concrete "what to fix next" guidance. Ground-truth and grading details stay in the reliability docs so the report itself stays clean.
